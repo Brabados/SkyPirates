@@ -7,29 +7,41 @@ public class GenerateEmptyAir : MonoBehaviour, IGenerate
     public Board Generate(Map Data)
     {
         Board PlayArea = new Board(Data.MapSize);
-        int qStart = -Data.MapSize.x / 2;
-        int rStart = -Data.MapSize.y / 2;
+
         for (int x = 0; x < Data.MapSize.x; x++)
         {
             for (int y = 0; y < Data.MapSize.y; y++)
             {
-                int q = qStart + x;
-                int r = rStart + y;
+                Vector2Int offsetCoords = new Vector2Int(x, y);
+                Vector3Int cube = HexUtils.OffsetToCube(offsetCoords, Data.isFlatTopped);
+
                 GameObject holder = new GameObject($"Hex {x},{y}", typeof(Tile));
                 Tile tile = holder.GetComponent<Tile>();
-                tile.Data = Data.TileTypes[0];
-                tile.SetPositionAndHeight(new Vector2Int(x, y), q, r, tile.Data == Data.TileTypes[0] ? 5 : 20);
-                Vector3 tilePosition = Data.GetHexPositionFromCoordinate(new Vector2Int(x, y));
-                tilePosition.y = tilePosition.y + tile.Height / 2;
+                tile.Data = Data.TileTypes[0]; // Always air
+
+                float height = 5f;
+
+                // Correct position assignment
+                tile.SetPosition(offsetCoords);
+                tile.SetQUSPosition(cube);
+                tile.SetHeight(height);
+
+                Vector3 tilePosition = Data.GetHexPositionFromCoordinate(offsetCoords);
+                tilePosition.y += height / 2f;
                 holder.transform.position = tilePosition;
+
                 holder.transform.SetParent(transform);
-                Instantiate(tile.Data.TilePrefab, holder.transform).transform.position += new Vector3(0, tile.Height / 2 - 1, 0);
+
+                GameObject visual = Instantiate(tile.Data.TilePrefab, holder.transform);
+                visual.transform.position += new Vector3(0, height / 2f - 1f, 0);
+
                 tile.SetupHexRenderer(Data.innerSize, Data.outerSize, Data.isFlatTopped);
-                tile.SetPosition(new Vector2Int(x, y));
                 tile.SetPawnPos();
+
                 PlayArea.set_Tile(x, y, tile);
             }
         }
+
         return PlayArea;
     }
 }

@@ -102,11 +102,13 @@ public class MapMerge : MonoBehaviour
                     int mx = x + offsetXA;
                     int my = y + offsetYA;
                     Vector2Int tilePos = new Vector2Int(mx, my);
-                    Vector3Int cubeCoords = HexUtils.OffsetToCube(tilePos, map.isFlatTopped);
+                    Vector2Int centeredOffset = tilePos - new Vector2Int(mergedWidth / 2, mergedHeight / 2);
+                    Vector3Int cubeCoords = HexUtils.OffsetToCube(centeredOffset, map.isFlatTopped);
+
 
                     Tile newTile = Object.Instantiate(tile, map.transform);
                     newTile.SetPosition(tilePos);
-                    newTile.SetQUSPosition(cubeCoords.x, cubeCoords.y);
+                    newTile.SetQUSPosition(cubeCoords);
                     newTile.SetPawnPos();
 
                     map.PlayArea.set_Tile(mx, my, newTile);
@@ -126,11 +128,13 @@ public class MapMerge : MonoBehaviour
                     int mx = x + offsetXB;
                     int my = y + offsetYB;
                     Vector2Int tilePos = new Vector2Int(mx, my);
-                    Vector3Int cubeCoords = HexUtils.OffsetToCube(tilePos, map.isFlatTopped);
+                    Vector2Int centeredOffset = tilePos - new Vector2Int(mergedWidth / 2, mergedHeight / 2);
+                    Vector3Int cubeCoords = HexUtils.OffsetToCube(centeredOffset, map.isFlatTopped);
+
 
                     Tile newTile = Object.Instantiate(tile, map.transform);
                     newTile.SetPosition(tilePos);
-                    newTile.SetQUSPosition(cubeCoords.x, cubeCoords.y);
+                    newTile.SetQUSPosition(cubeCoords);
                     newTile.SetPawnPos();
 
                     map.PlayArea.set_Tile(mx, my, newTile);
@@ -174,7 +178,9 @@ public class MapMerge : MonoBehaviour
                     tile.Data = mapData.TileTypes[0];
 
                     // Setup position, height, and cube coords
-                    tile.SetPositionAndHeight(new Vector2Int(x, y), q, r, tile.Data == mapData.TileTypes[0] ? 5 : 20);
+                    Vector2Int offset = new Vector2Int(x, y);
+                    Vector3Int cube = HexUtils.OffsetToCube(offset, mapData.isFlatTopped);
+                    tile.SetPositionAndHeight(offset, cube, tile.Data == mapData.TileTypes[0] ? 5 : 20);
 
                     // Position the tile in world space
                     Vector3 worldPos = mapData.GetHexPositionFromCoordinate(new Vector2Int(x, y));

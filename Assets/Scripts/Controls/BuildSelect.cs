@@ -41,7 +41,7 @@ public class BuildSelect : MonoBehaviour, ISelectionResponce
                 tile.Data = EditTile;
                 tile.SetPositionAndHeight(
                     new Vector2Int(selectedTile.Column, selectedTile.Row), 
-                    selectedTile.QAxis, selectedTile.RAxis, tile.Data.Name == "Air" ? 5 : tilehight * 5);
+                    selectedTile.ReturnSquareCoOrds(), tile.Data.Name == "Air" ? 5 : tilehight * 5);
                
                 Vector3 tilePosition = playarea.GetHexPositionFromCoordinate(new Vector2Int(selectedTile.Column,selectedTile.Row ));
                 tilePosition.y = tilePosition.y + tile.Height / 2;

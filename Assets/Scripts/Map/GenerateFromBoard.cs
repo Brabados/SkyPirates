@@ -18,26 +18,30 @@ public class GenerateFromBoard : MonoBehaviour, IGenerate
                 if (tile == null)
                     continue;
 
-                int q = -width / 2 + x;
-                int r = -height / 2 + y;
+                Vector2Int offsetCoords = new Vector2Int(x, y);
+                Vector3Int cube = HexUtils.OffsetToCube(offsetCoords, Data.isFlatTopped);
 
-                tile.SetPositionAndHeight(new Vector2Int(x, y), q, r, tile.Data == Data.TileTypes[0] ? 5 : 20);
-                Vector3 tilePosition = Data.GetHexPositionFromCoordinate(new Vector2Int(x, y));
-                tilePosition.y += tile.Height / 2;
+                float heightVal = tile.Data == Data.TileTypes[0] ? 5 : 20;
+
+                tile.SetPosition(offsetCoords);
+                tile.SetQUSPosition(cube);
+                tile.SetHeight(heightVal);
+
+                Vector3 tilePosition = Data.GetHexPositionFromCoordinate(offsetCoords);
+                tilePosition.y += heightVal / 2f;
                 tile.transform.position = tilePosition;
 
                 if (tile.transform.childCount == 0 && tile.Data.TilePrefab != null)
                 {
-                    Instantiate(tile.Data.TilePrefab, tile.transform).transform.position += new Vector3(0, tile.Height / 2 - 1, 0);
+                    GameObject visual = Instantiate(tile.Data.TilePrefab, tile.transform);
+                    visual.transform.position += new Vector3(0, heightVal / 2f - 1f, 0);
                 }
 
                 tile.SetupHexRenderer(Data.innerSize, Data.outerSize, Data.isFlatTopped);
-                tile.SetPosition(new Vector2Int(x, y));
                 tile.SetPawnPos();
             }
         }
 
         return playArea;
     }
-
 }

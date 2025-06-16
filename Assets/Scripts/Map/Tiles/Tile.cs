@@ -54,11 +54,11 @@ public class Tile : MonoBehaviour
         Row = coords.y;
     }
 
-    public void SetQUSPosition(int q, int r)
+    public void SetQUSPosition(Vector3Int cube)
     {
-        QAxis = q;
-        RAxis = r;
-        SAxis = -QAxis - RAxis;
+        QAxis = cube.x;
+        RAxis = cube.y;
+        SAxis = cube.z;
     }
 
     public void SetHeight(float height)
@@ -66,10 +66,10 @@ public class Tile : MonoBehaviour
         Height = height;
     }
 
-    public void SetPositionAndHeight(Vector2Int coords, int q, int r, float height)
+    public void SetPositionAndHeight(Vector2Int coords, Vector3Int cube, float height)
     {
         SetPosition(coords);
-        SetQUSPosition(q, r);
+        SetQUSPosition(cube);
         SetHeight(height);      
         transform.position = new Vector3(transform.position.x, Height / 2f, transform.position.z);
         

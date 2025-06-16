@@ -55,7 +55,7 @@ public static class BoardRotator
 
             Tile newTile = Object.Instantiate(oldTile);
             newTile.name = oldTile.name + $"_rotated_{rotation}";
-            newTile.SetQUSPosition(rotated.x, rotated.y);
+            newTile.SetQUSPosition(rotated);
             newTile.SetHeight(oldTile.Height);
             newTile.SetPosition(new Vector2Int(offsetX, offsetY));
 

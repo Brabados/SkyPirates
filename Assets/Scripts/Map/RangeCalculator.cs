@@ -25,7 +25,8 @@ public static class RangeCalculator
     /// </summary>
     private static Tile TileAdd(Board board, Tile tile, int q, int r, int s)
     {
-        return board.SearchTileByCubeCoordinates(tile.QAxis + q, tile.RAxis + r, tile.SAxis + s);
+        Vector3Int Add = new Vector3Int(tile.QAxis + q, tile.RAxis + r, tile.SAxis + s);
+        return board.SearchTileByCubeCoordinates(Add);
     }
 
     /// <summary>
@@ -37,7 +38,8 @@ public static class RangeCalculator
     /// <returns>Tile at the scaled coordinates or null if out of bounds.</returns>
     public static Tile HexScale(Board board, Tile tile, int factor)
     {
-        return board.SearchTileByCubeCoordinates(tile.QAxis * factor, tile.RAxis * factor, tile.SAxis * factor);
+        Vector3Int Scale = new Vector3Int(tile.QAxis * factor, tile.RAxis * factor, tile.SAxis * factor);
+        return board.SearchTileByCubeCoordinates(Scale);
     }
 
     /// <summary>
@@ -157,7 +159,7 @@ public static class RangeCalculator
         for (int i = 1; i <= range; i++)
         {
             current += direction;
-            Tile tile = board.SearchTileByCubeCoordinates(current.x, current.y, current.z);
+            Tile tile = board.SearchTileByCubeCoordinates(current);
             if (tile != null)
             {
                 line.Add(tile);

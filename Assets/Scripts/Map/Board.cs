@@ -55,7 +55,7 @@ public class Board
             for (int i = 0; i < 6; i++)
             {
                 Vector3Int neighborPos = new Vector3Int(tile.QAxis + directions[i].x, tile.RAxis + directions[i].y, tile.SAxis + directions[i].z);
-                Tile neighbour = SearchTileByCubeCoordinates(neighborPos.x, neighborPos.y, neighborPos.z);
+                Tile neighbour = SearchTileByCubeCoordinates(neighborPos);
                 if (neighbour != null)
                 {
                     Neighbours.Add(neighbour);
@@ -65,15 +65,15 @@ public class Board
 
         return Neighbours;
     }
-    public Tile SearchTileByCubeCoordinates(int q, int r, int s)
+    public Tile SearchTileByCubeCoordinates(Vector3Int cubeCoords)
     {
         int centerX = _size_X / 2;
         int centerY = _size_Y / 2;
 
         // Convert cube coordinates (q, r, s) to array indices (x, y)
         // This conversion depends on how your array and cube coordinates are related
-        int x = q + centerX;
-        int y = r + centerY;
+        int x = cubeCoords.x + centerX;
+        int y = cubeCoords.y + centerY;
 
         // Check if the calculated indices are within bounds
         if (x >= 0 && x < _board_Contents.GetLength(0) && y >= 0 && y < _board_Contents.GetLength(1))

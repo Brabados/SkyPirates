@@ -22,6 +22,8 @@ public static class HexUtils
             int s = -q - r;
             return new Vector3Int(q, r, s);
         }
+
+
     }
 
     // 6 Hex Directions in Cube Coordinates
@@ -34,4 +36,21 @@ public static class HexUtils
         new Vector3Int(-1, 0, 1),
         new Vector3Int(0, -1, 1)
     };
+
+    public static Vector2Int CubeToOffset(Vector3Int cube, bool isFlatTopped)
+    {
+        if (isFlatTopped)
+        {
+            int col = cube.x;
+            int row = cube.z + (cube.x + (cube.x & 1)) / 2;
+            return new Vector2Int(col, row);
+        }
+        else
+        {
+            int col = cube.x + (cube.z + (cube.z & 1)) / 2;
+            int row = cube.z;
+            return new Vector2Int(col, row);
+        }
+    }
+
 }

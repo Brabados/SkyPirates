@@ -26,13 +26,13 @@ public class BoardLookupPlayModeTests
     {
         var go = new GameObject("Map");
         var map = go.AddComponent<Map>();
+        map.enabled = false; // don't auto-run Start
         map.MapSize = size;
         map.innerSize = 0.5f;
         map.outerSize = 1f;
         map.isFlatTopped = true;
         map.TileTypes = new List<TileDataSO>();
 
-        // Create two dummy tile types so the board can instantiate tiles.
         var tile1 = ScriptableObject.CreateInstance<TileDataSO>();
         tile1.UniqueID = "type1";
         tile1.TilePrefab = new GameObject("prefab1");
@@ -45,8 +45,18 @@ public class BoardLookupPlayModeTests
         tile2.BaseMat = tile1.BaseMat;
         map.TileTypes.Add(tile2);
 
+        // Add required components
+        var generator = go.AddComponent<RandomGeneration>();
+        go.AddComponent<MovementLine>();
+
+        // Manual setup
+        map.generate = generator;
+        map.PlayArea = generator.Generate(map);
+        map.SetNeighbours(map.PlayArea, map.isFlatTopped);
+
         return map;
     }
+
 
     /// <summary>
     /// Many of the generation utilities rely on a scene containing a
@@ -55,13 +65,25 @@ public class BoardLookupPlayModeTests
     /// </summary>
     private void EnsureCamera()
     {
-        if (Camera.main == null)
-        {
-            var camGO = new GameObject("Main Camera");
-            camGO.tag = "MainCamera";
-            camGO.AddComponent<Camera>();
-            camGO.AddComponent<CameraController>();
-        }
+        var camGO = new GameObject("MainCamera");
+        camGO.tag = "MainCamera";
+        var camera = camGO.AddComponent<Camera>();
+        var controller = camGO.AddComponent<CameraController>();
+
+        // Create a dummy child transform to act as the zoom target
+        var zoomTransform = new GameObject("CameraPivot").transform;
+        zoomTransform.parent = camGO.transform;
+        zoomTransform.localPosition = new Vector3(0, 10, -10);
+
+        controller.cameraTransform = zoomTransform;
+
+        controller.movementSpeedNormal = 5f;
+        controller.movementSpeedFast = 10f;
+        controller.movementTime = 5f;
+        controller.rotationAmount = 1f;
+        controller.minimumZoom = 5f;
+        controller.maximumZoom = 20f;
+        controller.zoomAmount = new Vector3(0, -1, 1);
     }
 
     /// <summary>
@@ -73,8 +95,9 @@ public class BoardLookupPlayModeTests
         foreach (var tile in board.GetAllTiles())
         {
             Vector3Int cube = new Vector3Int(tile.QAxis, tile.RAxis, tile.SAxis);
-            Assert.AreSame(tile, board.SearchTileByCubeCoordinates(cube.x, cube.y, cube.z));
             Assert.AreSame(tile, board.GetTileByCube(cube));
+            Assert.AreSame(tile, board.SearchTileByCubeCoordinates(cube));
+
         }
     }
 
