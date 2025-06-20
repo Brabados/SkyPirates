@@ -52,4 +52,28 @@ public class PathfindingBasicTests
         int expectedLength = board.CubeDistance(start, end) + 1;
         Assert.AreEqual(expectedLength, path.Count);
     }
+
+    [Test]
+    public void FindPath_NoRoute_ReturnsEmptyList()
+    {
+        int size = 3;
+        int[,] costs = new int[size, size];
+        for (int x = 0; x < size; x++)
+            for (int y = 0; y < size; y++)
+                costs[x, y] = 1;
+
+        // Impassable wall separating start and end
+        for (int y = 0; y < size; y++)
+            costs[1, y] = 0;
+
+        Board board = CreateBoard(size, costs);
+        Tile start = board.get_Tile(0, 1);
+        Tile end = board.get_Tile(2, 1);
+
+        Pathfinding finder = new Pathfinding();
+        Tile[] allTiles = board.GetAllTiles().ToArray();
+        List<Vector3Int> path = finder.FindPath(start, end, allTiles);
+
+        Assert.AreEqual(0, path.Count);
+    }
 }
