@@ -130,12 +130,6 @@ public class Tile : MonoBehaviour
 
         return forward;
     }
-    public override int GetHashCode()
-    {
-        int hashCodeQ = QAxis.GetHashCode();
-        int hashCodeR = RAxis.GetHashCode();
-        return hashCodeQ ^ (hashCodeR + unchecked((int)0x9e3779b9) + (hashCodeQ << 6) + (hashCodeQ >> 2));
-    }
 
     public override bool Equals(object obj)
     {

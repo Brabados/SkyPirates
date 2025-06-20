@@ -67,13 +67,6 @@ public class Board
     }
 
 
-    public void swap_Tiles(Vector2Int Tile1, Vector2Int Tile2)
-    {
-        Tile placeholder = get_Tile(Tile1.x, Tile1.y);
-        set_Tile(Tile1.x, Tile1.y, get_Tile(Tile2.x, Tile2.y));
-        set_Tile(Tile2.x, Tile2.y, placeholder);
-    }
-
     //Sets the 6 neighbours of each tile on the board
     public List<Tile> GetNeighbours(Vector2Int centerTile)
     {

@@ -86,74 +86,27 @@ public class Map : MonoBehaviour
         }
     }
 
-
-
-    /// <summary>
-    /// Converts axial grid coordinates <c>(q,r)</c> into Unity world space.
-    /// <para>
-    /// World coordinates are derived from the axial coordinate pair “(q, r)”
-    /// using orientation specific formulas.  A <c>0.9</c> multiplier is applied
-    /// so tiles do not visually touch.
-    /// </para>
-    /// <para>When <c>size = 1</c> and spacing is <c>0.9</c> the equations become:</para>
-    /// <code>
-    /// // flat topped
-    /// x = 1.5 * q
-    /// z = sqrt(3) * (r + q/2)
-    /// // pointy topped
-    /// x = sqrt(3) * (q + r/2)
-    /// z = 1.5 * r
-    /// </code>
-    /// Multiplying by <c>0.9</c> gives the following sample positions:
-    /// <code>
-    /// | q | r | layout | expected (x,z) |
-    /// | 0 | 0 | flat   | (0.000,  0.000) |
-    /// | 1 | 0 | flat   | (1.350, -0.779) |
-    /// | 0 | 1 | flat   | (0.000, -1.559) |
-    /// | 0 | 0 | pointy | (0.000,  0.000) |
-    /// | 1 | 0 | pointy | (1.559,  0.000) |
-    /// | 1 | 1 | pointy | (2.338, -1.350) |
-    /// </code>
-    /// <para>Coordinate diagram:</para>
-    /// <code>
-    ///    (-1,1)  (0,1)  (1,1)
-    ///       \      |      /
-    ///    (-1,0) (0,0) (1,0)
-    ///       /      |      \
-    ///    (-1,-1)(0,-1)(1,-1)
-    /// </code>
-    /// </summary>
     public Vector3 GetHexPositionFromCoordinate(Vector2Int coordinates)
     {
-        // Using the axial-to-world formulas from redblobgames.com ensures the
-        // origin is consistent for both orientations.  The previous version
-        // added a width/2 offset for flat topped grids which shifted the entire
-        // board.  Applying the standard equations avoids that bug and works for
-        // negative coordinates too.
+        
         int q = coordinates.x;
         int r = coordinates.y;
         float size = outerSize;
 
-        // Slightly shrink the hex grid so neighbouring tiles don't touch.
-        // This was present in the previous implementation so we keep it
-        // for visual consistency.
+        
         float spacing = 0.90f;
         float xPosition;
         float zPosition;
 
         if (isFlatTopped)
         {
-            // Flat topped orientation aligns hex edges horizontally
-            //  x = size * 3/2 * q
-            //  z = size * sqrt(3) * (r + q/2)
+            
             xPosition = size * 1.5f * q;
             zPosition = size * Mathf.Sqrt(3f) * (r + q / 2f);
         }
         else
         {
-            // Pointy topped orientation rotates the grid 90 degrees
-            //  x = size * sqrt(3) * (q + r/2)
-            //  z = size * 3/2 * r
+           
             xPosition = size * Mathf.Sqrt(3f) * (q + r / 2f);
             zPosition = size * 1.5f * r;
         }
@@ -161,7 +114,7 @@ public class Map : MonoBehaviour
         xPosition *= spacing;
         zPosition *= spacing;
 
-        // Negate z so the grid's "forward" direction matches Unity's.
+       
         return new Vector3(xPosition, 0f, -zPosition);
     }
 

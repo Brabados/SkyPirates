@@ -2,17 +2,7 @@ using UnityEngine;
 
 public static class HexUtils
 {
-    /// <summary>
-    /// Convert offset coordinates <paramref name="offset"/> (column, row)
-    /// to cube coordinates using the standard axial conversions from
-    /// <see href="https://www.redblobgames.com/grids/hex-grids/">Red Blob Games</see>.
-    ///
-    /// When <paramref name="isFlatTopped"/> is <c>true</c> the method assumes an
-    /// <b>even-q</b> layout (columns shifted down when the column index is even).
-    /// When <paramref name="isFlatTopped"/> is <c>false</c> an <b>even-r</b>
-    /// layout is used (rows shifted right on even indices).
-    /// Set <paramref name="useOdd"/> to convert from the odd-q/odd-r variants.
-    /// </summary>
+
     public static Vector3Int OffsetToCube(Vector2Int offset, bool isFlatTopped,
                                           bool useOdd = false)
     {
