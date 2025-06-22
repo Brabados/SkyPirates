@@ -25,8 +25,5 @@ public abstract class Pawn : MonoBehaviour
         Set.Contents = this;
     }
 
-    public void HighlightMovements()
-    {
 
-    }
 }

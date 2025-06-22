@@ -171,4 +171,9 @@ public class Tile : MonoBehaviour
     {
         return new Vector3Int(QAxis, RAxis, SAxis);
     }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

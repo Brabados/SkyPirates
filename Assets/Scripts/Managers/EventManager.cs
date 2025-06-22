@@ -27,6 +27,7 @@ public class EventManager : MonoBehaviour
     public static event Action<Item> OnShowInfo;
     public static event Action<TileDataSO> OnTileChange;
     public static event Action<float> OnSliderValueChange;
+    public static event Action<Pawn> OnUIUpdate;
 
     // --- TRIGGERS ---
 
@@ -38,6 +39,7 @@ public class EventManager : MonoBehaviour
     public static void TriggerMovementChange(List<Vector3Int> points) => OnMovementChange?.Invoke(points);
 
     // --- UI TRIGGERS ---
+    public static void TriggerUIUpdate(Pawn Selected) => OnUIUpdate?.Invoke(Selected);
     public static void TriggerCharacterChange(Pawn onscreenPawn) => OnCharacterChange?.Invoke(onscreenPawn);
     public static void TriggerItemSelect(Item selectedItem) => OnItemSelect?.Invoke(selectedItem);
     public static void TriggerEquipmentChange(ItemType itemType, Item item) => OnEquipmentChange?.Invoke(itemType, item);

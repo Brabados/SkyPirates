@@ -49,6 +49,7 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
             if (SelectedContents != null)
             {
                 EventManager.TriggerPawnSelect(SelectedContents);
+                EventManager.TriggerUIUpdate(SelectedContents);
             }
             SelectedTile.Hex.meshupdate(selectedMat);
         }

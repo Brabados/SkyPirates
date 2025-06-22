@@ -19,17 +19,11 @@ public class InventoryGenerator : MonoBehaviour
         SpawnButtons();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void SpawnButtons()
     {
         Viewport.GetComponent<RectTransform>().sizeDelta = new Vector2(
-    Viewport.GetComponent<RectTransform>().sizeDelta.x,
-    PublicItems.InInventory.Count * (ScrollSpace.rect.height / 6) + 150);
+        Viewport.GetComponent<RectTransform>().sizeDelta.x,
+        PublicItems.InInventory.Count * (ScrollSpace.rect.height / 6) + 150);
         // Create and position the buttons
         for (int x = 0; x < PublicItems.InInventory.Count; x++)
         {

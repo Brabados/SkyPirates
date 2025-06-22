@@ -1,0 +1,37 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UICharaterUpdater : MonoBehaviour
+{
+    public Canvas UI;
+    public Image CharaterProt;
+    public Text CharaterName;
+    public Text CharaterHealthNO;
+    public Slider CharaterHelthVisual;
+
+
+    public void Start()
+    {
+        EventManager.OnUIUpdate += UpdateUI;
+    }
+
+    public void UpdateUI(Pawn Selected)
+    {
+        UI.gameObject.SetActive (true);
+        PlayerPawns Player;
+        if(Selected is PlayerPawns)
+        {
+            Player = (PlayerPawns)Selected;
+
+            CharaterProt.sprite = Player.Data.CharaterPortrate;
+            CharaterName.text = Player.Data.CharaterName;
+        }
+    }
+
+    public void OnDestroy()
+    {
+        EventManager.OnUIUpdate -= UpdateUI;
+    }
+}
