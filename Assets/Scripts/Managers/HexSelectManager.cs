@@ -4,23 +4,36 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-// Manager for the selection and highlight of hexes. Informs the current IHighlightResponse and ISelectionResponse when to
-// act with given inputs.
 [RequireComponent(typeof(RangeFinder))]
 public class HexSelectManager : MonoBehaviour
 {
     public static HexSelectManager Instance { get; private set; }
     public BasicControls InputActions { get; private set; }
-    public ISelectionResponce Responce { get; set; }
-    public IHighlightResponce Highlight { get; set; }
-    public RangeFinder HighlightFinder { get; private set; }
-    public Canvas UI { get; private set; }
 
+    private ISelectionResponce _responce;
+
+    // Tracks ALL currently selected tiles across ALL selection states.
+    public HashSet<Tile> SelectedTiles { get; private set; } = new HashSet<Tile>();
+
+    // State tracking
     private HexSelectState currentState;
     private readonly HexSelectState defaultState = new DefaultSelectState();
     private readonly HexSelectState moveSelectState = new MoveSelectState();
     private readonly HexSelectState actionSelectState = new ActionSelectState();
     private readonly HexSelectState editSelectState = new EditState();
+
+    // History stack to return to previous state
+    private Stack<HexSelectState> stateStack = new Stack<HexSelectState>();
+
+    public ISelectionResponce Responce
+    {
+        get => _responce;
+        set => _responce = value;
+    }
+
+    public IHighlightResponce Highlight { get; set; }
+    public RangeFinder HighlightFinder { get; private set; }
+    public Canvas UI { get; private set; }
 
     private void Awake()
     {
@@ -39,7 +52,7 @@ public class HexSelectManager : MonoBehaviour
             currentState = defaultState;
             currentState.EnterState(this);
         }
-        else if(name == "ShipBuildScreen")
+        else if (name == "ShipBuildScreen")
         {
             currentState = editSelectState;
             currentState.EnterState(this);
@@ -54,6 +67,7 @@ public class HexSelectManager : MonoBehaviour
 
         InputActions = EventManager.EventInstance.inputActions;
         HighlightFinder = GetComponent<RangeFinder>();
+
         string name = SceneManager.GetActiveScene().name;
         if (name != "ShipBuildScreen")
         {
@@ -89,8 +103,10 @@ public class HexSelectManager : MonoBehaviour
         Highlight?.SetHighlight(toHighlight);
     }
 
+    // These now push the current state to the stack to enable state rollback
     public void SwitchToMoveSelectState()
     {
+        stateStack.Push(currentState);
         currentState.ExitState(this);
         currentState = moveSelectState;
         currentState.EnterState(this);
@@ -99,6 +115,7 @@ public class HexSelectManager : MonoBehaviour
 
     public void SwitchToDefaultState()
     {
+        stateStack.Push(currentState);
         currentState.ExitState(this);
         currentState = defaultState;
         currentState.EnterState(this);
@@ -107,12 +124,30 @@ public class HexSelectManager : MonoBehaviour
 
     public void SwitchToActionSelectState()
     {
+        stateStack.Push(currentState);
         currentState.ExitState(this);
         currentState = actionSelectState;
         currentState.EnterState(this);
         Debug.Log("ActionState");
     }
 
+    // Return to the previous state
+    public void ReturnToPreviousState()
+    {
+        if (stateStack.Count > 0)
+        {
+            currentState.ExitState(this);
+            currentState = stateStack.Pop();
+            currentState.EnterState(this);
+            Debug.Log("Returned to previous state");
+        }
+        else
+        {
+            Debug.LogWarning("No previous state to return to.");
+        }
+    }
+
+    
     public void UpdateMovementRange(List<Tile> area, Tile selection)
     {
         if (((MoveSelect)Responce).Selections.Count > 0)

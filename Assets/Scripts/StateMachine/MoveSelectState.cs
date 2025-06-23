@@ -14,24 +14,51 @@ public class MoveSelectState : HexSelectState
     {
         moveSelect = manager.GetComponent<MoveSelect>();
         moveHighlight = manager.GetComponent<MovementHighlight>();
-        GameObject selectedObject = manager.Responce.CurrentSelection();
-        Tile hex = selectedObject.GetComponent<Tile>();
-        pawn = hex.Contents;
 
-        moveSelect.SelectedCharater = pawn;
-        movementRange = manager.HighlightFinder.HexReachable(hex, pawn.Stats.Movement);
-        moveSelect.Selections.Add(hex);
-        moveSelect.Area = movementRange;
-        moveHighlight.Area = movementRange;
-        moveHighlight.Starthighlight(selectedObject);
+        if (manager.SelectedTiles.Count == 0)
+        {
+            Debug.LogError("No tile selected to start MoveSelectState.");
+            return;
+        }
+
+        // Use the first selected tile
+        Tile hex = null;
+        foreach (var tile in manager.SelectedTiles)
+        {
+            hex = tile;
+            break;
+        }
+
+        if (hex == null || hex.Contents == null)
+        {
+            Debug.LogError("Selected tile is invalid or has no pawn.");
+            return;
+        }
+
+        GameObject selectedObject = hex.gameObject;
+        Pawn pawn = hex.Contents;
+
         manager.Responce = moveSelect;
         manager.Highlight = moveHighlight;
 
-        foreach (Tile tile in movementRange)
+        moveSelect.SelectedCharater = pawn;
+        moveSelect.Selections.Clear();
+        moveSelect.Selections.Add(hex);
+
+        moveSelect.Area = manager.HighlightFinder.HexReachable(hex, pawn.Stats.Movement);
+        moveHighlight.Area = moveSelect.Area;
+        moveHighlight.Starthighlight(selectedObject);
+
+        foreach (Tile tile in moveSelect.Area)
         {
             tile.Hex.meshupdate(moveSelect.HighlightMat);
         }
+
+        // Ensure selection stays tracked globally
+        manager.SelectedTiles.Add(hex);
     }
+
+
 
     public override void UpdateState(HexSelectManager manager)
     {
@@ -57,13 +84,23 @@ public class MoveSelectState : HexSelectState
 
     public override void ExitState(HexSelectManager manager)
     {
-        foreach (Tile tile in movementRange)
+        if (movementRange != null)
         {
-            tile.Hex.meshupdate(tile.BaseMaterial);
+            foreach (Tile tile in movementRange)
+            {
+                // Only reset visuals if the tile is NOT selected
+                if (!manager.SelectedTiles.Contains(tile))
+                {
+                    tile.Hex.meshupdate(tile.BaseMaterial);
+                }
+            }
         }
+
         moveHighlight.CleanUp();
         moveSelect.CleanUP();
-        movementRange.Clear();
+        movementRange?.Clear();
         pawn = null;
     }
+
+
 }

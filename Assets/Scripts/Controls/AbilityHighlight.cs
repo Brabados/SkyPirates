@@ -24,7 +24,12 @@ public class AbilityHighlight : MonoBehaviour, IHighlightResponce
         if (_highlightedObject != input)
         {
             if (_highlightedObject != null && _highlightedTile != null)
-                _highlightedTile.Hex.meshupdate(_highlightedTile.BaseMaterial);
+            {
+                if (!HexSelectManager.Instance.SelectedTiles.Contains(_highlightedTile))
+                {
+                    _highlightedTile.Hex.meshupdate(_highlightedTile.BaseMaterial);
+                }
+            }
 
             _highlightedObject = input;
             _highlightedTile = _highlightedObject.GetComponent<Tile>();

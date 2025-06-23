@@ -28,11 +28,21 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
     {
         if (SelectedObject != null)
         {
-            SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
-            SelectedTile = null;
-            SelectedContents = null;
-            SelectedObject = null;
+            // Only remove visual if you are truly deselecting
+            if (!isReselecting)
+            {
+                SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
+
+                // If this is the player intentionally deselecting, remove from the global tracker
+                HexSelectManager.Instance.SelectedTiles.Remove(SelectedTile);
+
+                SelectedTile = null;
+                SelectedContents = null;
+                SelectedObject = null;
+            }
         }
+
+        // Only return to default state if this is a true deselection
         if (CharacterNo == -1 && !isReselecting)
         {
             HexSelectManager.Instance.SwitchToDefaultState();
@@ -43,45 +53,45 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
     {
         if (Selection != null && SelectedObject == null)
         {
+            // First time selection
             SelectedObject = Selection;
             SelectedTile = SelectedObject.GetComponent<Tile>();
             SelectedContents = SelectedTile.Contents;
-            if (SelectedContents != null)
+
+            if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
                 EventManager.TriggerPawnSelect(SelectedContents);
                 EventManager.TriggerUIUpdate(SelectedContents);
             }
+
             SelectedTile.Hex.meshupdate(selectedMat);
+            HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
         }
         else if (Selection != null)
         {
+            // Reselection (no recursion)
+
+            // Remove previous selection visual
+            if (SelectedTile != null)
+            {
+                SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
+                HexSelectManager.Instance.SelectedTiles.Remove(SelectedTile);
+            }
+
+            // Assign new selection
+            SelectedObject = Selection;
             SelectedTile = SelectedObject.GetComponent<Tile>();
             SelectedContents = SelectedTile.Contents;
-            if (SelectedContents == null || !(SelectedContents is PlayerPawns))
+
+            if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
-                CharacterNo = -1;
-            }
-            else
-            {
-                int index = 0;
-                foreach (PlayerPawns a in PawnManager.PawnManagerInstance.PlayerPawns)
-                {
-                    if (a == SelectedContents)
-                    {
-                        CharacterNo = index;
-                    }
-                    index++;
-                }
+                EventManager.TriggerPawnSelect(SelectedContents);
+                EventManager.TriggerUIUpdate(SelectedContents);
             }
 
-            // Set the reselecting flag to true before deselecting
-            isReselecting = true;
-            Deselect();
-            // Set the reselecting flag back to false after deselecting
-            isReselecting = false;
-
-            Select(Selection);
-            CharacterNo = -1;
+            SelectedTile.Hex.meshupdate(selectedMat);
+            HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
         }
     }
+
 }

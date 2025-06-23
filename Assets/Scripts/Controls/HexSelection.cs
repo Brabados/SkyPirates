@@ -11,23 +11,18 @@ public class HexSelection : MonoBehaviour, ISelectionResponce
 
     public List<Tile> movementRangeEnemy;
 
-
-    public void Update()
-    {
-        //better implementaiton needed to fix highlight overwrite
-        if (SelectedTile != null)
-        {
-            SelectedTile.Hex.meshupdate(selectedMat);
-        }
-    }
-    //Basic Tile selection using recusion to swap selections
     public void Select(GameObject Selection)
     {
         if (Selection != null && SelectedObject == null)
         {
+            // Select new object
             SelectedObject = Selection;
             SelectedTile = SelectedObject.GetComponent<Tile>();
             SelectedContents = SelectedTile.Contents;
+
+            //  Add to global selection tracker
+            HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
+
             if (SelectedContents != null)
             {
                 EventManager.TriggerPawnSelect(SelectedContents);
@@ -38,25 +33,27 @@ public class HexSelection : MonoBehaviour, ISelectionResponce
                 else
                 {
                     movementRangeEnemy = HexSelectManager.Instance.HighlightFinder.AreaRing(SelectedContents.Position, SelectedContents.Stats.Movement);
-                    foreach(Tile x in movementRangeEnemy)
+                    // Clean movement list to remove invalid tiles
+                    for (int i = movementRangeEnemy.Count - 1; i >= 0; i--)
                     {
-                        if(x.Data.MovementCost == 0)
+                        if (movementRangeEnemy[i].Data.MovementCost == 0)
                         {
-                            movementRangeEnemy.Remove(x);
+                            movementRangeEnemy.RemoveAt(i);
                         }
                     }
                 }
             }
+
             SelectedTile.Hex.meshupdate(selectedMat);
         }
         else if (Selection != null)
         {
+            // If selecting a new tile while one is already selected
             Deselect();
             Select(Selection);
         }
     }
 
-    //Deselects current tile
     public void Deselect()
     {
         if (SelectedObject != null)
@@ -69,6 +66,10 @@ public class HexSelection : MonoBehaviour, ISelectionResponce
                 }
                 movementRangeEnemy.Clear();
             }
+
+            //  Remove from global selection tracker
+            HexSelectManager.Instance.SelectedTiles.Remove(SelectedTile);
+
             SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
             SelectedTile = null;
             SelectedContents = null;
@@ -80,5 +81,4 @@ public class HexSelection : MonoBehaviour, ISelectionResponce
     {
         return SelectedObject;
     }
-
 }
