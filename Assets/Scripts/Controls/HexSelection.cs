@@ -11,47 +11,61 @@ public class HexSelection : MonoBehaviour, ISelectionResponce
 
     public List<Tile> movementRangeEnemy;
 
-    public void Select(GameObject Selection)
+    public void Select(GameObject selection)
     {
-        if (Selection != null && SelectedObject == null)
+        if (selection == null)
         {
-            // Select new object
-            SelectedObject = Selection;
-            SelectedTile = SelectedObject.GetComponent<Tile>();
-            SelectedContents = SelectedTile.Contents;
+            Debug.LogWarning("[HexSelection] Tried to select a null object.");
+            return;
+        }
 
-            //  Add to global selection tracker
-            HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
+        Tile selectedTile = selection.GetComponent<Tile>();
+        if (selectedTile == null)
+        {
+            Debug.LogWarning("[HexSelection] Selected object is not a tile.");
+            return;
+        }
 
-            if (SelectedContents != null)
+        // If selecting a different tile, clean up the previous selection
+        if (SelectedObject != null && SelectedTile != selectedTile)
+        {
+            Deselect();
+        }
+
+        //  Update local selection
+        SelectedObject = selection;
+        SelectedTile = selectedTile;
+        SelectedContents = SelectedTile.Contents;
+
+        //  Track selection globally
+        HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
+
+        //  If this tile has a pawn, update the last pawn tile
+        if (SelectedContents != null)
+        {
+            if (SelectedContents is PlayerPawns)
             {
+                HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
                 EventManager.TriggerPawnSelect(SelectedContents);
-                if (SelectedContents is PlayerPawns)
+                HexSelectManager.Instance.SwitchToActionSelectState();
+            }
+            else
+            {
+                movementRangeEnemy = HexSelectManager.Instance.HighlightFinder.AreaRing(SelectedContents.Position, SelectedContents.Stats.Movement);
+
+                // Clean movement list to remove invalid tiles
+                for (int i = movementRangeEnemy.Count - 1; i >= 0; i--)
                 {
-                    HexSelectManager.Instance.SwitchToActionSelectState();
-                }
-                else
-                {
-                    movementRangeEnemy = HexSelectManager.Instance.HighlightFinder.AreaRing(SelectedContents.Position, SelectedContents.Stats.Movement);
-                    // Clean movement list to remove invalid tiles
-                    for (int i = movementRangeEnemy.Count - 1; i >= 0; i--)
+                    if (movementRangeEnemy[i].Data.MovementCost == 0)
                     {
-                        if (movementRangeEnemy[i].Data.MovementCost == 0)
-                        {
-                            movementRangeEnemy.RemoveAt(i);
-                        }
+                        movementRangeEnemy.RemoveAt(i);
                     }
                 }
             }
+        }
 
-            SelectedTile.Hex.meshupdate(selectedMat);
-        }
-        else if (Selection != null)
-        {
-            // If selecting a new tile while one is already selected
-            Deselect();
-            Select(Selection);
-        }
+        // Apply selection visual
+        SelectedTile.Hex.meshupdate(selectedMat);
     }
 
     public void Deselect()
@@ -67,10 +81,10 @@ public class HexSelection : MonoBehaviour, ISelectionResponce
                 movementRangeEnemy.Clear();
             }
 
-            //  Remove from global selection tracker
             HexSelectManager.Instance.SelectedTiles.Remove(SelectedTile);
 
             SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
+
             SelectedTile = null;
             SelectedContents = null;
             SelectedObject = null;

@@ -15,6 +15,17 @@ public class HexSelectManager : MonoBehaviour
     // Tracks ALL currently selected tiles across ALL selection states.
     public HashSet<Tile> SelectedTiles { get; private set; } = new HashSet<Tile>();
 
+    public Tile LastPawnTile { get; private set; }
+
+    public void UpdateLastPawnTile(Tile tile)
+    {
+        if (tile != null && tile.Contents != null)
+        {
+            LastPawnTile = tile;
+        }
+    }
+
+
     // State tracking
     private HexSelectState currentState;
     private readonly HexSelectState defaultState = new DefaultSelectState();
@@ -179,4 +190,14 @@ public class HexSelectManager : MonoBehaviour
             }
         }
     }
+
+    public Tile GetCurrentSelectedTile()
+    {
+        foreach (var tile in SelectedTiles)
+        {
+            return tile;
+        }
+        return null;
+    }
+
 }

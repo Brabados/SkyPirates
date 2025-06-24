@@ -63,9 +63,6 @@ public class Board
         toset.Column = x;
         toset.Row = y;
 
-#if UNITY_EDITOR
-        Debug.Log($"set_Tile: offset=({x},{y}) → cube={newCube}");
-#endif
     }
 
 

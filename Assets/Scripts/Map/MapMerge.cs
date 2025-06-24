@@ -159,9 +159,6 @@ public class MapMerge : MonoBehaviour
                     // Convert offset to cube
                     Vector2Int offsetCoords = new Vector2Int(x, y);
                     Vector3Int cubeCoords = HexUtils.OffsetToCube(offsetCoords, mapData.isFlatTopped, false);
-#if UNITY_EDITOR
-                    Debug.Log(offsetCoords.ToString() +  cubeCoords.ToString());
-#endif
 
                     // Create empty GameObject with Tile component
                     GameObject holder = new GameObject($"Hex {x},{y}", typeof(Tile));

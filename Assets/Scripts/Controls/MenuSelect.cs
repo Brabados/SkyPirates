@@ -49,14 +49,16 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
         }
     }
 
-    public void Select(GameObject Selection)
+    public void Select(GameObject selection)
     {
-        if (Selection != null && SelectedObject == null)
+        if (selection != null && SelectedObject == null)
         {
-            // First time selection
-            SelectedObject = Selection;
+            SelectedObject = selection;
             SelectedTile = SelectedObject.GetComponent<Tile>();
             SelectedContents = SelectedTile.Contents;
+
+            // Track this as the last pawn tile if it has a pawn
+            HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
 
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
@@ -67,21 +69,21 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
             SelectedTile.Hex.meshupdate(selectedMat);
             HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
         }
-        else if (Selection != null)
+        else if (selection != null)
         {
-            // Reselection (no recursion)
-
-            // Remove previous selection visual
+            
             if (SelectedTile != null)
             {
                 SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
                 HexSelectManager.Instance.SelectedTiles.Remove(SelectedTile);
             }
 
-            // Assign new selection
-            SelectedObject = Selection;
+            SelectedObject = selection;
             SelectedTile = SelectedObject.GetComponent<Tile>();
             SelectedContents = SelectedTile.Contents;
+
+            // Track this as the last pawn tile if it has a pawn
+            HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
 
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
@@ -93,5 +95,21 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
             HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
         }
     }
+
+
+    public void SetSelection(GameObject selection)
+    {
+        if (selection == null) return;
+
+        SelectedObject = selection;
+        SelectedTile = selection.GetComponent<Tile>();
+        SelectedContents = SelectedTile?.Contents;
+
+        // Optional: Re-highlight selection material if needed
+        SelectedTile.Hex.meshupdate(selectedMat);
+
+        HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);
+    }
+
 
 }

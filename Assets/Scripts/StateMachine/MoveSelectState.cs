@@ -15,14 +15,14 @@ public class MoveSelectState : HexSelectState
         moveSelect = manager.GetComponent<MoveSelect>();
         moveHighlight = manager.GetComponent<MovementHighlight>();
 
-        if (manager.SelectedTiles.Count == 0)
+        // Always fallback to the last pawn tile
+        Tile hex = manager.LastPawnTile;
+
+        if (hex == null || hex.Contents == null)
         {
-            Debug.LogError("No tile selected to start MoveSelectState.");
+            Debug.LogError("MoveSelectState: Selected tile is invalid or has no pawn.");
             return;
         }
-
-        // Use the first selected tile
-        Tile hex = null;
         foreach (var tile in manager.SelectedTiles)
         {
             hex = tile;
@@ -88,19 +88,19 @@ public class MoveSelectState : HexSelectState
         {
             foreach (Tile tile in movementRange)
             {
-                // Only reset visuals if the tile is NOT selected
-                if (!manager.SelectedTiles.Contains(tile))
-                {
-                    tile.Hex.meshupdate(tile.BaseMaterial);
-                }
+                
+                tile.Hex.meshupdate(tile.BaseMaterial);
             }
         }
 
         moveHighlight.CleanUp();
         moveSelect.CleanUP();
+
         movementRange?.Clear();
         pawn = null;
     }
+
+
 
 
 }

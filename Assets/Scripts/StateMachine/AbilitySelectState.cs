@@ -10,14 +10,32 @@ public class AbilitySelectState : HexSelectState
 
     public override void EnterState(HexSelectManager manager)
     {
-        GameObject current = manager.Responce.CurrentSelection();
         manager.UI.enabled = true;
+
+      
+        Tile selectedTile = manager.GetCurrentSelectedTile();
+        if (selectedTile == null)
+        {
+            Debug.LogError("AbilitySelectState: No selected tile found.");
+            return;
+        }
+
+        GameObject current = selectedTile.gameObject;
+
         menuSelect = manager.GetComponent<MenuSelect>();
-        menuSelect.Select(current);
         menuHighlight = manager.GetComponent<AbilityHighlight>();
+
         manager.Responce = menuSelect;
         manager.Highlight = menuHighlight;
+
+       
+        menuSelect.SetSelection(current);
+
+   
+        manager.Highlight.SetHighlight(current);
     }
+
+
 
     public override void ExitState(HexSelectManager manager)
     {

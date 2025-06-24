@@ -9,15 +9,29 @@ public class ActionSelectState : HexSelectState
     private MenuHighlight menuHighlight;
     public override void EnterState(HexSelectManager manager)
     {
-        //enables buttons, disables other selections.
-        //very basic atm, will need to split ui elements from perment fixtures to the ones needed here
-        GameObject Select = manager.Responce.CurrentSelection();
         manager.UI.enabled = true;
+
+        // Always pull the last pawn tile, even if something else is highlighted
+        Tile fallbackTile = manager.LastPawnTile;
+
+        if (fallbackTile == null)
+        {
+            Debug.LogError("ActionSelectState: No last pawn tile found.");
+            return;
+        }
+
+        GameObject select = fallbackTile.gameObject;
+
         menuSelect = manager.GetComponent<MenuSelect>();
-        menuSelect.Select(Select);
         menuHighlight = manager.GetComponent<MenuHighlight>();
+
         manager.Responce = menuSelect;
+        manager.Highlight = menuHighlight;
+
+        menuSelect.Select(select); // This sets the selection to the fallback pawn tile
+        manager.Highlight.SetHighlight(select); // Ensure visual is reset to fallback tile
     }
+
 
     public override void ExitState(HexSelectManager manager)
     {

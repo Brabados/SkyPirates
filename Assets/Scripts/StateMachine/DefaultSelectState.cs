@@ -10,7 +10,7 @@ public class DefaultSelectState : HexSelectState
         HexState = manager.GetComponent<HexSelection>();
         manager.Responce = HexState;
         manager.Highlight = manager.GetComponent<HexHighlight>();
-        manager.Responce.Deselect();
+
     }
 
     public override void UpdateState(HexSelectManager manager)
