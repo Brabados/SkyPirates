@@ -23,11 +23,11 @@ public class MoveSelectState : HexSelectState
             Debug.LogError("MoveSelectState: Selected tile is invalid or has no pawn.");
             return;
         }
-        foreach (var tile in manager.SelectedTiles)
-        {
-            hex = tile;
-            break;
-        }
+       // foreach (var tile in manager.SelectedTiles)
+       // {
+       //     hex = tile;
+       //     break;
+        //}
 
         if (hex == null || hex.Contents == null)
         {

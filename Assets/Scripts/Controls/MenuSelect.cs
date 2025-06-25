@@ -57,11 +57,10 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
             SelectedTile = SelectedObject.GetComponent<Tile>();
             SelectedContents = SelectedTile.Contents;
 
-            // Track this as the last pawn tile if it has a pawn
-            HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
 
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
+                HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
                 EventManager.TriggerPawnSelect(SelectedContents);
                 EventManager.TriggerUIUpdate(SelectedContents);
             }
@@ -83,10 +82,11 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
             SelectedContents = SelectedTile.Contents;
 
             // Track this as the last pawn tile if it has a pawn
-            HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
+
 
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
+                HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
                 EventManager.TriggerPawnSelect(SelectedContents);
                 EventManager.TriggerUIUpdate(SelectedContents);
             }
