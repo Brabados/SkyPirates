@@ -8,7 +8,6 @@ public class MoveSelectState : HexSelectState
     private MoveSelect moveSelect;
     private MovementHighlight moveHighlight;
     private List<Tile> movementRange;
-    private Pawn pawn;
 
     public override void EnterState(HexSelectManager manager)
     {
@@ -23,17 +22,7 @@ public class MoveSelectState : HexSelectState
             Debug.LogError("MoveSelectState: Selected tile is invalid or has no pawn.");
             return;
         }
-       // foreach (var tile in manager.SelectedTiles)
-       // {
-       //     hex = tile;
-       //     break;
-        //}
 
-        if (hex == null || hex.Contents == null)
-        {
-            Debug.LogError("Selected tile is invalid or has no pawn.");
-            return;
-        }
 
         GameObject selectedObject = hex.gameObject;
         Pawn pawn = hex.Contents;
@@ -46,6 +35,7 @@ public class MoveSelectState : HexSelectState
         moveSelect.Selections.Add(hex);
 
         moveSelect.Area = manager.HighlightFinder.HexReachable(hex, pawn.Stats.Movement);
+        movementRange = moveSelect.Area;
         moveHighlight.Area = moveSelect.Area;
         moveHighlight.Starthighlight(selectedObject);
 
@@ -97,7 +87,6 @@ public class MoveSelectState : HexSelectState
         moveSelect.CleanUP();
 
         movementRange?.Clear();
-        pawn = null;
     }
 
 
