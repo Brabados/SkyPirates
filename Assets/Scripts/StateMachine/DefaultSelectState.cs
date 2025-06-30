@@ -5,12 +5,16 @@ using UnityEngine.InputSystem;
 public class DefaultSelectState : HexSelectState
 {
     private HexSelection HexState;
+
     public override void EnterState(HexSelectManager manager)
     {
         HexState = manager.GetComponent<HexSelection>();
         manager.Responce = HexState;
         manager.Highlight = manager.GetComponent<HexHighlight>();
-
+        if(CanvasManager.CanvasInstance != null)
+        {
+            EventManager.TriggerHideCanvas(((int)Menues.PawnInfo));
+        }
     }
 
     public override void UpdateState(HexSelectManager manager)

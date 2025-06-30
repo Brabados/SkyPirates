@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12198ef0f7f71804cb5df0510cb91a94, type: 3}
   m_Name: Rifle
   m_EditorClassIdentifier: 
+  UniqueID: f8faa895-f8dc-4f22-806e-2409923bfbda
   Type: 4
   Name: Rifle
   Info: The long rifle is an early example of a firearm using rifling, which caused
@@ -20,3 +21,4 @@ MonoBehaviour:
   StatChanges: 000000000200000000000000000000000000000002000000
   ExtraAbilies: []
   WhoCanEquip: 
+  BaseAttack: {fileID: 11400000, guid: e71eae8e8a9eaa44fbfca0e52e111dff, type: 2}

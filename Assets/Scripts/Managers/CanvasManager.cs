@@ -6,18 +6,21 @@ using UnityEngine.InputSystem;
 public class CanvasManager : MonoBehaviour
 {
     public static CanvasManager CanvasInstance { get; private set; }
-    public List<Canvas> Menues;
+
+    [Header("Exclusive Swap Menus (one at a time)")]
+    public List<Canvas> SwapMenus = new List<Canvas>();
+    public List<Transform> SwapMenuCameraPositions = new List<Transform>();
+
+    [Header("Layered BattleMode Menus (multiple allowed)")]
+    public List<Canvas> LayeredMenus = new List<Canvas>();
+
     public BasicControls inputActions;
-    public int positon;
-    public Transform CameraPosInventory;
-    public Transform CameraPosEquipment;
+    public int position;
 
     private bool transition = false;
-    // Start is called before the first frame update
+
     private void Awake()
     {
-        // If there is an instance, and it's not me, delete myself.
-
         if (CanvasInstance != null && CanvasInstance != this)
         {
             Destroy(this.gameObject);
@@ -28,68 +31,133 @@ public class CanvasManager : MonoBehaviour
         }
     }
 
-    public void Start()
+    private void Start()
     {
-        positon = 0;
+        position = 0;
         inputActions = EventManager.EventInstance.inputActions;
-        foreach (Canvas x in gameObject.GetComponentsInChildren<Canvas>())
+
+        if (inputActions.Menu.enabled == true)
         {
-            if (!Menues.Contains(x))
-            {
-                Menues.Add(x);
-                x.gameObject.SetActive(false);
-            }
+            SwapMenus[position].gameObject.SetActive(true);
         }
-        Menues[positon].gameObject.SetActive(true);
+
+        foreach (Canvas a in LayeredMenus)
+        {
+            a.gameObject.SetActive(false);       
+        }
+
+        EventManager.OnHideCanvas += CloseMenu;
+        EventManager.OnShowCanvas += SetMenu;
+
+        inputActions.Menu.MenuSwap.performed += OnMenuSwap;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        if(transition)
-        {
+        inputActions.Menu.MenuSwap.performed -= OnMenuSwap;
+        EventManager.OnHideCanvas -= CloseMenu;
+        EventManager.OnShowCanvas -= SetMenu;
+    }
+
+
+    // Swaps between exclusive menus (one active at a time).
+
+    private void OnMenuSwap(InputAction.CallbackContext context)
+    {
+        if (transition)
             return;
-        }
-        if(inputActions.Menu.MenuSwap.triggered)
+
+        float inputValue = context.ReadValue<float>();
+        if (inputValue == 0)
+            return;
+
+        // Disable current swap menu
+        SwapMenus[position].gameObject.SetActive(false);
+
+        // Move to next menu
+        position += (int)inputValue;
+
+        if (position >= SwapMenus.Count)
         {
-            Menues[positon].gameObject.SetActive(false);
-            positon += (int)inputActions.Menu.MenuSwap.ReadValue<float>();
-            if(positon >= Menues.Count)
-            {
-                positon = 0;
-            }
-            else if (positon < 0)
-            {
-                positon = Menues.Count - 1;
-            }
-            if(positon == 0)
-            {
-                StartCoroutine(CameraMove(Camera.main.transform.position, CameraPosEquipment.position));
-                transition = true;
-            }
-            else if(positon == 2)
-            {
-                StartCoroutine(CameraMove( Camera.main.transform.position, CameraPosInventory.position));
-                transition = true;
-            }
-            Menues[positon].gameObject.SetActive(true);
+            position = 0;
+        }
+        else if (position < 0)
+        {
+            position = SwapMenus.Count - 1;
         }
 
-        IEnumerator CameraMove(Vector3 start, Vector3 end)
-        {
-            float time = 0;
-            Vector3 currentlocation = new Vector3();
-            while(currentlocation != end)
-            {
-                time += Time.deltaTime;
-                currentlocation.x = Mathf.Lerp(start.x, end.x, time);
-                currentlocation.y = Mathf.Lerp(start.y, end.y, time);
-                currentlocation.z = Mathf.Lerp(start.z, end.z, time);
+        // Enable the new swap menu
+        SwapMenus[position].gameObject.SetActive(true);
 
-                Camera.main.transform.position = currentlocation;
-                yield return null;
-            }
-            transition = false;
+        // Start camera transition if available
+        if (position < SwapMenuCameraPositions.Count && SwapMenuCameraPositions[position] != null)
+        {
+            StartCoroutine(CameraMove(Camera.main.transform.position, SwapMenuCameraPositions[position].position));
+            transition = true;
+        }
+    }
+
+
+    // Moves the camera between positions.
+   
+    private IEnumerator CameraMove(Vector3 start, Vector3 end)
+    {
+        float time = 0;
+        Vector3 currentLocation = start;
+
+        while (Vector3.Distance(currentLocation, end) > 0.01f)
+        {
+            time += Time.deltaTime;
+            currentLocation = Vector3.Lerp(start, end, time);
+            Camera.main.transform.position = currentLocation;
+            yield return null;
+        }
+
+        Camera.main.transform.position = end;
+        transition = false;
+    }
+
+
+    // Enable a BattleMode menu without disabling others (layered).
+
+    public void SetMenu(int index)
+    {
+        if (index < 0 || index >= LayeredMenus.Count)
+            return;
+
+        LayeredMenus[index].gameObject.SetActive(true);
+    }
+
+
+    // Disable a specific BattleMode menu.
+
+    public void CloseMenu(int index)
+    {
+        if (index < 0 || index >= LayeredMenus.Count)
+            return;
+
+        LayeredMenus[index].gameObject.SetActive(false);
+    }
+
+
+    // Disable all Layered BattleMode menus.
+
+    public void CloseAllLayeredMenus()
+    {
+        foreach (Canvas menu in LayeredMenus)
+        {
+            menu.gameObject.SetActive(false);
+        }
+    }
+
+
+    // Disable all Swap menus.
+
+    public void CloseAllSwapMenus()
+    {
+        foreach (Canvas menu in SwapMenus)
+        {
+            menu.gameObject.SetActive(false);
         }
     }
 }

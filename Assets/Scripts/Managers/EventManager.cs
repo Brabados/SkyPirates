@@ -28,6 +28,8 @@ public class EventManager : MonoBehaviour
     public static event Action<TileDataSO> OnTileChange;
     public static event Action<float> OnSliderValueChange;
     public static event Action<Pawn> OnUIUpdate;
+    public static event Action<int> OnHideCanvas;
+    public static event Action<int> OnShowCanvas;
 
     // --- TRIGGERS ---
 
@@ -50,6 +52,10 @@ public class EventManager : MonoBehaviour
     public static void TriggerShowInfo(Item itemInfo) => OnShowInfo?.Invoke(itemInfo);
     public static void TriggerTileChange(TileDataSO TileInfo) => OnTileChange?.Invoke(TileInfo);
     public static void TriggerSliderValueChange(float value) => OnSliderValueChange?.Invoke(value);
+    public static void TriggerHideCanvas(int index) => OnHideCanvas?.Invoke(index);
+    public static void TriggerShowCanvas(int index) => OnShowCanvas?.Invoke(index);
+
+
 
     private void Awake()
     {

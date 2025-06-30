@@ -10,7 +10,7 @@ public class AbilitySelectState : HexSelectState
 
     public override void EnterState(HexSelectManager manager)
     {
-        manager.UI.enabled = true;
+       
 
       
         Tile selectedTile = manager.GetCurrentSelectedTile();
@@ -39,7 +39,7 @@ public class AbilitySelectState : HexSelectState
 
     public override void ExitState(HexSelectManager manager)
     {
-        manager.UI.enabled = false;
+
         if (menuHighlight != null)
         {
             menuHighlight.ClearHighlights();

@@ -9,7 +9,7 @@ public class ActionSelectState : HexSelectState
     private MenuHighlight menuHighlight;
     public override void EnterState(HexSelectManager manager)
     {
-        manager.UI.enabled = true;
+        EventManager.TriggerShowCanvas(((int)Menues.CombatButtons));
 
         // Always pull the last pawn tile, even if something else is highlighted
         Tile fallbackTile = manager.LastPawnTile;
@@ -36,7 +36,7 @@ public class ActionSelectState : HexSelectState
     public override void ExitState(HexSelectManager manager)
     {
         //disables buttons
-        manager.UI.enabled = false;
+        EventManager.TriggerHideCanvas(((int)Menues.CombatButtons));
     }
 
     public override void UpdateState(HexSelectManager manager)

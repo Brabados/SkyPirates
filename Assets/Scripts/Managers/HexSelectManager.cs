@@ -44,7 +44,6 @@ public class HexSelectManager : MonoBehaviour
 
     public IHighlightResponce Highlight { get; set; }
     public RangeFinder HighlightFinder { get; private set; }
-    public Canvas UI { get; private set; }
 
     private void Awake()
     {
@@ -80,11 +79,7 @@ public class HexSelectManager : MonoBehaviour
         HighlightFinder = GetComponent<RangeFinder>();
 
         string name = SceneManager.GetActiveScene().name;
-        if (name != "ShipBuildScreen")
-        {
-            UI = FindObjectOfType<Canvas>();
-            UI.enabled = false;
-        }
+
     }
 
     private void Update()
@@ -158,6 +153,10 @@ public class HexSelectManager : MonoBehaviour
         }
     }
 
+    public void SwitchToAbilityState(BaseAbility Ability)
+    {
+
+    }
     
     public void UpdateMovementRange(List<Tile> area, Tile selection)
     {

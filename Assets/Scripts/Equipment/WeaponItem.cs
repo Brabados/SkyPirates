@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class WeaponItem : Item
 {
+    public ActiveAbility BaseAttack;
     public void Awake()
     {
         Type = ItemType.Weapon;

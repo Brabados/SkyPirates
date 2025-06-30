@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Menues
+{
+    CombatButtons,
+    PawnInfo
+}
+
 public class MenuSelect : MonoBehaviour, ISelectionResponce
 {
     public Material selectedMat;
@@ -60,6 +66,7 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
 
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
+                EventManager.TriggerShowCanvas(((int)Menues.PawnInfo));
                 HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
                 EventManager.TriggerPawnSelect(SelectedContents);
                 EventManager.TriggerUIUpdate(SelectedContents);
@@ -86,6 +93,7 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
 
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
+                EventManager.TriggerShowCanvas(((int)Menues.PawnInfo));
                 HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
                 EventManager.TriggerPawnSelect(SelectedContents);
                 EventManager.TriggerUIUpdate(SelectedContents);

@@ -35,6 +35,6 @@ public class AbilitySelectStateTests
         Assert.DoesNotThrow(() => state.EnterState(manager));
         Assert.AreSame(menuSelect, manager.Responce);
         Assert.AreSame(abilityHighlight, manager.Highlight);
-        Assert.IsTrue(manager.UI.enabled);
+
     }
 }
