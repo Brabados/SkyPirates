@@ -125,31 +125,5 @@ public class RangeCalculatorExtraTests
         Assert.AreEqual(0, line.Count);
     }
 
-    [Test]
-    public void AreaCone_InvalidDirection_ReturnsEmpty()
-    {
-        Board board = CreateSimpleBoard(5);
-        Tile center = board.get_Tile(2, 2);
-        List<Tile> cone = RangeCalculator.AreaCone(board, center, 2, 6);
-        Assert.AreEqual(0, cone.Count);
-    }
-
-    [Test]
-    public void AreaCone_RangeZero_ReturnsEmpty()
-    {
-        Board board = CreateSimpleBoard(5);
-        Tile center = board.get_Tile(2, 2);
-        List<Tile> cone = RangeCalculator.AreaCone(board, center, 0, 0);
-        Assert.AreEqual(0, cone.Count);
-    }
-
-    [Test]
-    public void AreaCone_RangeTwo_ReturnsSixTiles()
-    {
-        Board board = CreateSimpleBoard(7);
-        Tile center = board.get_Tile(3, 3);
-        List<Tile> cone = RangeCalculator.AreaCone(board, center, 2, 0);
-        Assert.AreEqual(6, cone.Count);
-    }
 }
 

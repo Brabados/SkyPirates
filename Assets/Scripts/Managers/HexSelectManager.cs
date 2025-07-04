@@ -32,7 +32,7 @@ public class HexSelectManager : MonoBehaviour
     private readonly HexSelectState moveSelectState = new MoveSelectState();
     private readonly HexSelectState actionSelectState = new ActionSelectState();
     private readonly HexSelectState editSelectState = new EditState();
-
+    private readonly HexSelectState abilitySelectState = new AbilitySelectState();
     // History stack to return to previous state
     private Stack<HexSelectState> stateStack = new Stack<HexSelectState>();
 
@@ -153,9 +153,14 @@ public class HexSelectManager : MonoBehaviour
         }
     }
 
-    public void SwitchToAbilityState(BaseAbility Ability)
+    public void SwitchToAbilityState(ActiveAbility Ability)
     {
-
+        stateStack.Push(currentState);
+        currentState.ExitState(this);   
+        ((AbilitySelectState)abilitySelectState).Active = Ability;
+        currentState = abilitySelectState;
+        currentState.EnterState(this);
+        Debug.Log("Ability State" + " " + Ability.Name);
     }
     
     public void UpdateMovementRange(List<Tile> area, Tile selection)

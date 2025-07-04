@@ -88,8 +88,8 @@ public class RangeFinder : MonoBehaviour
     /// <param name="range">Depth of the cone.</param>
     /// <param name="direction">Index indicating the cone direction.</param>
     /// <returns>Tiles contained within the cone.</returns>
-    public List<Tile> AreaCone(Tile center, int range, int direction)
+    public List<Tile> AreaCone(Tile center, Tile target, int range)
     {
-        return RangeCalculator.AreaCone(_GameBoard.PlayArea, center, range, direction);
+        return RangeCalculator.AreaCone(_GameBoard.PlayArea, center, target, range);
     }
 }

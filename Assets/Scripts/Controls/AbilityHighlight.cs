@@ -6,58 +6,38 @@ public class AbilityHighlight : MonoBehaviour, IHighlightResponce
     public Material HighlightMat;
     public Material AreaHighlightMat;
 
-    private GameObject _highlightedObject = null;
-    private Tile _highlightedTile = null;
-    private Pawn _highlightedContent = null;
+    private GameObject highlightSelect = null;
+    private Tile highlightTile = null;
 
-    private RangeFinder _rangeFinder;
-    private Map _map;
+    public List<Tile> Area = new List<Tile>();
+    private ActiveAbility activeAbility;
 
-    void Start()
+    public void SetActiveAbility(ActiveAbility ability)
     {
-        _rangeFinder = FindObjectOfType<RangeFinder>();
-        _map = FindObjectOfType<Map>();
+        activeAbility = ability;
     }
 
-    public void SetHighlight(GameObject input)
+    public void SetHighlight(GameObject highlight)
     {
-        if (_highlightedObject != input)
+        if (highlight != null && highlight != highlightSelect)
         {
-            if (_highlightedObject != null && _highlightedTile != null)
+            Tile tile = highlight.GetComponent<Tile>();
+            if (Area.Contains(tile))
             {
-                if (!HexSelectManager.Instance.SelectedTiles.Contains(_highlightedTile))
-                {
-                    _highlightedTile.Hex.meshupdate(_highlightedTile.BaseMaterial);
-                }
-            }
+                highlightSelect = highlight;
+                highlightTile = tile;
 
-            _highlightedObject = input;
-            _highlightedTile = _highlightedObject.GetComponent<Tile>();
-
-            if (_highlightedTile == null)
-            {
-                Pawn maybePawn = _highlightedObject.GetComponent<Pawn>();
-                if (maybePawn != null)
-                {
-                    _highlightedTile = maybePawn.Position;
-                    _highlightedObject = _highlightedTile.gameObject;
-                }
-            }
-
-            if (_highlightedTile != null)
-            {
-                _highlightedContent = _highlightedTile.Contents;
-                _highlightedTile.Hex.meshupdate(HighlightMat);
+                UpdateAbilityPreview();
             }
         }
     }
 
     public void MoveHighlight(Vector2 input)
     {
-        if (_highlightedTile == null) return;
+        if (highlightTile == null) return;
 
-        Tile check = _highlightedTile.CheckNeighbours(input);
-        if (check != null)
+        Tile check = highlightTile.CheckNeighbours(input);
+        if (check != null && Area.Contains(check))
         {
             SetHighlight(check.gameObject);
         }
@@ -65,69 +45,57 @@ public class AbilityHighlight : MonoBehaviour, IHighlightResponce
 
     public GameObject ReturnHighlight()
     {
-        return _highlightedObject;
+        return highlightSelect;
     }
 
-
-    public void HighlightAbility(ActiveAbility ability, int direction = 0)
+    public void UpdateAbilityPreview()
     {
-        if (_highlightedTile == null) return;
 
-        ClearHighlights();
+        if (highlightTile == null || activeAbility == null) return;
 
-        foreach (BaseAction action in ability.Actions)
+        foreach (BaseAction action in activeAbility.Actions)
         {
-            List<Tile> tiles = GetTilesForAction(action, _highlightedTile, direction);
+            List<Tile> tiles = GetTilesForAction(action, HexSelectManager.Instance.LastPawnTile, highlightTile);
+
+           // tiles.RemoveAll(t => !TargetValidator.IsValidTarget(t, action));
+
             foreach (Tile t in tiles)
             {
-                if (t != null && t.Hex != null)
-                    t.Hex.meshupdate(AreaHighlightMat);
+                t.Hex.meshupdate(AreaHighlightMat);
             }
         }
 
-        // Re-apply selected tile highlight
-        if (_highlightedTile != null)
-            _highlightedTile.Hex.meshupdate(HighlightMat);
+        highlightTile.Hex.meshupdate(HighlightMat);
     }
 
-
-
-    private List<Tile> GetTilesForAction(BaseAction action, Tile origin, int direction)
+    private List<Tile> GetTilesForAction(BaseAction action, Tile origin, Tile target)
     {
+        var finder = HexSelectManager.Instance.HighlightFinder;
+
         switch (action.Area)
         {
             case EffectArea.Single:
-                return new List<Tile> { origin };
-
+                return new List<Tile> { target };
             case EffectArea.Area:
-                return _rangeFinder.AreaRing(origin, action.Size);
-
+                return finder.AreaRing(target, action.Size);
             case EffectArea.Ring:
-                return _rangeFinder.HexRing(origin, action.Size);
-
+                return finder.HexRing(target, action.Size);
             case EffectArea.Line:
-                return _rangeFinder.AreaLine(origin, _highlightedTile, direction);
-
+                return finder.AreaLine(origin, target, action.Range);
             case EffectArea.Cone:
-                return _rangeFinder.AreaCone(origin, action.Range, direction);
-
+                return finder.AreaCone(origin, target, action.Range);
             case EffectArea.Diagonal:
-                return new List<Tile>(); // Placeholder
+                // Optional: Add diagonal handling if implemented
+                return new List<Tile>();
+            default:
+                return new List<Tile>();
         }
-
-        return new List<Tile>();
     }
 
-    public void ClearHighlights()
+    public void CleanUp()
     {
-        foreach (Tile t in _map.PlayArea.GetAllTiles())
-        {
-            if (t != null && t.Hex != null)
-                t.Hex.meshupdate(t.BaseMaterial);
-        }
-
-        // Re-apply highlight
-        if (_highlightedTile != null)
-            _highlightedTile.Hex.meshupdate(HighlightMat);
+        highlightSelect = null;
+        highlightTile = null;
+        Area.Clear();
     }
 }

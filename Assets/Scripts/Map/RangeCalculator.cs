@@ -10,13 +10,6 @@ using UnityEngine;
 /// behaviour so unit tests can run without scenes loaded.  AI coding agents can
 /// quickly verify logic by calling these methods directly.
 ///
-/// <para>Neighbour index diagram (pointy top hexes):
-/// <code>
-///      2   1
-///   3   \ /   0
-///      4---5
-/// </code>
-/// Each tile stores its neighbours in this order.</para>
 /// </summary>
 public static class RangeCalculator
 {
@@ -150,18 +143,19 @@ public static class RangeCalculator
     {
         List<Tile> line = new List<Tile>();
 
+        if (center == null || target == null || range <= 0) return line;
+
         Vector3Int direction = board.GetDirectionVector(center, target);
         if (direction == Vector3Int.zero) return line;
 
-        Vector3Int current = center.ReturnSquareCoOrds();
+        Tile current = center;
 
         for (int i = 1; i <= range; i++)
         {
-            current += direction;
-            Tile tile = board.SearchTileByCubeCoordinates(current.x, current.y, current.z);
-            if (tile != null)
+            current = board.GetNeighbourInDirection(current, direction);
+            if (current != null)
             {
-                line.Add(tile);
+                line.Add(current);
             }
             else break;
         }
@@ -169,41 +163,40 @@ public static class RangeCalculator
         return line;
     }
 
-    /// <summary>
-    /// Computes a cone of tiles emanating from <paramref name="center"/>.
-    /// </summary>
-    /// <param name="board">Board containing the tiles.</param>
-    /// <param name="center">Starting tile.</param>
-    /// <param name="range">Length of the cone.</param>
-    /// <param name="direction">Index of the cone direction (0-5).</param>
-    /// <returns>Tiles included in the cone.</returns>
-    public static List<Tile> AreaCone(Board board, Tile center, int range, int direction)
+
+    public static List<Tile> AreaCone(Board board, Tile center, Tile target, int range)
     {
         List<Tile> cone = new List<Tile>();
+        if (center == null || target == null || range <= 0) return cone;
+
+        // Step 1: Find the primary direction using existing method
+        Vector3Int primaryDirection = board.GetDirectionVector(center, target);
+        if (primaryDirection == Vector3Int.zero) return cone;
+
+        // Step 2: Get spread directions for the cone
+        Vector3Int[] coneDirections = HexUtils.GetConeDirections(primaryDirection);
+
+        // Step 3: Build the cone
         Tile current = center;
-
-        if (direction < 0 || direction >= 6) return cone;
-
         for (int i = 1; i <= range; i++)
         {
-            Tile main = current;
-            for (int j = -1; j <= 1; j++)
+            foreach (var coneDir in coneDirections)
             {
-                int dir = (direction + j + 6) % 6;
-                Tile step = main;
+                Tile step = current;
                 for (int k = 0; k < i; k++)
                 {
                     if (step == null) break;
-                    step = step.Neighbours[dir];
+                    step = board.GetNeighbourInDirection(step, coneDir);
                 }
-                if (step != null)
+                if (step != null && !cone.Contains(step))
                     cone.Add(step);
             }
 
-            current = current.Neighbours[direction];
+            current = board.GetNeighbourInDirection(current, primaryDirection);
             if (current == null) break;
         }
 
         return cone;
     }
+
 }

@@ -1,49 +1,128 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class AbilitySelectState : HexSelectState
 {
-    private MenuSelect menuSelect;
-    private AbilityHighlight menuHighlight;
+    private AbilitySelect abilitySelect;
+    private AbilityHighlight abilityHighlight;
+    public ActiveAbility Active;
+
+    private List<Tile> abilityRange;
 
     public override void EnterState(HexSelectManager manager)
     {
-       
-
-      
         Tile selectedTile = manager.GetCurrentSelectedTile();
-        if (selectedTile == null)
+        if (selectedTile == null || selectedTile.Contents == null)
         {
-            Debug.LogError("AbilitySelectState: No selected tile found.");
+            Debug.LogError("AbilitySelectState: No valid pawn selected.");
             return;
         }
 
         GameObject current = selectedTile.gameObject;
 
-        menuSelect = manager.GetComponent<MenuSelect>();
-        menuHighlight = manager.GetComponent<AbilityHighlight>();
+        abilitySelect = manager.GetComponent<AbilitySelect>();
+        abilityHighlight = manager.GetComponent<AbilityHighlight>();
 
-        manager.Responce = menuSelect;
-        manager.Highlight = menuHighlight;
+        manager.Responce = abilitySelect;
+        manager.Highlight = abilityHighlight;
 
-       
-        menuSelect.SetSelection(current);
+        abilitySelect.ActiveAbility = Active;
+        abilityHighlight.SetActiveAbility(Active);
 
-   
-        manager.Highlight.SetHighlight(current);
+        // Calculate ability range
+        abilitySelect.Area = GetAbilityRange(selectedTile, Active);
+        abilityHighlight.Area = abilitySelect.Area;
+
+        abilityRange = abilitySelect.Area;
+        if(abilityRange.Count == 0)
+        {
+            Debug.Log("No vaild Target in range");
+            HexSelectManager.Instance.ReturnToPreviousState();
+        }
+
+        // Paint valid selection tiles
+        foreach (Tile tile in abilityRange)
+        {
+            tile.Hex.meshupdate(abilitySelect.HighlightMat);
+        }
+
+        // Set starting highlight
+        //abilityHighlight.SetHighlight(current);
     }
 
-
-
-    public override void ExitState(HexSelectManager manager)
+    private List<Tile> GetAbilityRange(Tile start, ActiveAbility ability)
     {
+        List<Tile> range = new List<Tile>();
 
-        if (menuHighlight != null)
+        foreach (BaseAction action in ability.Actions)
         {
-            menuHighlight.ClearHighlights();
+            RangeFinder finder = HexSelectManager.Instance.HighlightFinder;
+
+            List<Tile> actionRange = new List<Tile>();
+            List<Tile> invalidTiles = new List<Tile>();
+
+            actionRange = finder.AreaRing(start, action.Range);
+
+            switch(action.Targettype)
+            {
+                case Target.Self:
+                    foreach(Tile t in actionRange)
+                    {
+                        if(!HexSelectManager.Instance.SelectedTiles.Contains(t))
+                        {
+                            invalidTiles.Add(t);
+                        }
+                    }
+                    break;
+                case Target.Pawn:
+                    foreach (Tile t in actionRange)
+                    {
+                        if (!(t.Contents is PlayerPawns || t.Contents is EnemyPawn) || HexSelectManager.Instance.SelectedTiles.Contains(t))
+                        {
+                            invalidTiles.Add(t);
+                        }
+                    }
+                    break;
+                case Target.Enemy:
+                    foreach (Tile t in actionRange)
+                    {
+                        if (!(t.Contents is EnemyPawn))
+                        {
+                            invalidTiles.Add(t);
+                        }
+                        else if (HexSelectManager.Instance.SelectedTiles.Contains(t))
+                        {
+                            invalidTiles.Add(t);
+                        }
+                    }
+                    break;
+                case Target.Friendly:
+                    foreach (Tile t in actionRange)
+                    {
+                        if (!(t.Contents is PlayerPawns) || HexSelectManager.Instance.SelectedTiles.Contains(t))
+                        {
+                            invalidTiles.Add(t);
+                        }
+                    }
+                    break;
+            }
+
+            foreach(Tile t in invalidTiles)
+            {
+                actionRange.Remove(t);
+            }
+
+            foreach (Tile t in actionRange)
+            {
+                if (!range.Contains(t))
+                {
+                    range.Add(t);
+                }
+            }
         }
+
+        return range;
     }
 
     public override void UpdateState(HexSelectManager manager)
@@ -69,5 +148,21 @@ public class AbilitySelectState : HexSelectState
         {
             manager.Responce.Deselect();
         }
+    }
+
+    public override void ExitState(HexSelectManager manager)
+    {
+        if (abilityRange != null)
+        {
+            foreach (Tile tile in abilityRange)
+            {
+                tile.Hex.meshupdate(tile.BaseMaterial);
+            }
+        }
+
+        abilityHighlight.CleanUp();
+        abilitySelect.CleanUp();
+
+        abilityRange?.Clear();
     }
 }

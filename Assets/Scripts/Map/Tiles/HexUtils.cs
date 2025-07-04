@@ -41,4 +41,35 @@ public static class HexUtils
         new Vector3Int(-1, 0, 1),
         new Vector3Int(0, -1, 1)
     };
+
+    public static Vector3Int GetPrimaryDirection(Vector3Int diff)
+    {
+        // Normalize the direction vector to one of the 6 primary hex directions
+        float minDistance = float.MaxValue;
+        Vector3Int closest = Vector3Int.zero;
+
+        foreach (var dir in CubeDirections)
+        {
+            float distance = Vector3Int.Distance(diff, dir);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closest = dir;
+            }
+        }
+
+        return closest;
+    }
+
+    public static Vector3Int[] GetConeDirections(Vector3Int primary)
+    {
+        int index = System.Array.IndexOf(CubeDirections, primary);
+        if (index == -1) return new Vector3Int[] { };
+
+        Vector3Int left = CubeDirections[(index + 5) % 6];
+        Vector3Int right = CubeDirections[(index + 1) % 6];
+
+        return new Vector3Int[] { left, primary, right };
+    }
+
 }

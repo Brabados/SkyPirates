@@ -10,6 +10,7 @@ public class UICharaterUpdater : MonoBehaviour
     public Text CharaterName;
     public Text CharaterHealthNO;
     public Slider CharaterHelthVisual;
+    public AttackButton attack;
 
 
     public void Start()
@@ -27,6 +28,7 @@ public class UICharaterUpdater : MonoBehaviour
 
             CharaterProt.sprite = Player.Data.CharaterPortrate;
             CharaterName.text = Player.Data.CharaterName;
+            attack.BasicAttack = Player.Equiped.Weapon.BaseAttack;
         }
     }
 

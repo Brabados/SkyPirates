@@ -69,7 +69,7 @@ public class MovementHighlight : MonoBehaviour, IHighlightResponce
 
     public PathfinderSelections UpdateSelection()
     {
-        Tile[] areaArray = Area.ToArray();
+        
         PathfinderSelections.AddPath(CurrentPath);
         return PathfinderSelections;
     }

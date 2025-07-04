@@ -209,4 +209,17 @@ public class Board
         }
         return Vector3Int.zero;
     }
+    public Tile GetNeighbourInDirection(Tile tile, Vector3Int direction)
+    {
+        if (tile == null) return null;
+
+        Vector3Int neighborCoords = new Vector3Int(
+            tile.QAxis + direction.x,
+            tile.RAxis + direction.y,
+            tile.SAxis + direction.z
+        );
+
+        return SearchTileByCubeCoordinates(neighborCoords.x, neighborCoords.y, neighborCoords.z);
+    }
+
 }
