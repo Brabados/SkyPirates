@@ -139,6 +139,11 @@ public class HexRenderer : MonoBehaviour
         H_Meshrenderer.material = Mat;
     }
 
+    public Material currentMat()
+    {
+        return H_Meshrenderer.material;
+    }
+
     //Creates a mesh to be used as the colider mesh, which is the same as the drawn mesh but with a flat hex on top.
     public void GetColliderMesh()
     {

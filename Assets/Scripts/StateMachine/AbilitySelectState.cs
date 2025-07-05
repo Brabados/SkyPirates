@@ -39,6 +39,7 @@ public class AbilitySelectState : HexSelectState
         {
             Debug.Log("No vaild Target in range");
             HexSelectManager.Instance.ReturnToPreviousState();
+            return;
         }
 
         // Paint valid selection tiles
