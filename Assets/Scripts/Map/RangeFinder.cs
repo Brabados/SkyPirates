@@ -92,4 +92,24 @@ public class RangeFinder : MonoBehaviour
     {
         return RangeCalculator.AreaCone(_GameBoard.PlayArea, center, target, range);
     }
+
+    public List<Tile> AreaDiagonal(Tile center, int range)
+    {
+        return RangeCalculator.AreaDiagonal(_GameBoard.PlayArea, center, range);
+    }
+
+    public List<Tile> AreaPath(Tile center, Tile target, int range)
+    {
+        return RangeCalculator.AreaPath(_GameBoard.PlayArea, center, target, range);
+    }
+
+
+    public List<Tile> AreaConeFan(Tile center, int range)
+    {
+        return RangeCalculator.AreaConeFan(_GameBoard.PlayArea, center, center.Neighbours[0], range);
+    }
+    public List<Tile> AreaLineFan(Tile center, int range)
+    {
+        return RangeCalculator.AreaLineFan(_GameBoard.PlayArea, center,  range) ;
+    }
 }

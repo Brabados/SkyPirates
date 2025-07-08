@@ -18,7 +18,8 @@ public enum EffectArea
     Ring,
     Diagonal,
     Line,
-    Cone
+    Cone,
+    Path
 }
 
 public enum Effect
@@ -60,6 +61,9 @@ public class BaseAction : BaseScriptableObject
 {
     [SerializeField]
     public Target Targettype;
+
+    [SerializeField]
+    public EffectArea TargetArea;
 
     [SerializeField]
     public EffectArea Area;

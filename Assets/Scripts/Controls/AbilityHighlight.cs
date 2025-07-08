@@ -139,8 +139,9 @@ public class AbilityHighlight : MonoBehaviour, IHighlightResponce
             case EffectArea.Cone:
                 return finder.AreaCone(origin, target, action.Range);
             case EffectArea.Diagonal:
-                // Optional: Add diagonal handling if implemented
-                return new List<Tile>();
+                return finder.AreaDiagonal(origin, action.Range);
+            case EffectArea.Path:
+                return finder.AreaPath(origin, target, action.Range);
             default:
                 return new List<Tile>();
         }

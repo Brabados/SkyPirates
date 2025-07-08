@@ -72,28 +72,33 @@ public static class RangeCalculator
     public static List<Tile> HexRing(Board board, Tile center, int radius)
     {
         List<Tile> results = new List<Tile>();
+        if (center == null || radius <= 0) return results;
 
-        if (radius == 0)
+        Vector3Int cube = new Vector3Int(center.QAxis, center.RAxis, center.SAxis);
+
+        // Start at cube + direction[4] * radius (arbitrary consistent start)
+        Vector3Int direction = HexUtils.CubeDirections[4];
+        Vector3Int current = cube + direction * radius;
+
+        // Walk around the ring
+        for (int side = 0; side < 6; side++)
         {
-            return results;
-        }
-
-        Tile hex = HexScale(board, center.Neighbours[0], radius);
-
-        for (int i = 0; i < 6; i++)
-        {
-            for (int j = 0; j < radius; j++)
+            for (int step = 0; step < radius; step++)
             {
-                if (hex != null)
-                {
-                    results.Add(hex);
-                    hex = hex.Neighbours[i];
-                }
+                Tile tile = board.SearchTileByCubeCoordinates(current.x, current.y, current.z);
+                if (tile != null)
+                    results.Add(tile);
+
+                // move to next hex in this side’s direction
+                Vector3Int dir = HexUtils.CubeDirections[side];
+                current += dir;
             }
         }
 
         return results;
     }
+
+
 
     /// <summary>
     /// Finds all tiles reachable from <paramref name="start"/> given movement cost.
@@ -139,29 +144,25 @@ public static class RangeCalculator
     /// <param name="target">Tile defining the direction.</param>
     /// <param name="range">Maximum length of the line.</param>
     /// <returns>List of tiles in the line.</returns>
-    public static List<Tile> AreaLine(Board board, Tile center, Tile target, int range)
+    public static List<Tile> AreaLine(Board board, Tile origin, Tile target, int range)
     {
         List<Tile> line = new List<Tile>();
+        if (origin == null || target == null || range <= 0) return line;
 
-        if (center == null || target == null || range <= 0) return line;
-
-        Vector3Int direction = board.GetDirectionVector(center, target);
+        Vector3Int direction = board.GetDirectionVector(origin, target);
         if (direction == Vector3Int.zero) return line;
 
-        Tile current = center;
-
-        for (int i = 1; i <= range; i++)
+        Tile current = origin;
+        for (int i = 0; i < range; i++)
         {
             current = board.GetNeighbourInDirection(current, direction);
-            if (current != null)
-            {
-                line.Add(current);
-            }
-            else break;
+            if (current == null) break;
+            line.Add(current);
         }
 
         return line;
     }
+
 
 
     public static List<Tile> AreaCone(Board board, Tile center, Tile target, int range)
@@ -194,6 +195,143 @@ public static class RangeCalculator
 
             current = board.GetNeighbourInDirection(current, primaryDirection);
             if (current == null) break;
+        }
+
+        return cone;
+    }
+
+    public static List<Tile> AreaDiagonal(Board board, Tile center, int range)
+    {
+        List<Tile> diagonals = new List<Tile>();
+
+        if (center == null || range <= 0) return diagonals;
+
+        // Cube diagonal directions for flat-topped hexes
+        Vector3Int[] diagonalDirections = new Vector3Int[]
+        {
+        new Vector3Int(1, 1, -2),  // Up-Right Diagonal
+        new Vector3Int(-1, -1, 2), // Down-Left Diagonal
+        new Vector3Int(1, -2, 1),  // Up-Left Diagonal
+        new Vector3Int(-1, 2, -1)  // Down-Right Diagonal
+        };
+
+        foreach (var direction in diagonalDirections)
+        {
+            Tile current = center;
+
+            for (int i = 1; i <= range; i++)
+            {
+                current = board.SearchTileByCubeCoordinates(
+                    current.QAxis + direction.x,
+                    current.RAxis + direction.y,
+                    current.SAxis + direction.z
+                );
+
+                if (current != null)
+                {
+                    diagonals.Add(current);
+                }
+                else
+                {
+                    break; // Stop this direction if out of bounds
+                }
+            }
+        }
+
+        return diagonals;
+    }
+
+    public static List<Tile> AreaPath(Board board, Tile center, Tile target, int range)
+    {
+        List<Tile> path = new List<Tile>();
+
+        if (center == null || target == null || range <= 0) return path;
+
+        // Use linear interpolation to create a line between center and target
+        Vector3 centerCube = new Vector3(center.QAxis, center.RAxis, center.SAxis);
+        Vector3 targetCube = new Vector3(target.QAxis, target.RAxis, target.SAxis);
+
+        for (int i = 1; i <= range; i++)
+        {
+            float t = (1.0f / (range + 1)) * i;
+            Vector3 lerp = Vector3.Lerp(centerCube, targetCube, t);
+            Vector3Int rounded = HexUtils.RoundCubeCoordinates(lerp);
+
+            Tile tile = board.SearchTileByCubeCoordinates(rounded.x, rounded.y, rounded.z);
+            if (tile != null && !path.Contains(tile))
+            {
+                path.Add(tile);
+            }
+        }
+
+        return path;
+    }
+
+    public static List<Tile> AreaLineFan(Board board, Tile origin, int range)
+    {
+        List<Tile> result = new List<Tile>();
+        if (origin == null || range <= 0) return result;
+
+
+        foreach (Vector3Int direction in HexUtils.CubeDirections)
+        {
+            Tile current = origin;
+
+            for (int i = 0; i < range; i++)
+            {
+                current = board.GetNeighbourInDirection(current, direction);
+
+                if (current != null && !result.Contains(current))
+                {
+                    result.Add(current);
+                }
+                else break;
+            }
+        }
+
+        return result;
+    }
+
+
+
+    public static List<Tile> AreaConeFan(Board board, Tile origin, Tile target, int range)
+    {
+        List<Tile> cone = new List<Tile>();
+        if (origin == null || target == null || range <= 0) return cone;
+
+        Vector3Int primaryDirection = board.GetDirectionVector(origin, target);
+        if (primaryDirection == Vector3Int.zero) return cone;
+
+        // Get left and right spread directions
+        Vector3Int[] coneDirections = HexUtils.GetConeDirections(primaryDirection);
+
+        Tile current = origin;
+
+        for (int i = 1; i <= range; i++)
+        {
+            // Step forward in primary direction
+            current = board.GetNeighbourInDirection(current, primaryDirection);
+            if (current == null) break;
+
+            // Always include the forward tile
+            if (!cone.Contains(current))
+                cone.Add(current);
+
+            // Fan to left and right from this step
+            foreach (var spreadDir in coneDirections)
+            {
+                if (spreadDir == primaryDirection) continue;
+
+                Tile spread = current;
+                for (int j = 0; j < i; j++)
+                {
+                    if (spread == null) break;
+                    spread = board.GetNeighbourInDirection(spread, spreadDir);
+                }
+
+                if (spread != null && !cone.Contains(spread))
+                    cone.Add(spread);
+            }
         }
 
         return cone;

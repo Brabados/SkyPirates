@@ -30,101 +30,106 @@ public class AbilitySelectState : HexSelectState
         abilitySelect.ActiveAbility = Active;
         abilityHighlight.SetActiveAbility(Active);
 
-        // Calculate ability range
-        abilitySelect.Area = GetAbilityRange(selectedTile, Active);
+        //Use new TargetArea to determine selectable area
+        abilitySelect.Area = GetTargetableTiles(selectedTile, Active);
         abilityHighlight.Area = abilitySelect.Area;
 
         abilityRange = abilitySelect.Area;
-        if(abilityRange.Count == 0)
+
+        if (abilityRange.Count == 0)
         {
-            Debug.Log("No vaild Target in range");
+            Debug.Log("No valid targets in range.");
             HexSelectManager.Instance.ReturnToPreviousState();
             return;
         }
 
-        // Paint valid selection tiles
+        // Highlight valid tiles
         foreach (Tile tile in abilityRange)
         {
             tile.Hex.meshupdate(abilitySelect.HighlightMat);
         }
-
-        // Set starting highlight
-        //abilityHighlight.SetHighlight(current);
     }
 
-    private List<Tile> GetAbilityRange(Tile start, ActiveAbility ability)
+
+    private List<Tile> GetTargetableTiles(Tile start, ActiveAbility ability)
     {
-        List<Tile> range = new List<Tile>();
+        List<Tile> result = new List<Tile>();
 
         foreach (BaseAction action in ability.Actions)
         {
             RangeFinder finder = HexSelectManager.Instance.HighlightFinder;
 
-            List<Tile> actionRange = new List<Tile>();
-            List<Tile> invalidTiles = new List<Tile>();
+            List<Tile> targetArea = new List<Tile>();
+            List<Tile> invalids = new List<Tile>();
 
-            actionRange = finder.AreaRing(start, action.Range);
-
-            switch(action.Targettype)
+            // Use TargetArea instead of Area
+            switch (action.TargetArea)
             {
-                case Target.Self:
-                    foreach(Tile t in actionRange)
-                    {
-                        if(!HexSelectManager.Instance.SelectedTiles.Contains(t))
-                        {
-                            invalidTiles.Add(t);
-                        }
-                    }
+                case EffectArea.Single:
+                    targetArea.Add(start);
                     break;
-                case Target.Pawn:
-                    foreach (Tile t in actionRange)
-                    {
-                        if (!(t.Contents is PlayerPawns || t.Contents is EnemyPawn) || HexSelectManager.Instance.SelectedTiles.Contains(t))
-                        {
-                            invalidTiles.Add(t);
-                        }
-                    }
+                case EffectArea.Area:
+                    targetArea = finder.AreaRing(start, action.Range);
                     break;
-                case Target.Enemy:
-                    foreach (Tile t in actionRange)
-                    {
-                        if (!(t.Contents is EnemyPawn))
-                        {
-                            invalidTiles.Add(t);
-                        }
-                        else if (HexSelectManager.Instance.SelectedTiles.Contains(t))
-                        {
-                            invalidTiles.Add(t);
-                        }
-                    }
+                case EffectArea.Ring:
+                    targetArea = finder.HexRing(start, action.Range);
                     break;
-                case Target.Friendly:
-                    foreach (Tile t in actionRange)
-                    {
-                        if (!(t.Contents is PlayerPawns) || HexSelectManager.Instance.SelectedTiles.Contains(t))
-                        {
-                            invalidTiles.Add(t);
-                        }
-                    }
+                case EffectArea.Line:
+                    targetArea = finder.AreaLineFan(start, action.Range);
+                    break;
+                case EffectArea.Cone:
+                    targetArea = finder.AreaConeFan(start, action.Range);
+                    break;
+                case EffectArea.Diagonal:
+                    targetArea = finder.AreaDiagonal(start, action.Range);
+                    break;
+                case EffectArea.Path:
+                    targetArea = finder.AreaRing(start, action.Range);
                     break;
             }
 
-            foreach(Tile t in invalidTiles)
+            // Filter targets by target type
+            foreach (Tile t in targetArea)
             {
-                actionRange.Remove(t);
-            }
-
-            foreach (Tile t in actionRange)
-            {
-                if (!range.Contains(t))
+                switch (action.Targettype)
                 {
-                    range.Add(t);
+                    case Target.Self:
+                        if (!HexSelectManager.Instance.SelectedTiles.Contains(t))
+                            invalids.Add(t);
+                        break;
+                    case Target.Tile:
+                        break; // any tile valid
+                    case Target.Pawn:
+                        if (!(t.Contents is PlayerPawns || t.Contents is EnemyPawn) || HexSelectManager.Instance.SelectedTiles.Contains(t))
+                            invalids.Add(t);
+                        break;
+                    case Target.Enemy:
+                        if (!(t.Contents is EnemyPawn) || HexSelectManager.Instance.SelectedTiles.Contains(t))
+                            invalids.Add(t);
+                        break;
+                    case Target.Friendly:
+                        if (!(t.Contents is PlayerPawns) || HexSelectManager.Instance.SelectedTiles.Contains(t))
+                            invalids.Add(t);
+                        break;
                 }
+            }
+
+            foreach (Tile t in invalids)
+            {
+                targetArea.Remove(t);
+            }
+
+            foreach (Tile t in targetArea)
+            {
+                if (!result.Contains(t))
+                    result.Add(t);
             }
         }
 
-        return range;
+        return result;
     }
+
+
 
     public override void UpdateState(HexSelectManager manager)
     {

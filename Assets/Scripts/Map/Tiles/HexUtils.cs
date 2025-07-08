@@ -72,4 +72,31 @@ public static class HexUtils
         return new Vector3Int[] { left, primary, right };
     }
 
+    public static Vector3Int RoundCubeCoordinates(Vector3 cube)
+    {
+        int q = Mathf.RoundToInt(cube.x);
+        int r = Mathf.RoundToInt(cube.y);
+        int s = Mathf.RoundToInt(cube.z);
+
+        float qDiff = Mathf.Abs(q - cube.x);
+        float rDiff = Mathf.Abs(r - cube.y);
+        float sDiff = Mathf.Abs(s - cube.z);
+
+        if (qDiff > rDiff && qDiff > sDiff)
+        {
+            q = -r - s;
+        }
+        else if (rDiff > sDiff)
+        {
+            r = -q - s;
+        }
+        else
+        {
+            s = -q - r;
+        }
+
+        return new Vector3Int(q, r, s);
+    }
+
+
 }
