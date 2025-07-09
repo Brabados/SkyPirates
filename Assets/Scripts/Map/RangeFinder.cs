@@ -88,10 +88,11 @@ public class RangeFinder : MonoBehaviour
     /// <param name="range">Depth of the cone.</param>
     /// <param name="direction">Index indicating the cone direction.</param>
     /// <returns>Tiles contained within the cone.</returns>
-    public List<Tile> AreaCone(Tile center, Tile target, int range)
+    public List<Tile> AreaCone(Tile center, Tile target, int range, int size)
     {
-        return RangeCalculator.AreaCone(_GameBoard.PlayArea, center, target, range);
+        return RangeCalculator.AreaCone(_GameBoard.PlayArea, center, target, range, size);
     }
+
 
     public List<Tile> AreaDiagonal(Tile center, int range)
     {
@@ -104,9 +105,9 @@ public class RangeFinder : MonoBehaviour
     }
 
 
-    public List<Tile> AreaConeFan(Tile center, int range)
+    public List<Tile> AreaConeFan(Tile origin, int range, int size)
     {
-        return RangeCalculator.AreaConeFan(_GameBoard.PlayArea, center, center.Neighbours[0], range);
+        return RangeCalculator.AreaConeFan(_GameBoard.PlayArea, origin, range, size);
     }
     public List<Tile> AreaLineFan(Tile center, int range)
     {

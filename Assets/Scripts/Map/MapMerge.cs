@@ -156,38 +156,40 @@ public class MapMerge : MonoBehaviour
                 Tile existing = board.get_Tile(x, y);
                 if (existing == null)
                 {
-                    // Convert offset to cube
                     Vector2Int offsetCoords = new Vector2Int(x, y);
-                    Vector3Int cubeCoords = HexUtils.OffsetToCube(offsetCoords, mapData.isFlatTopped, false);
+                    Vector3Int cubeCoords = new Vector3Int(
+                        offsetCoords.x - board.qOffset,
+                        offsetCoords.y - board.rOffset,
+                        -(offsetCoords.x - board.qOffset + offsetCoords.y - board.rOffset)
+                    );
 
-                    // Create empty GameObject with Tile component
-                    GameObject holder = new GameObject($"Hex {x},{y}", typeof(Tile));
-                    Tile tile = holder.GetComponent<Tile>();
-                    tile.Data = mapData.TileTypes[0];
-
-                    // Setup position and height
-                    int height = tile.Data == mapData.TileTypes[0] ? 5 : 20;
+                    // Create tile GameObject
+                    Tile tile = new GameObject($"Hex {x},{y}", typeof(Tile)).GetComponent<Tile>();
+                    tile.Data = mapData.TileTypes[0];  // Use default type
                     tile.SetQUSPosition(cubeCoords.x, cubeCoords.y);
+                    tile.SetPosition(offsetCoords);
+
+                    // Set height based on type (you can replace this logic as needed)
+                    int height = tile.Data == mapData.TileTypes[0] ? 5 : 20;
                     tile.SetHeight(height);
                     tile.Column = x;
                     tile.Row = y;
 
-                    // Set world position
-                    Vector3 worldPos = mapData.GetHexPositionFromCoordinate(offsetCoords);
-                    worldPos.y += tile.Height / 2f;
-                    holder.transform.position = worldPos;
+                    // Assign to map transform
+                    tile.transform.SetParent(mapData.transform);
 
-                    // Parent to map
-                    holder.transform.SetParent(mapData.transform);
+                    // Set world position
+                    tile.transform.position = mapData.GetHexPositionFromCoordinate(offsetCoords);
 
                     // Instantiate mesh
-                    GameObject visual = Object.Instantiate(tile.Data.TilePrefab, holder.transform);
-                    visual.transform.position += new Vector3(0, tile.Height / 2f - 1f, 0);
+                    if (tile.Data.TilePrefab != null)
+                    {
+                        GameObject visual = Object.Instantiate(tile.Data.TilePrefab, tile.transform);
+                        visual.transform.localPosition += new Vector3(0, tile.Height / 2f - 1f, 0); // adjust based on pivot
+                    }
 
-                    // Setup hex visuals
+                    // Setup visual and pawn pos
                     tile.SetupHexRenderer(mapData.innerSize, mapData.outerSize, mapData.isFlatTopped);
-
-                    // Final setup
                     tile.SetPawnPos();
 
                     // Assign to board
@@ -196,6 +198,7 @@ public class MapMerge : MonoBehaviour
             }
         }
     }
+
 
 
 }

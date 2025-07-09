@@ -60,6 +60,12 @@ public class Tile : MonoBehaviour
         RAxis = r;
         SAxis = -QAxis - RAxis;
     }
+    public void SetQUSPosition(int q, int r, int s)
+    {
+        QAxis = q;
+        RAxis = r;
+        SAxis = s;
+    }
 
     public void SetHeight(float height)
     {

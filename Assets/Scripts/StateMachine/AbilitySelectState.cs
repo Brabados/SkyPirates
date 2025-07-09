@@ -78,7 +78,7 @@ public class AbilitySelectState : HexSelectState
                     targetArea = finder.AreaLineFan(start, action.Range);
                     break;
                 case EffectArea.Cone:
-                    targetArea = finder.AreaConeFan(start, action.Range);
+                    targetArea = finder.AreaConeFan(start, action.Range, action.Size);
                     break;
                 case EffectArea.Diagonal:
                     targetArea = finder.AreaDiagonal(start, action.Range);

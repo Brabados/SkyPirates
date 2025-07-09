@@ -69,6 +69,9 @@ public class BaseAction : BaseScriptableObject
     public EffectArea Area;
 
     [SerializeField]
+    public int TargetSize;
+
+    [SerializeField]
     public int Size;
 
     [SerializeField]

@@ -165,40 +165,69 @@ public static class RangeCalculator
 
 
 
-    public static List<Tile> AreaCone(Board board, Tile center, Tile target, int range)
+    public static List<Tile> AreaCone(Board board, Tile origin, Tile target, int range, int size)
     {
-        List<Tile> cone = new List<Tile>();
-        if (center == null || target == null || range <= 0) return cone;
+        List<Tile> result = new List<Tile>();
+        if (origin == null || target == null || range <= 0 || size <= 0) return result;
 
-        // Step 1: Find the primary direction using existing method
-        Vector3Int primaryDirection = board.GetDirectionVector(center, target);
-        if (primaryDirection == Vector3Int.zero) return cone;
+        Vector3Int forward = board.GetDirectionVector(origin, target);
+        if (forward == Vector3Int.zero) return result;
 
-        // Step 2: Get spread directions for the cone
-        Vector3Int[] coneDirections = HexUtils.GetConeDirections(primaryDirection);
+        int directionIndex = System.Array.IndexOf(HexUtils.CubeDirections, forward);
+        if (directionIndex == -1) return result;
 
-        // Step 3: Build the cone
-        Tile current = center;
-        for (int i = 1; i <= range; i++)
+        // Get adjacent directions for spread
+        Vector3Int leftDir = HexUtils.CubeDirections[(directionIndex + 5) % 6];
+        Vector3Int rightDir = HexUtils.CubeDirections[(directionIndex + 1) % 6];
+
+        for (int depth = 1; depth <= range; depth++)
         {
-            foreach (var coneDir in coneDirections)
-            {
-                Tile step = current;
-                for (int k = 0; k < i; k++)
-                {
-                    if (step == null) break;
-                    step = board.GetNeighbourInDirection(step, coneDir);
-                }
-                if (step != null && !cone.Contains(step))
-                    cone.Add(step);
-            }
+            // Move to the depth tile in forward direction
+            Vector3Int center = new Vector3Int(
+                origin.QAxis + forward.x * depth,
+                origin.RAxis + forward.y * depth,
+                origin.SAxis + forward.z * depth
+            );
 
-            current = board.GetNeighbourInDirection(current, primaryDirection);
-            if (current == null) break;
+            // Fan out side-to-side from center at this depth
+            for (int spread = -size; spread <= size; spread++)
+            {
+                Vector3Int offset = CubeLerpOffset(center, leftDir, rightDir, spread);
+                Tile tile = board.SearchTileByCubeCoordinates(offset.x, offset.y, offset.z);
+                if (tile != null && !result.Contains(tile))
+                    result.Add(tile);
+            }
         }
 
-        return cone;
+        return result;
     }
+
+    // Cube offset interpolation between left/right at given spread distance
+    private static Vector3Int CubeLerpOffset(Vector3Int center, Vector3Int left, Vector3Int right, int offset)
+    {
+        if (offset == 0) return center;
+        Vector3Int stepDir = offset < 0 ? left : right;
+        offset = Mathf.Abs(offset);
+        return new Vector3Int(
+            center.x + stepDir.x * offset,
+            center.y + stepDir.y * offset,
+            center.z + stepDir.z * offset
+        );
+    }
+
+
+    // Utility to rotate direction by offset (-2 to +2 means left to right of cone axis)
+    private static Vector3Int GetSpreadDirection(Vector3Int forward, int offset)
+    {
+        if (offset == 0) return forward;
+
+        int index = System.Array.IndexOf(HexUtils.CubeDirections, forward);
+        if (index == -1) return forward;
+
+        int spreadIndex = (index + offset + 6) % 6;
+        return HexUtils.CubeDirections[spreadIndex];
+    }
+
 
     public static List<Tile> AreaDiagonal(Board board, Tile center, int range)
     {
@@ -294,47 +323,37 @@ public static class RangeCalculator
 
 
 
-    public static List<Tile> AreaConeFan(Board board, Tile origin, Tile target, int range)
+    public static List<Tile> AreaConeFan(Board board, Tile origin, int range, int size)
     {
-        List<Tile> cone = new List<Tile>();
-        if (origin == null || target == null || range <= 0) return cone;
+        List<Tile> result = new List<Tile>();
+        if (origin == null || range <= 0 || size <= 0) return result;
 
-        Vector3Int primaryDirection = board.GetDirectionVector(origin, target);
-        if (primaryDirection == Vector3Int.zero) return cone;
-
-        // Get left and right spread directions
-        Vector3Int[] coneDirections = HexUtils.GetConeDirections(primaryDirection);
-
-        Tile current = origin;
-
-        for (int i = 1; i <= range; i++)
+        foreach (var forward in HexUtils.CubeDirections)
         {
-            // Step forward in primary direction
-            current = board.GetNeighbourInDirection(current, primaryDirection);
-            if (current == null) break;
+            int dirIndex = System.Array.IndexOf(HexUtils.CubeDirections, forward);
+            Vector3Int leftDir = HexUtils.CubeDirections[(dirIndex + 5) % 6];
+            Vector3Int rightDir = HexUtils.CubeDirections[(dirIndex + 1) % 6];
 
-            // Always include the forward tile
-            if (!cone.Contains(current))
-                cone.Add(current);
-
-            // Fan to left and right from this step
-            foreach (var spreadDir in coneDirections)
+            for (int depth = 1; depth <= range; depth++)
             {
-                if (spreadDir == primaryDirection) continue;
+                Vector3Int center = new Vector3Int(
+                    origin.QAxis + forward.x * depth,
+                    origin.RAxis + forward.y * depth,
+                    origin.SAxis + forward.z * depth
+                );
 
-                Tile spread = current;
-                for (int j = 0; j < i; j++)
+                for (int spread = -size; spread <= size; spread++)
                 {
-                    if (spread == null) break;
-                    spread = board.GetNeighbourInDirection(spread, spreadDir);
+                    Vector3Int offset = CubeLerpOffset(center, leftDir, rightDir, spread);
+                    Tile tile = board.SearchTileByCubeCoordinates(offset.x, offset.y, offset.z);
+                    if (tile != null && !result.Contains(tile))
+                        result.Add(tile);
                 }
-
-                if (spread != null && !cone.Contains(spread))
-                    cone.Add(spread);
             }
         }
 
-        return cone;
+        return result;
     }
+
 
 }
