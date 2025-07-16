@@ -125,6 +125,9 @@ public class AbilityHighlight : MonoBehaviour, IHighlightResponce
     private List<Tile> GetTilesForAction(BaseAction action, Tile origin, Tile target)
     {
         var finder = HexSelectManager.Instance.HighlightFinder;
+        var board = HexSelectManager.Instance.HighlightFinder._GameBoard.PlayArea;
+
+        int usedRange = action.MaxRange ? action.Range : board.CubeDistance(origin, target);
 
         switch (action.Area)
         {
@@ -135,13 +138,13 @@ public class AbilityHighlight : MonoBehaviour, IHighlightResponce
             case EffectArea.Ring:
                 return finder.HexRing(target, action.Size);
             case EffectArea.Line:
-                return finder.AreaLine(origin, target, action.Range);
+                return finder.AreaLine(origin, target, usedRange);
             case EffectArea.Cone:
-                return finder.AreaCone(origin, target, action.Range, action.Size);
+                return finder.AreaCone(origin, target, usedRange, action.Size);
             case EffectArea.Diagonal:
-                return finder.AreaDiagonal(target, action.Range);
+                return finder.AreaDiagonal(target, usedRange);
             case EffectArea.Path:
-                return finder.AreaPath(origin, target, action.Range);
+                return finder.AreaPath(origin, target, usedRange);
             default:
                 return new List<Tile>();
         }

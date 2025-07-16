@@ -10,11 +10,22 @@ public abstract class Pawn : MonoBehaviour
     public Tile Position;
     public Attributes Stats;
     public EquipedItems Equiped;
+    public TurnToken Turn;
+
     public void Awake()
     {
         BaseSize = GetComponent<CapsuleCollider>();
         Stats = GetComponent<Attributes>();
         Equiped = GetComponent<EquipedItems>();
+        Equiped.SetStats();
+        Turn = new TurnToken(this, Stats.Grace + Equiped.grace, Stats.speed,
+                               Stats.Cadishness + Equiped.cadishness,
+                               Stats.Serendipity + Equiped.serindipity);
+    }
+
+    public void Start()
+    {
+
     }
 
     public void SetPosition(Tile Set)

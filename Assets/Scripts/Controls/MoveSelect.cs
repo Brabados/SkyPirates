@@ -100,8 +100,9 @@ public class MoveSelect : MonoBehaviour, ISelectionResponce
                 Vector3 Position = new Vector3(tile.PawnPosition.transform.position.x, tile.PawnPosition.transform.position.y + 4.5f, tile.PawnPosition.transform.position.z);
                 SelectedCharater.gameObject.transform.position = Position;
 
-                HexSelectManager.Instance.SwitchToDefaultState();
                 EventManager.TriggerMovementChange(null);
+                HexSelectManager.Instance.UpdateLastPawnTile(tile);
+                HexSelectManager.Instance.ReturnToPreviousState();
                 return;
             }
         }

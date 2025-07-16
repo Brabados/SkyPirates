@@ -56,17 +56,6 @@ public class HexSelectManager : MonoBehaviour
             Instance = this;
         }
 
-        string name = SceneManager.GetActiveScene().name;
-        if (name == "BattleScene")
-        {
-            currentState = defaultState;
-            currentState.EnterState(this);
-        }
-        else if (name == "ShipBuildScreen")
-        {
-            currentState = editSelectState;
-            currentState.EnterState(this);
-        }
     }
 
     private void Start()
@@ -79,7 +68,16 @@ public class HexSelectManager : MonoBehaviour
         HighlightFinder = GetComponent<RangeFinder>();
 
         string name = SceneManager.GetActiveScene().name;
-
+        if (name == "BattleScene")
+        {
+            currentState = defaultState;
+            currentState.EnterState(this);
+        }
+        else if (name == "ShipBuildScreen")
+        {
+            currentState = editSelectState;
+            currentState.EnterState(this);
+        }
     }
 
     private void Update()

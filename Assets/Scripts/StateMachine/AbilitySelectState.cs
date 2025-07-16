@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// --- AbilitySelectState.cs ---
+
 public class AbilitySelectState : HexSelectState
 {
     private AbilitySelect abilitySelect;
@@ -30,7 +32,6 @@ public class AbilitySelectState : HexSelectState
         abilitySelect.ActiveAbility = Active;
         abilityHighlight.SetActiveAbility(Active);
 
-        //Use new TargetArea to determine selectable area
         abilitySelect.Area = GetTargetableTiles(selectedTile, Active);
         abilityHighlight.Area = abilitySelect.Area;
 
@@ -43,13 +44,11 @@ public class AbilitySelectState : HexSelectState
             return;
         }
 
-        // Highlight valid tiles
         foreach (Tile tile in abilityRange)
         {
             tile.Hex.meshupdate(abilitySelect.HighlightMat);
         }
     }
-
 
     private List<Tile> GetTargetableTiles(Tile start, ActiveAbility ability)
     {
@@ -62,56 +61,38 @@ public class AbilitySelectState : HexSelectState
             List<Tile> targetArea = new List<Tile>();
             List<Tile> invalids = new List<Tile>();
 
-            // Use TargetArea instead of Area
+            int size = action.TargetSize;
+
             switch (action.TargetArea)
             {
                 case EffectArea.Single:
                     targetArea.Add(start);
                     break;
                 case EffectArea.Area:
-                    targetArea = finder.AreaRing(start, action.Range);
+                    targetArea = finder.AreaRing(start, size);
                     break;
                 case EffectArea.Ring:
-                    targetArea = finder.HexRing(start, action.Range);
+                    targetArea = finder.HexRing(start, size);
                     break;
                 case EffectArea.Line:
-                    targetArea = finder.AreaLineFan(start, action.Range);
+                    targetArea = finder.AreaLineFan(start, size);
                     break;
                 case EffectArea.Cone:
-                    targetArea = finder.AreaConeFan(start, action.Range, action.Size);
+                    targetArea = finder.AreaConeFan(start, size, action.Size);
                     break;
                 case EffectArea.Diagonal:
-                    targetArea = finder.AreaDiagonal(start, action.Range);
+                    targetArea = finder.AreaDiagonal(start, size);
                     break;
                 case EffectArea.Path:
-                    targetArea = finder.AreaRing(start, action.Range);
+                    // Approximation: allow targeting in AreaRing for lack of better path system
+                    targetArea = finder.AreaRing(start, size);
                     break;
             }
 
-            // Filter targets by target type
             foreach (Tile t in targetArea)
             {
-                switch (action.Targettype)
-                {
-                    case Target.Self:
-                        if (!HexSelectManager.Instance.SelectedTiles.Contains(t))
-                            invalids.Add(t);
-                        break;
-                    case Target.Tile:
-                        break; // any tile valid
-                    case Target.Pawn:
-                        if (!(t.Contents is PlayerPawns || t.Contents is EnemyPawn) || HexSelectManager.Instance.SelectedTiles.Contains(t))
-                            invalids.Add(t);
-                        break;
-                    case Target.Enemy:
-                        if (!(t.Contents is EnemyPawn) || HexSelectManager.Instance.SelectedTiles.Contains(t))
-                            invalids.Add(t);
-                        break;
-                    case Target.Friendly:
-                        if (!(t.Contents is PlayerPawns) || HexSelectManager.Instance.SelectedTiles.Contains(t))
-                            invalids.Add(t);
-                        break;
-                }
+                if (!IsValidTarget(action, t))
+                    invalids.Add(t);
             }
 
             foreach (Tile t in invalids)
@@ -129,7 +110,24 @@ public class AbilitySelectState : HexSelectState
         return result;
     }
 
-
+    private bool IsValidTarget(BaseAction action, Tile t)
+    {
+        switch (action.Targettype)
+        {
+            case Target.Self:
+                return HexSelectManager.Instance.SelectedTiles.Contains(t);
+            case Target.Tile:
+                return true;
+            case Target.Pawn:
+                return t.Contents is PlayerPawns || t.Contents is EnemyPawn;
+            case Target.Enemy:
+                return t.Contents is EnemyPawn;
+            case Target.Friendly:
+                return t.Contents is PlayerPawns;
+            default:
+                return false;
+        }
+    }
 
     public override void UpdateState(HexSelectManager manager)
     {
@@ -172,3 +170,5 @@ public class AbilitySelectState : HexSelectState
         abilityRange?.Clear();
     }
 }
+
+

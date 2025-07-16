@@ -7,7 +7,8 @@ public class DefaultSelectState : HexSelectState
     private HexSelection HexState;
 
     public override void EnterState(HexSelectManager manager)
-    {
+    { 
+
         HexState = manager.GetComponent<HexSelection>();
         manager.Responce = HexState;
         manager.Highlight = manager.GetComponent<HexHighlight>();
@@ -19,6 +20,20 @@ public class DefaultSelectState : HexSelectState
 
     public override void UpdateState(HexSelectManager manager)
     {
+        Pawn st = null;
+        int count = 0;
+        while (st == null)
+        {
+            st = TurnManager.Instance.UpdateTurn();
+            count++;
+            if (count > 300)
+            {
+                st = GameObject.FindObjectOfType<Pawn>();
+            }
+        }
+        Debug.Log(st.name);
+        manager.Highlight.SetHighlight(st.gameObject);
+        manager.Select();
         // Default update logic from HexSelectManager
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 

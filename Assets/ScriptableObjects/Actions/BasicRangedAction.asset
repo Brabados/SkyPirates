@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: BasicRangedAction
   m_EditorClassIdentifier: 
   UniqueID: 9a831438-eb3b-4a82-9355-d58db82f5b48
-  Targettype: 4
-  Area: 0
-  Size: 0
+  Targettype: 2
+  TargetArea: 1
+  TargetSize: 5
+  Area: 6
+  Size: 1
   Range: 5
   MoveEffect: 0
   StatusAffect: 0
   Damage: 1
   DmgType: 0
+  MaxRange: 0

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UniqueID: a2a84d79-3e58-4f67-8a13-25d965c26cfa
   Targettype: 4
+  TargetArea: 2
+  TargetSize: 1
   Area: 0
   Size: 0
   Range: 1
@@ -21,3 +23,4 @@ MonoBehaviour:
   StatusAffect: 0
   Damage: 1
   DmgType: 0
+  MaxRange: 0

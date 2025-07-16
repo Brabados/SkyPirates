@@ -10,6 +10,9 @@ public class Attributes : MonoBehaviour
     public int Serendipity;
     public int Swagger;
 
+    //Hidden Stats
+    public int speed;
+
     // Derived Aspects and Skills can be calculated or adjusted here if needed
 
    

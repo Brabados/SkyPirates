@@ -66,10 +66,10 @@ public class BaseAction : BaseScriptableObject
     public EffectArea TargetArea;
 
     [SerializeField]
-    public EffectArea Area;
+    public int TargetSize;
 
     [SerializeField]
-    public int TargetSize;
+    public EffectArea Area;
 
     [SerializeField]
     public int Size;
@@ -88,4 +88,7 @@ public class BaseAction : BaseScriptableObject
 
     [SerializeField]
     public DamageType DmgType;
+
+    [SerializeField]
+    public bool MaxRange;
 }

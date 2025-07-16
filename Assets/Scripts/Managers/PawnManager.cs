@@ -7,6 +7,7 @@ public class PawnManager : MonoBehaviour
     public static PawnManager PawnManagerInstance { get; private set; }
     public List<PlayerPawns> PlayerPawns;
     public List<EnemyPawn> EnemyPawns;
+    private bool TurnAssign = false;
 
     public List<EnemyPawn> GetAllEnemies()
     {
@@ -114,6 +115,11 @@ public class PawnManager : MonoBehaviour
         {
             EnemyPawns.Add(n);
         }
+        if(TurnAssign)
+        {
+            TurnManager.Instance.SetTurns();
+        }
+        else { TurnAssign = true; }
     }
 
     public void populatePlayer(List<PlayerPawns> Player)
@@ -122,6 +128,11 @@ public class PawnManager : MonoBehaviour
         {
             PlayerPawns.Add(n);
         }
+        if (TurnAssign)
+        {
+            TurnManager.Instance.SetTurns();
+        }
+        else { TurnAssign = true; }
     }
 
     public void clearPawns()
