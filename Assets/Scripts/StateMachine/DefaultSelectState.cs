@@ -8,7 +8,11 @@ public class DefaultSelectState : HexSelectState
 
     public override void EnterState(HexSelectManager manager)
     { 
-
+        if(TurnManager.Instance.currentTurn != null)
+        {
+            TurnManager.Instance.currentTurn.MovementLeft = TurnManager.Instance.currentTurn.FullMovement;
+            TurnManager.Instance.currentTurn.ActionTaken = false;
+        }
         HexState = manager.GetComponent<HexSelection>();
         manager.Responce = HexState;
         manager.Highlight = manager.GetComponent<HexHighlight>();
@@ -29,6 +33,10 @@ public class DefaultSelectState : HexSelectState
             if (count > 300)
             {
                 st = GameObject.FindObjectOfType<Pawn>();
+                if(st == null)
+                {
+                    st = new PlayerPawns();
+                }
             }
         }
         Debug.Log(st.name);

@@ -184,4 +184,17 @@ public struct PathfinderSelections
             NumSelections = Paths.Count;
         }
     }
+    public int TotalPathLength()
+    {
+        if (Paths == null || Paths.Count == 0) return 0;
+
+        int total = 0;
+        foreach (var path in Paths)
+        {
+            total += path.Count;
+        }
+
+        // Subtract 1 for each path (each includes its start tile)
+        return total - Paths.Count;
+    }
 }

@@ -115,7 +115,7 @@ public class Board
     }
 
 
-    // Return all tiles in the board (implement if you don't have it)
+    // Return all tiles in the board
     public IEnumerable<Tile> GetAllTiles()
     {
         for (int x = 0; x < _size_X; x++)
@@ -127,7 +127,6 @@ public class Board
             }
         }
     }
-
 
     public void Destroy()
     {

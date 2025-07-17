@@ -168,7 +168,8 @@ public class HexSelectManager : MonoBehaviour
             Tile lastSelectedTile = selection;
             List<Tile> movementRange = area;
             PathfinderSelections paths = ((MovementHighlight)Highlight).UpdateSelection();
-            int remainingMovement = ((MoveSelect)Responce).SelectedCharater.Stats.Movement;
+            int remainingMovement = TurnManager.Instance.currentTurn?.MovementLeft
+                         ?? ((MoveSelect)Responce).SelectedCharater.Stats.Movement;
 
             foreach (List<Vector3Int> path in paths.Paths)
             {

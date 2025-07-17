@@ -23,7 +23,6 @@ public class MoveSelectState : HexSelectState
             return;
         }
 
-
         GameObject selectedObject = hex.gameObject;
         Pawn pawn = hex.Contents;
 
@@ -34,7 +33,8 @@ public class MoveSelectState : HexSelectState
         moveSelect.Selections.Clear();
         moveSelect.Selections.Add(hex);
 
-        moveSelect.Area = manager.HighlightFinder.HexReachable(hex, pawn.Stats.Movement);
+        int moveLeft = TurnManager.Instance.currentTurn?.MovementLeft ?? pawn.Stats.Movement;
+        moveSelect.Area = manager.HighlightFinder.HexReachable(hex, moveLeft);
         movementRange = moveSelect.Area;
         moveHighlight.Area = moveSelect.Area;
         moveHighlight.Starthighlight(selectedObject);
@@ -47,8 +47,6 @@ public class MoveSelectState : HexSelectState
         // Ensure selection stays tracked globally
         manager.SelectedTiles.Add(hex);
     }
-
-
 
     public override void UpdateState(HexSelectManager manager)
     {
@@ -83,13 +81,20 @@ public class MoveSelectState : HexSelectState
             }
         }
 
+        int totalTilesMoved = moveSelect.PathfinderSelections.TotalPathLength();
+        TurnToken token = TurnManager.Instance.currentTurn;
+        if (token != null)
+        {
+            token.MovementLeft -= Mathf.Abs(totalTilesMoved);
+            if (token.MovementLeft < 0)
+            {
+                token.MovementLeft = 0;
+            }
+        }
+
         moveHighlight.CleanUp();
         moveSelect.CleanUP();
 
         movementRange?.Clear();
     }
-
-
-
-
 }

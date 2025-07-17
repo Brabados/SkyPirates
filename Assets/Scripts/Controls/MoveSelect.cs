@@ -61,7 +61,7 @@ public class MoveSelect : MonoBehaviour, ISelectionResponce
             {
                 SelectedObject = Selections[Selections.Count - 1].gameObject;
 
-                int remainingMovement = SelectedCharater.Stats.Movement;
+                int remainingMovement = TurnManager.Instance.currentTurn?.MovementLeft ?? SelectedCharater.Stats.Movement;
                 if (Selections.Count != 1)
                 {
                     remainingMovement += 1;

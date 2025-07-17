@@ -13,6 +13,7 @@ public class TurnToken : IComparable
     public float TurnCounter;
     public bool ActionTaken = false;
     public int MovementLeft;
+    public int FullMovement;
 
     public TurnToken(Pawn owner, int grace, int speed, int cadishness, int serindipity)
     {
@@ -21,6 +22,8 @@ public class TurnToken : IComparable
         _Speed = speed;
         _Cadishness = cadishness;
         _Serindipity = serindipity;
+        FullMovement = Owner.Stats.Movement;
+        MovementLeft = FullMovement;
     }
 
     public float InitativeChange()
