@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MoveButton : MonoBehaviour
+public class AbilityButton : MonoBehaviour
 {
     public Button AttachedButton;
-    public void Move()
-    {
-        HexSelectManager.Instance.SwitchToMoveSelectState();           
-    }
     public void Start()
     {
-        EventManager.OnMovementAllUsed += Disable;
+        EventManager.OnActionExicuted += Disable;
     }
 
     public void Disable()
@@ -22,6 +18,7 @@ public class MoveButton : MonoBehaviour
 
     public void OnDestroy()
     {
-        EventManager.OnMovementAllUsed -= Disable;
+        EventManager.OnActionExicuted -= Disable;
     }
+
 }

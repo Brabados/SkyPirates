@@ -86,9 +86,10 @@ public class MoveSelectState : HexSelectState
         if (token != null)
         {
             token.MovementLeft -= Mathf.Abs(totalTilesMoved);
-            if (token.MovementLeft < 0)
+            if (token.MovementLeft <= 0)
             {
                 token.MovementLeft = 0;
+                EventManager.TriggerMovementAllUsed();
             }
         }
 

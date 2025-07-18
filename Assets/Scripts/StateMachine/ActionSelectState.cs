@@ -44,6 +44,12 @@ public class ActionSelectState : HexSelectState
         // for consideration: still allows mouse hex selection
         //otherwise should remain blank/allow button selection rollover from bottom and top both 
         //are options as unity handles button selection for key board. May have to configure for gamepads.
+
+        if(TurnManager.Instance.currentTurn.ActionTaken && TurnManager.Instance.currentTurn.MovementLeft == 0)
+        {
+            menuSelect.Deselect();
+        }
+
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))

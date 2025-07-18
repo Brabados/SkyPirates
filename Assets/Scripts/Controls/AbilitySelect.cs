@@ -25,6 +25,7 @@ public class AbilitySelect : MonoBehaviour, ISelectionResponce
             // Selection complete. Trigger ability resolution here or pass to next system.
             Debug.Log("Ability selected at tile: " + tile.name);
             TurnManager.Instance.currentTurn.ActionTaken = true;
+            EventManager.TriggerActionExicuted();
 
             // Return to previous state after selection
             HexSelectManager.Instance.ReturnToPreviousState();

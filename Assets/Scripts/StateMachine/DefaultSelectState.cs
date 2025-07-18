@@ -33,15 +33,17 @@ public class DefaultSelectState : HexSelectState
             if (count > 300)
             {
                 st = GameObject.FindObjectOfType<Pawn>();
-                if(st == null)
-                {
-                    st = new PlayerPawns();
-                }
             }
         }
-        Debug.Log(st.name);
-        manager.Highlight.SetHighlight(st.gameObject);
-        manager.Select();
+        if (st is PlayerPawns)
+        {
+            manager.Highlight.SetHighlight(st.gameObject);
+            manager.Select();
+        }
+        else if(st is EnemyPawn)
+        {
+            manager.SwitchToEnemyTurnState();
+        }
         // Default update logic from HexSelectManager
         Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 

@@ -90,14 +90,19 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
 
             // Track this as the last pawn tile if it has a pawn
 
-
+            //This section here will need to be updated with UI for second Charater inforamtion
+            //Is also the way to swap pawns when the all pawns at once turn structure is built
+            //commenting out for now to make turn system work
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
-                EventManager.TriggerShowCanvas(((int)Menues.PawnInfo));
-                HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
-                EventManager.TriggerPawnSelect(SelectedContents);
-                EventManager.TriggerUIUpdate(SelectedContents);
+               // EventManager.TriggerShowCanvas(((int)Menues.PawnInfo));
+                //HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
+               // EventManager.TriggerPawnSelect(SelectedContents);
+              //  EventManager.TriggerUIUpdate(SelectedContents);
             }
+
+            //another side note logic should be placed here to highlight the movement range of any selected
+            //pawn, player, enemy or otherwise.
 
             SelectedTile.Hex.meshupdate(selectedMat);
             HexSelectManager.Instance.SelectedTiles.Add(SelectedTile);

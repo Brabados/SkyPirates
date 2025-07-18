@@ -33,6 +33,7 @@ public class HexSelectManager : MonoBehaviour
     private readonly HexSelectState actionSelectState = new ActionSelectState();
     private readonly HexSelectState editSelectState = new EditState();
     private readonly HexSelectState abilitySelectState = new AbilitySelectState();
+    private readonly HexSelectState enemyTurnState = new EnemyTurnState();
     // History stack to return to previous state
     private Stack<HexSelectState> stateStack = new Stack<HexSelectState>();
 
@@ -123,8 +124,19 @@ public class HexSelectManager : MonoBehaviour
         currentState.ExitState(this);
         currentState = defaultState;
         currentState.EnterState(this);
+        EventManager.TriggerActionExicuted();
+        EventManager.TriggerMovementAllUsed();
         Debug.Log("DefaultState");
     }
+
+    public void SwitchToEnemyTurnState()
+    {
+        stateStack.Push(currentState);
+        currentState.ExitState(this);
+        currentState = enemyTurnState;
+        currentState.EnterState(this);
+    }
+
 
     public void SwitchToActionSelectState()
     {
