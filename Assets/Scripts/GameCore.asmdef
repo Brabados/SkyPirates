@@ -1,7 +1,14 @@
 {
   "name": "GameCore",
   "references": [
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "Unity.Mathematics",
+    "Unity.Entities",
+    "Unity.Collections",
+    "Unity.Physics",
+    "Unity.Transforms",
+    "Unity.Entities.Hybrid",
+    "Unity.Burst"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb8e58b4301fa5542824556cf84ebd2f, type: 3}
   m_Name: Ice Ring
   m_EditorClassIdentifier: 
+  UniqueID: dc82673e-9b6b-44d1-8734-5a344cac4450
   Type: 3
   Name: Ice Ring
   Info: A Ring usually for engagement or fashion, that are fully covered or heavily

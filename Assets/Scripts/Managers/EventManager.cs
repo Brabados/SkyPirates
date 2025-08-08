@@ -30,8 +30,8 @@ public class EventManager : MonoBehaviour
     public static event Action<Pawn> OnUIUpdate;
     public static event Action<int> OnHideCanvas;
     public static event Action<int> OnShowCanvas;
-    public static event Action OnActionExicuted;
-    public static event Action OnMovementAllUsed;
+    public static event Action<bool> OnActionExicuted;
+    public static event Action<bool> OnMovementAllUsed;
 
     // --- TRIGGERS ---
 
@@ -43,9 +43,9 @@ public class EventManager : MonoBehaviour
     public static void TriggerMovementChange(List<Vector3Int> points) => OnMovementChange?.Invoke(points);
 
     // --- UI TRIGGERS ---
-    public static void TriggerActionExicuted() => OnActionExicuted?.Invoke();
+    public static void TriggerActionExicuted(bool state) => OnActionExicuted?.Invoke(state);
 
-    public static void TriggerMovementAllUsed() => OnMovementAllUsed?.Invoke();
+    public static void TriggerMovementAllUsed(bool state) => OnMovementAllUsed?.Invoke(state);
     public static void TriggerUIUpdate(Pawn Selected) => OnUIUpdate?.Invoke(Selected);
     public static void TriggerCharacterChange(Pawn onscreenPawn) => OnCharacterChange?.Invoke(onscreenPawn);
     public static void TriggerItemSelect(Item selectedItem) => OnItemSelect?.Invoke(selectedItem);

@@ -124,8 +124,8 @@ public class HexSelectManager : MonoBehaviour
         currentState.ExitState(this);
         currentState = defaultState;
         currentState.EnterState(this);
-        EventManager.TriggerActionExicuted();
-        EventManager.TriggerMovementAllUsed();
+        EventManager.TriggerActionExicuted(true);
+        EventManager.TriggerMovementAllUsed(true);
         Debug.Log("DefaultState");
     }
 

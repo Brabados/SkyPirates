@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3afad397337bb034b9b645f83f9f8f50, type: 3}
   m_Name: Slippers
   m_EditorClassIdentifier: 
+  UniqueID: ced416fe-bf96-47a9-bb6d-3e4ef939c767
   Type: 2
   Name: Slippers
   Info: Slippers are a type of shoes falling under the broader category of light

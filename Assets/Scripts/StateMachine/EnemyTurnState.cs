@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyTurnState : HexSelectState
 {
     private BasicMovement movementLogic;
+    private BasicAbilityChoice abilityChoice;
     private RangeFinder rangeFinder;
     private Board board;
     private Pathfinding pathfinder = new Pathfinding();
@@ -11,6 +12,8 @@ public class EnemyTurnState : HexSelectState
     public override void EnterState(HexSelectManager manager)
     {
         Pawn enemy = TurnManager.Instance.currentTurn.Owner;
+        movementLogic = (BasicMovement)(enemy as EnemyPawn).AI.Movement;
+        abilityChoice = (BasicAbilityChoice)(enemy as EnemyPawn).AI.AbilityChoice;
         Map map = GameObject.FindObjectOfType<Map>();
         board = map.PlayArea;
         if (enemy == null || !(enemy is EnemyPawn)) return;
@@ -24,7 +27,6 @@ public class EnemyTurnState : HexSelectState
         }
 
         rangeFinder = manager.HighlightFinder;
-        board = movementLogic.board;
 
         Tile startTile = enemy.Position;
         int moveLeft = TurnManager.Instance.currentTurn.MovementLeft;
@@ -48,12 +50,21 @@ public class EnemyTurnState : HexSelectState
                 friendlies.Add(e.Position);
 
         // Get scores
-        List<int> heatmap = movementLogic.MoveToHeatMap(reachable, playerTiles, friendlies, moveLeft);
+        List<int> Moveheatmap = movementLogic.HeatMap(reachable, playerTiles, friendlies, moveLeft);
+        List<int> Attackheatmap = abilityChoice.HeatMap(reachable, playerTiles, friendlies, moveLeft);
+
+        int count = Mathf.Min(Moveheatmap.Count, Attackheatmap.Count);
+        List<int> combined = new List<int>(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            combined.Add(Moveheatmap[i] + Attackheatmap[i]);
+        }
 
         // Score & select top 5
         List<(Tile tile, int score)> scored = new List<(Tile tile, int score)>();
         for (int i = 0; i < reachable.Count; i++)
-            scored.Add((reachable[i], heatmap[i]));
+            scored.Add((reachable[i], combined[i]));
 
         scored.Sort((a, b) => b.score.CompareTo(a.score)); // high to low
         int topN = Mathf.Min(5, scored.Count);
@@ -77,6 +88,7 @@ public class EnemyTurnState : HexSelectState
         Tile destination = board.SearchTileByCubeCoordinates(lastCube.x, lastCube.y, lastCube.z);
         if (destination != null)
         {
+            enemy.Position.Contents = null;
             enemy.SetPosition(destination);
             TurnManager.Instance.currentTurn.MovementLeft -= (pathCubes.Count - 1);
         }

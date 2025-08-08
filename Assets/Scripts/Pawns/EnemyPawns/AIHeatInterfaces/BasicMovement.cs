@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicMovement : MonoBehaviour, IAIMoveable
+public class BasicMovement : MonoBehaviour, IAIHeatMap
 {
     public Board board; // Assumes Board is assigned externally
 
-    public List<int> MoveToHeatMap(List<Tile> TilesInRange, List<Tile> PlayerPos, List<Tile> FriendlyPos, int movement)
+    public List<int> HeatMap(List<Tile> TilesInRange, List<Tile> PlayerPos, List<Tile> FriendlyPos, int movement)
     {
         List<int> heatMap = new List<int>();
 
@@ -37,7 +37,7 @@ public class BasicMovement : MonoBehaviour, IAIMoveable
             if (minDistToAlly <= 3)
             {
                 // Best score at distance 3, worst (but still positive) at distance 1
-                score += minDistToAlly; // You could also use (4 - minDistToAlly) if you want closer = better
+                score += minDistToAlly; 
             }
             else
             {

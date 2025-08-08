@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babf1dcbfc3efbf4b9ccbcb7389ea851, type: 3}
   m_Name: Goggles
   m_EditorClassIdentifier: 
+  UniqueID: a4938534-7c0b-4116-9643-2698643b96a3
   Type: 0
   Name: Goggles
   Info: 'Welding goggles are protective eyewear designed to safeguard the eyes from

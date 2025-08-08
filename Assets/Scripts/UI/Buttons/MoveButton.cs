@@ -15,9 +15,9 @@ public class MoveButton : MonoBehaviour
         EventManager.OnMovementAllUsed += Disable;
     }
 
-    public void Disable()
+    public void Disable(bool state)
     {
-        AttachedButton.enabled = !AttachedButton.enabled;
+        AttachedButton.enabled = state;
     }
 
     public void OnDestroy()

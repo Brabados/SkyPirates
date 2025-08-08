@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb8e58b4301fa5542824556cf84ebd2f, type: 3}
   m_Name: Necklace
   m_EditorClassIdentifier: 
+  UniqueID: 4b50f4a6-c15b-4a36-bf68-7227ecd628cd
   Type: 3
   Name: Necklace
   Info: A necklace that is overly bright, showy, and potentially tacky in appearance,

@@ -11,9 +11,9 @@ public class AbilityButton : MonoBehaviour
         EventManager.OnActionExicuted += Disable;
     }
 
-    public void Disable()
+    public void Disable(bool state)
     {
-        AttachedButton.enabled = !AttachedButton.enabled;
+        AttachedButton.enabled = state;
     }
 
     public void OnDestroy()

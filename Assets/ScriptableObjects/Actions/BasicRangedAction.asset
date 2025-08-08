@@ -16,9 +16,9 @@ MonoBehaviour:
   Targettype: 2
   TargetArea: 1
   TargetSize: 5
-  Area: 6
+  Area: 0
   Size: 1
-  Range: 5
+  Range: 4
   MoveEffect: 0
   StatusAffect: 0
   Damage: 1

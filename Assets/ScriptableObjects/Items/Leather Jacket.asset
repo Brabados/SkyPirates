@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f60231973166740b6c73f6aaf2f525, type: 3}
   m_Name: Leather Jacket
   m_EditorClassIdentifier: 
+  UniqueID: 2a7515d5-6891-4797-a497-36f232359508
   Type: 1
   Name: Leather Jacket
   Info: The jacket was often part of an overall uniform ensemble meant to protect

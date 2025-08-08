@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3afad397337bb034b9b645f83f9f8f50, type: 3}
   m_Name: Leather Boots
   m_EditorClassIdentifier: 
+  UniqueID: 8ede6592-cf7c-47e7-bca0-0493d893cb26
   Type: 2
   Name: Leather Boots
   Info: They are soft knee-high leather boots typically made of brown calfskin. Thigh

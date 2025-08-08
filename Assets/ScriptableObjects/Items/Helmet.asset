@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: babf1dcbfc3efbf4b9ccbcb7389ea851, type: 3}
   m_Name: Helmet
   m_EditorClassIdentifier: 
+  UniqueID: e826e6a5-ad2d-4e11-98e8-d4637efe7570
   Type: 0
   Name: Helmet
   Info: 'In its simplest form, the great helm was a flat-topped cylinder of steel

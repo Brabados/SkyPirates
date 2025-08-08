@@ -98,5 +98,11 @@ public static class HexUtils
         return new Vector3Int(q, r, s);
     }
 
+    public static int CubeDistance(Tile a, Tile b)
+    {
+        return (Mathf.Abs(a.QAxis - b.QAxis)
+              + Mathf.Abs(a.RAxis - b.RAxis)
+              + Mathf.Abs(a.SAxis - b.SAxis)) / 2;
+    }
 
 }
