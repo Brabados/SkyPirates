@@ -1,41 +1,79 @@
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-public struct FishPrefabComponent : IComponentData
-{
-    public Entity prefab;
-}
-
 public partial class FishFlockController : SystemBase
 {
+    private struct SpawnRequest
+    {
+        public NativeArray<Entity> Prefabs;
+        public FishControllerSettingsComponent Settings;
+        public int Remaining;
+        public Unity.Mathematics.Random Random;
+    }
+
+    private SpawnRequest? _currentSpawn;
     private bool _hasSpawned;
+
+    [SerializeField] private int spawnChunkSize = 250; // fish per frame, tweak for perf
 
     protected override void OnCreate()
     {
-        RequireForUpdate<FishPrefabComponent>();
+        RequireForUpdate<FishPrefabReference>();
     }
 
     protected override void OnStartRunning()
     {
-        if (_hasSpawned) return;
+        if (!_hasSpawned)
+            QueueSpawn();
+    }
 
+    public void TriggerSpawn()
+    {
+        QueueSpawn();
+    }
+
+    private void QueueSpawn()
+    {
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        var prefabEntity = SystemAPI.GetSingleton<FishPrefabComponent>().prefab;
 
-        // Get settings from component, or use defaults if not found
-        FishControllerSettingsComponent settings = default;
+        // Find the registry entity
+        Entity registryEntity = Entity.Null;
+        using (var regs = entityManager.CreateEntityQuery(typeof(FishPrefabReference)).ToEntityArray(Allocator.Temp))
+        {
+            if (regs.Length == 0)
+            {
+                Debug.LogError("No FishPrefabReference buffer found in subscene!");
+                return;
+            }
+            registryEntity = regs[0];
+        }
+
+        // Copy prefabs into safe array
+        var prefabBuffer = entityManager.GetBuffer<FishPrefabReference>(registryEntity);
+        if (prefabBuffer.Length == 0)
+        {
+            Debug.LogError("FishPrefabReference buffer is empty!");
+            return;
+        }
+
+        var prefabEntities = new NativeArray<Entity>(prefabBuffer.Length, Allocator.Persistent);
+        for (int i = 0; i < prefabBuffer.Length; i++)
+            prefabEntities[i] = prefabBuffer[i].Prefab;
+
+        // Settings
+        FishControllerSettingsComponent settings;
         bool hasSettings = SystemAPI.HasSingleton<FishControllerSettingsComponent>();
-
         if (hasSettings)
         {
             settings = SystemAPI.GetSingleton<FishControllerSettingsComponent>();
-            Debug.Log("Using FishControllerSettings from component");
         }
         else
         {
-            // Default values if no settings component found
             settings = new FishControllerSettingsComponent
             {
                 SpawnCount = 1000,
@@ -52,54 +90,144 @@ public partial class FishFlockController : SystemBase
                 BoundaryRadius = 20f,
                 BoundaryWeight = 2f
             };
-            Debug.Log("Using default FishControllerSettings (no settings component found)");
         }
 
-        var random = new Unity.Mathematics.Random((uint)UnityEngine.Random.Range(1, int.MaxValue));
-
-        for (int i = 0; i < settings.SpawnCount; i++)
+        _currentSpawn = new SpawnRequest
         {
-            var instance = entityManager.Instantiate(prefabEntity);
+            Prefabs = prefabEntities,
+            Settings = settings,
+            Remaining = settings.SpawnCount,
+            Random = new Unity.Mathematics.Random((uint)UnityEngine.Random.Range(1, int.MaxValue))
+        };
 
-            float3 pos = random.NextFloat3Direction() * random.NextFloat(0f, settings.SpawnRadius);
-            float3 forward = random.NextFloat3Direction();
+        Debug.Log($"Queued spawn of {settings.SpawnCount} fish ({(hasSettings ? "custom" : "default")} settings).");
+    }
 
-            entityManager.SetComponentData(instance, new LocalTransform
+    protected override void OnUpdate()
+    {
+        if (!_currentSpawn.HasValue) return;
+
+        var spawn = _currentSpawn.Value;
+        int toSpawn = math.min(spawnChunkSize, spawn.Remaining);
+        spawn.Remaining -= toSpawn;
+
+        // Choose a random prefab once per fish
+        var prefabArray = spawn.Prefabs;
+        var prefabCount = prefabArray.Length;
+        var rnd = spawn.Random;
+
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var instances = new NativeArray<Entity>(toSpawn, Allocator.TempJob);
+
+        // Batch instantiate
+        var prefabChoice = prefabArray[rnd.NextInt(0, prefabCount)];
+        entityManager.Instantiate(prefabChoice, instances);
+
+        // Job to set data
+        var settings = spawn.Settings;
+        var job = new InitFishJob
+        {
+            Entities = instances,
+            InitialSpeed = settings.InitialSpeed,
+            MaxSpeed = settings.MaxSpeed,
+            SearchRadius = settings.SearchRadius,
+            CohesionWeight = settings.CohesionWeight,
+            AlignmentWeight = settings.AlignmentWeight,
+            SeparationWeight = settings.SeparationWeight,
+            ObstacleAvoidanceDistance = settings.ObstacleAvoidanceDistance,
+            ObstacleAvoidanceWeight = settings.ObstacleAvoidanceWeight,
+            BoundaryCenter = settings.BoundaryCenter,
+            BoundaryRadius = settings.BoundaryRadius,
+            BoundaryWeight = settings.BoundaryWeight,
+            SpawnRadius = settings.SpawnRadius,
+            Random = rnd,
+            Transforms = GetComponentLookup<LocalTransform>(),
+            Velocities = GetComponentLookup<Velocity>(),
+            BoidSettingsLookup = GetComponentLookup<BoidSettings>(),
+            BoundarySettingsLookup = GetComponentLookup<BoundarySettings>(),
+            Ecb = new EntityCommandBuffer(Allocator.TempJob)
+        };
+
+        job.Run(toSpawn);
+
+        job.Ecb.Playback(entityManager);
+        job.Ecb.Dispose();
+        instances.Dispose();
+
+        // Save updated random state
+        spawn.Random = job.Random;
+        _currentSpawn = spawn;
+
+        if (spawn.Remaining <= 0)
+        {
+            _currentSpawn.Value.Prefabs.Dispose();
+            _currentSpawn = null;
+            _hasSpawned = true;
+            Debug.Log("Finished spawning all fish.");
+        }
+    }
+
+    [BurstCompile]
+    private struct InitFishJob : IJobParallelFor
+    {
+        public NativeArray<Entity> Entities;
+
+        public float InitialSpeed;
+        public float MaxSpeed;
+        public float SearchRadius;
+        public float CohesionWeight;
+        public float AlignmentWeight;
+        public float SeparationWeight;
+        public float ObstacleAvoidanceDistance;
+        public float ObstacleAvoidanceWeight;
+        public float3 BoundaryCenter;
+        public float BoundaryRadius;
+        public float BoundaryWeight;
+        public float SpawnRadius;
+
+        public Unity.Mathematics.Random Random;
+
+        public ComponentLookup<LocalTransform> Transforms;
+        public ComponentLookup<Velocity> Velocities;
+        public ComponentLookup<BoidSettings> BoidSettingsLookup;
+        public ComponentLookup<BoundarySettings> BoundarySettingsLookup;
+
+        public EntityCommandBuffer Ecb;
+
+        public void Execute(int index)
+        {
+            var entity = Entities[index];
+            float3 pos = Random.NextFloat3Direction() * Random.NextFloat(0f, SpawnRadius);
+            float3 forward = Random.NextFloat3Direction();
+
+            Ecb.SetComponent(entity, new LocalTransform
             {
                 Position = pos,
                 Rotation = quaternion.LookRotationSafe(forward, math.up()),
                 Scale = 1f
             });
 
-            entityManager.SetComponentData(instance, new Velocity
+            Ecb.SetComponent(entity, new Velocity { Value = forward * InitialSpeed });
+
+            Ecb.SetComponent(entity, new BoidSettings
             {
-                Value = forward * settings.InitialSpeed
+                MaxSpeed = MaxSpeed,
+                SearchRadius = SearchRadius,
+                ObstacleAvoidanceDistance = ObstacleAvoidanceDistance,
+                ObstacleAvoidanceWeight = ObstacleAvoidanceWeight,
+                CohesionWeight = CohesionWeight,
+                AlignmentWeight = AlignmentWeight,
+                SeparationWeight = SeparationWeight
             });
 
-            entityManager.SetComponentData(instance, new BoidSettings
+            Ecb.SetComponent(entity, new BoundarySettings
             {
-                MaxSpeed = settings.MaxSpeed,
-                SearchRadius = settings.SearchRadius,
-                ObstacleAvoidanceDistance = settings.ObstacleAvoidanceDistance,
-                ObstacleAvoidanceWeight = settings.ObstacleAvoidanceWeight,
-                CohesionWeight = settings.CohesionWeight,
-                AlignmentWeight = settings.AlignmentWeight,
-                SeparationWeight = settings.SeparationWeight
+                Center = BoundaryCenter,
+                Radius = BoundaryRadius,
+                BoundaryWeight = BoundaryWeight
             });
 
-            entityManager.SetComponentData(instance, new BoundarySettings
-            {
-                Center = settings.BoundaryCenter,
-                Radius = settings.BoundaryRadius,
-                BoundaryWeight = settings.BoundaryWeight
-            });
-
-            entityManager.AddComponent<BoidTag>(instance);
+            Ecb.AddComponent<BoidTag>(entity);
         }
-
-        _hasSpawned = true;
-        Debug.Log($"Spawned {settings.SpawnCount} fish with FishFlockController using " + (hasSettings ? "custom" : "default") + " settings.");
     }
-
-    protected override void OnUpdate() { }
 }

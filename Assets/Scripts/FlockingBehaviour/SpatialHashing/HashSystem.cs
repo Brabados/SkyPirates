@@ -13,6 +13,7 @@ public partial struct OptimizedSpatialHashSystem : ISystem
     private NativeParallelMultiHashMap<int3, BoidData> _spatialMap;
     private NativeArray<BoidData> _boidDataArray;
     private NativeArray<Entity> _entityArray;
+    private int _lastBoidCount;
 
     public struct BoidData
     {
@@ -44,6 +45,7 @@ public partial struct OptimizedSpatialHashSystem : ISystem
         // Count boids first
         var boidQuery = SystemAPI.QueryBuilder().WithAll<BoidTag, LocalTransform, Velocity>().Build();
         int boidCount = boidQuery.CalculateEntityCount();
+        _lastBoidCount = boidCount;
 
         if (boidCount == 0) return;
 
@@ -57,7 +59,7 @@ public partial struct OptimizedSpatialHashSystem : ISystem
             _entityArray = new NativeArray<Entity>(newSize, Allocator.Persistent);
         }
 
-        // Populate spatial hash job
+        // Populate spatial hash job (scheduled, not completed here)
         var populateJob = new PopulateSpatialHashJob
         {
             SpatialMap = _spatialMap.AsParallelWriter(),
@@ -66,13 +68,16 @@ public partial struct OptimizedSpatialHashSystem : ISystem
             CellSize = 5f // Match search radius
         };
 
+        // Schedule the populate job and assign its handle to the system dependency
         var populateHandle = populateJob.ScheduleParallel(boidQuery, state.Dependency);
-        populateHandle.Complete();
+        state.Dependency = populateHandle;
+
     }
 
     public NativeParallelMultiHashMap<int3, BoidData> GetSpatialMap() => _spatialMap;
     public NativeArray<BoidData> GetBoidDataArray() => _boidDataArray;
     public NativeArray<Entity> GetEntityArray() => _entityArray;
+    public int GetLastBoidCount() => _lastBoidCount;
 }
 
 [BurstCompile]

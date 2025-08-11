@@ -30,7 +30,7 @@ public partial struct OptimizedFlockingBehaviorSystem : ISystem
         var spatialHashRef = state.WorldUnmanaged.GetUnsafeSystemRef<OptimizedSpatialHashSystem>(spatialHashSystem);
         var spatialMap = spatialHashRef.GetSpatialMap();
 
-        if (spatialMap.Count() == 0) return;
+        if (spatialHashRef.GetLastBoidCount() == 0) return;
 
         var shipData = new ShipData { HasShip = false };
 
@@ -65,8 +65,6 @@ public partial struct OptimizedFlockingBehaviorSystem : ISystem
         var boidQuery = SystemAPI.QueryBuilder()
             .WithAll<BoidTag, LocalTransform, Velocity, BoidSettings, BoundarySettings>()
             .Build();
-
-        state.Dependency.Complete();
 
         // Update the ComponentLookup right before scheduling the job
         _boidGroupLookup.Update(ref state);
@@ -216,9 +214,13 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
         float radiusSq = radius * radius;
         int count = 0;
 
-        for (int x = -1; x <= 1; x++)
-            for (int y = -1; y <= 1; y++)
-                for (int z = -1; z <= 1; z++)
+        // how many cells to search in each axis
+        int radiusInCells = (int)math.ceil(radius / cellSize);
+        radiusInCells = math.max(1, radiusInCells);
+
+        for (int x = -radiusInCells; x <= radiusInCells; x++)
+            for (int y = -radiusInCells; y <= radiusInCells; y++)
+                for (int z = -radiusInCells; z <= radiusInCells; z++)
                 {
                     int3 cell = center + new int3(x, y, z);
                     if (SpatialMap.TryGetFirstValue(cell, out var data, out var iter))
@@ -234,6 +236,7 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
                 }
 
         return count;
+
     }
 
     [BurstCompile]
@@ -254,7 +257,7 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
     }
 }
 
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct AssignBoidUpdateGroupsSystem : ISystem
 {
     private ComponentLookup<BoidUpdateGroup> _boidGroupLookup;

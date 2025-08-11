@@ -878,7 +878,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             ""id"": ""6cb746c4-d2e5-434a-97df-3fe5e062724b"",
             ""actions"": [
                 {
-                    ""name"": ""MoveCamera"",
+                    ""name"": ""MoveShip"",
                     ""type"": ""Value"",
                     ""id"": ""5f98e769-9af3-4133-ac46-19586f26ea69"",
                     ""expectedControlType"": ""Vector2"",
@@ -896,7 +896,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""RotateCamera"",
+                    ""name"": ""TurnShip"",
                     ""type"": ""Value"",
                     ""id"": ""c37d1ba0-0120-4e30-899e-1b4d34156171"",
                     ""expectedControlType"": ""Vector2"",
@@ -939,6 +939,24 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RotateCamera"",
+                    ""type"": ""Value"",
+                    ""id"": ""6e82d880-57b6-4fa5-a7a3-2144bc45126f"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Spawn"",
+                    ""type"": ""Button"",
+                    ""id"": ""9623dd73-a149-495d-9e09-63b92f803665"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -949,7 +967,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -960,7 +978,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -971,7 +989,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -982,7 +1000,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -993,7 +1011,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1004,7 +1022,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1015,7 +1033,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1026,7 +1044,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1037,7 +1055,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1048,7 +1066,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1059,7 +1077,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1070,7 +1088,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1081,7 +1099,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1092,7 +1110,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1103,7 +1121,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""MoveCamera"",
+                    ""action"": ""MoveShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1257,7 +1275,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1268,7 +1286,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1279,7 +1297,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1290,7 +1308,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1301,7 +1319,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1312,7 +1330,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1323,7 +1341,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1334,7 +1352,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1345,7 +1363,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1356,7 +1374,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1367,7 +1385,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1378,7 +1396,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1389,7 +1407,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -1400,7 +1418,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1411,7 +1429,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RotateCamera"",
+                    ""action"": ""TurnShip"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -1656,6 +1674,50 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""action"": ""SceneSwitch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""c4feb522-acfd-4428-8bb7-4191d825d09d"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCamera"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""768ea779-a54f-4b4c-a19f-79d9f1a819de"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""4ae32f99-5765-451b-95b1-f472e4c15ea4"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RotateCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6e0478f9-894a-4d7d-94a7-a19646980cea"",
+                    ""path"": ""<Keyboard>/l"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Spawn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1785,13 +1847,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         m_Battle_SceneSwitch = m_Battle.FindAction("SceneSwitch", throwIfNotFound: true);
         // OverWorld
         m_OverWorld = asset.FindActionMap("OverWorld", throwIfNotFound: true);
-        m_OverWorld_MoveCamera = m_OverWorld.FindAction("MoveCamera", throwIfNotFound: true);
+        m_OverWorld_MoveShip = m_OverWorld.FindAction("MoveShip", throwIfNotFound: true);
         m_OverWorld_Height = m_OverWorld.FindAction("Height", throwIfNotFound: true);
-        m_OverWorld_RotateCamera = m_OverWorld.FindAction("RotateCamera", throwIfNotFound: true);
+        m_OverWorld_TurnShip = m_OverWorld.FindAction("TurnShip", throwIfNotFound: true);
         m_OverWorld_MoveSelection = m_OverWorld.FindAction("MoveSelection", throwIfNotFound: true);
         m_OverWorld_Select = m_OverWorld.FindAction("Select", throwIfNotFound: true);
         m_OverWorld_Deselect = m_OverWorld.FindAction("Deselect", throwIfNotFound: true);
         m_OverWorld_SceneSwitch = m_OverWorld.FindAction("SceneSwitch", throwIfNotFound: true);
+        m_OverWorld_RotateCamera = m_OverWorld.FindAction("RotateCamera", throwIfNotFound: true);
+        m_OverWorld_Spawn = m_OverWorld.FindAction("Spawn", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_SwitchCharater = m_Menu.FindAction("SwitchCharater", throwIfNotFound: true);
@@ -2041,13 +2105,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     // OverWorld
     private readonly InputActionMap m_OverWorld;
     private List<IOverWorldActions> m_OverWorldActionsCallbackInterfaces = new List<IOverWorldActions>();
-    private readonly InputAction m_OverWorld_MoveCamera;
+    private readonly InputAction m_OverWorld_MoveShip;
     private readonly InputAction m_OverWorld_Height;
-    private readonly InputAction m_OverWorld_RotateCamera;
+    private readonly InputAction m_OverWorld_TurnShip;
     private readonly InputAction m_OverWorld_MoveSelection;
     private readonly InputAction m_OverWorld_Select;
     private readonly InputAction m_OverWorld_Deselect;
     private readonly InputAction m_OverWorld_SceneSwitch;
+    private readonly InputAction m_OverWorld_RotateCamera;
+    private readonly InputAction m_OverWorld_Spawn;
     /// <summary>
     /// Provides access to input actions defined in input action map "OverWorld".
     /// </summary>
@@ -2060,17 +2126,17 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// </summary>
         public OverWorldActions(@BasicControls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "OverWorld/MoveCamera".
+        /// Provides access to the underlying input action "OverWorld/MoveShip".
         /// </summary>
-        public InputAction @MoveCamera => m_Wrapper.m_OverWorld_MoveCamera;
+        public InputAction @MoveShip => m_Wrapper.m_OverWorld_MoveShip;
         /// <summary>
         /// Provides access to the underlying input action "OverWorld/Height".
         /// </summary>
         public InputAction @Height => m_Wrapper.m_OverWorld_Height;
         /// <summary>
-        /// Provides access to the underlying input action "OverWorld/RotateCamera".
+        /// Provides access to the underlying input action "OverWorld/TurnShip".
         /// </summary>
-        public InputAction @RotateCamera => m_Wrapper.m_OverWorld_RotateCamera;
+        public InputAction @TurnShip => m_Wrapper.m_OverWorld_TurnShip;
         /// <summary>
         /// Provides access to the underlying input action "OverWorld/MoveSelection".
         /// </summary>
@@ -2087,6 +2153,14 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "OverWorld/SceneSwitch".
         /// </summary>
         public InputAction @SceneSwitch => m_Wrapper.m_OverWorld_SceneSwitch;
+        /// <summary>
+        /// Provides access to the underlying input action "OverWorld/RotateCamera".
+        /// </summary>
+        public InputAction @RotateCamera => m_Wrapper.m_OverWorld_RotateCamera;
+        /// <summary>
+        /// Provides access to the underlying input action "OverWorld/Spawn".
+        /// </summary>
+        public InputAction @Spawn => m_Wrapper.m_OverWorld_Spawn;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2113,15 +2187,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_OverWorldActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_OverWorldActionsCallbackInterfaces.Add(instance);
-            @MoveCamera.started += instance.OnMoveCamera;
-            @MoveCamera.performed += instance.OnMoveCamera;
-            @MoveCamera.canceled += instance.OnMoveCamera;
+            @MoveShip.started += instance.OnMoveShip;
+            @MoveShip.performed += instance.OnMoveShip;
+            @MoveShip.canceled += instance.OnMoveShip;
             @Height.started += instance.OnHeight;
             @Height.performed += instance.OnHeight;
             @Height.canceled += instance.OnHeight;
-            @RotateCamera.started += instance.OnRotateCamera;
-            @RotateCamera.performed += instance.OnRotateCamera;
-            @RotateCamera.canceled += instance.OnRotateCamera;
+            @TurnShip.started += instance.OnTurnShip;
+            @TurnShip.performed += instance.OnTurnShip;
+            @TurnShip.canceled += instance.OnTurnShip;
             @MoveSelection.started += instance.OnMoveSelection;
             @MoveSelection.performed += instance.OnMoveSelection;
             @MoveSelection.canceled += instance.OnMoveSelection;
@@ -2134,6 +2208,12 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @SceneSwitch.started += instance.OnSceneSwitch;
             @SceneSwitch.performed += instance.OnSceneSwitch;
             @SceneSwitch.canceled += instance.OnSceneSwitch;
+            @RotateCamera.started += instance.OnRotateCamera;
+            @RotateCamera.performed += instance.OnRotateCamera;
+            @RotateCamera.canceled += instance.OnRotateCamera;
+            @Spawn.started += instance.OnSpawn;
+            @Spawn.performed += instance.OnSpawn;
+            @Spawn.canceled += instance.OnSpawn;
         }
 
         /// <summary>
@@ -2145,15 +2225,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="OverWorldActions" />
         private void UnregisterCallbacks(IOverWorldActions instance)
         {
-            @MoveCamera.started -= instance.OnMoveCamera;
-            @MoveCamera.performed -= instance.OnMoveCamera;
-            @MoveCamera.canceled -= instance.OnMoveCamera;
+            @MoveShip.started -= instance.OnMoveShip;
+            @MoveShip.performed -= instance.OnMoveShip;
+            @MoveShip.canceled -= instance.OnMoveShip;
             @Height.started -= instance.OnHeight;
             @Height.performed -= instance.OnHeight;
             @Height.canceled -= instance.OnHeight;
-            @RotateCamera.started -= instance.OnRotateCamera;
-            @RotateCamera.performed -= instance.OnRotateCamera;
-            @RotateCamera.canceled -= instance.OnRotateCamera;
+            @TurnShip.started -= instance.OnTurnShip;
+            @TurnShip.performed -= instance.OnTurnShip;
+            @TurnShip.canceled -= instance.OnTurnShip;
             @MoveSelection.started -= instance.OnMoveSelection;
             @MoveSelection.performed -= instance.OnMoveSelection;
             @MoveSelection.canceled -= instance.OnMoveSelection;
@@ -2166,6 +2246,12 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @SceneSwitch.started -= instance.OnSceneSwitch;
             @SceneSwitch.performed -= instance.OnSceneSwitch;
             @SceneSwitch.canceled -= instance.OnSceneSwitch;
+            @RotateCamera.started -= instance.OnRotateCamera;
+            @RotateCamera.performed -= instance.OnRotateCamera;
+            @RotateCamera.canceled -= instance.OnRotateCamera;
+            @Spawn.started -= instance.OnSpawn;
+            @Spawn.performed -= instance.OnSpawn;
+            @Spawn.canceled -= instance.OnSpawn;
         }
 
         /// <summary>
@@ -2382,12 +2468,12 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     public interface IOverWorldActions
     {
         /// <summary>
-        /// Method invoked when associated input action "MoveCamera" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "MoveShip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnMoveCamera(InputAction.CallbackContext context);
+        void OnMoveShip(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Height" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -2396,12 +2482,12 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnHeight(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "RotateCamera" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "TurnShip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRotateCamera(InputAction.CallbackContext context);
+        void OnTurnShip(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "MoveSelection" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -2430,6 +2516,20 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSceneSwitch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RotateCamera" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRotateCamera(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Spawn" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSpawn(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Menu" which allows adding and removing callbacks.

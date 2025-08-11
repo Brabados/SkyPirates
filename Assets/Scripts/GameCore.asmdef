@@ -8,7 +8,8 @@
     "Unity.Physics",
     "Unity.Transforms",
     "Unity.Entities.Hybrid",
-    "Unity.Burst"
+    "Unity.Burst",
+    "Unity.Scenes"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
