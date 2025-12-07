@@ -8,16 +8,20 @@ SkyPirates is a Unity project for a tactical, hex-grid based game where you buil
 - Allow editing and management of characters and ships between battles.
 
 ## Getting Started
-1. Install **Unity 2020.3.14f1**. The project was created with this LTS version and should be opened with the same editor version for best compatibility.
+1. Install **Unity 2022.3.62f1**. The project was created with this LTS version and should be opened with the same editor version for best compatibility.
 2. Clone or download this repository.
-3. Open the project folder in the Unity Hub and launch it with `2020.3.14f1`.
+3. Open the project folder in the Unity Hub and launch it with `2022.3.62f1`.
 
 ### Dependencies
 The project relies on Unity packages listed in `Packages/manifest.json`. Notable dependencies include:
 - `com.unity.inputsystem` for handling player input.
 - `com.unity.textmeshpro` for UI text.
+- `com.unity.entities` for ECS text.
+- `com.unity.burst' for Unity's DOTS and burst compiling
 - `com.unity.nuget.newtonsoft-json` (Newtonsoft JSON) for save/load serialization.
+- `com.unity.splines' for quick and simple slines
 Unity will automatically install these packages when the project is opened.
+ 
 
 ## Running the Game
 After opening the project in the Unity editor, load one of the available scenes from the **Assets/Scenes** folder:
