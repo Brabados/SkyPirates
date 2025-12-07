@@ -1,6 +1,6 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using UnityEngine;
 
 
@@ -39,7 +39,7 @@ public class PathfindingTests
     public void FindPath_ReturnsExpectedCoordinates()
     {
         // Arrange: build a 3x3 board with a couple of impassable tiles
-        int[,] costs = new int[3,3];
+        int[,] costs = new int[3, 3];
         for (int x = 0; x < 3; x++)
             for (int y = 0; y < 3; y++)
                 costs[x, y] = 1;

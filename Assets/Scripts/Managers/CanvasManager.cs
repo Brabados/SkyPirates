@@ -43,7 +43,7 @@ public class CanvasManager : MonoBehaviour
 
         foreach (Canvas a in LayeredMenus)
         {
-            a.gameObject.SetActive(false);       
+            a.gameObject.SetActive(false);
         }
 
         EventManager.OnHideCanvas += CloseMenu;
@@ -99,7 +99,7 @@ public class CanvasManager : MonoBehaviour
 
 
     // Moves the camera between positions.
-   
+
     private IEnumerator CameraMove(Vector3 start, Vector3 end)
     {
         float time = 0;

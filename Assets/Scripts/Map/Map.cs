@@ -1,15 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using Newtonsoft.Json;
 
 public class Map : MonoBehaviour
 {
     [SerializeField]
     public Vector2Int MapSize;
 
-    public float innerSize , outerSize, height;
+    public float innerSize, outerSize, height;
     public bool isFlatTopped;
 
     [SerializeField]
@@ -23,11 +20,17 @@ public class Map : MonoBehaviour
 
     private MovementLine Arrow;
 
-    //Generation types implemented working on merging two ships 
+
     public void Start()
     {
         generate = GetComponent<IGenerate>();
         Arrow = GetComponent<MovementLine>();
+
+        if (generate == null)
+        {
+            generate = MakeGenerator(PawnManager.PawnManagerInstance.MapGeneration, PawnManager.PawnManagerInstance.MapFiles);
+        }
+
         if (generate != null)
         {
             PlayArea = generate.Generate(this);
@@ -40,16 +43,16 @@ public class Map : MonoBehaviour
         {
             Arrow.SetMap(PlayArea);
         }
-        
+
 
 
         if (!typeof(GenerateMerge).IsInstanceOfType(generate) && generate != null)
         {
-            foreach(PlayerPawns x in PawnManager.PawnManagerInstance.PlayerPawns)
+            foreach (PlayerPawns x in PawnManager.PawnManagerInstance.PlayerPawns)
             {
-                x.gameObject.SetActive(false);
+                // x.gameObject.SetActive(false);
             }
-            return;
+            // return;
         }
         int count = 0;
         if (PlayerList.ListInstance != null)
@@ -88,25 +91,25 @@ public class Map : MonoBehaviour
 
     public Vector3 GetHexPositionFromCoordinate(Vector2Int coordinates)
     {
-        
+
         int q = coordinates.x;
         int r = coordinates.y;
         float size = outerSize;
 
-        
+
         float spacing = 0.90f;
         float xPosition;
         float zPosition;
 
         if (isFlatTopped)
         {
-            
+
             xPosition = size * 1.5f * q;
             zPosition = size * Mathf.Sqrt(3f) * (r + q / 2f);
         }
         else
         {
-           
+
             xPosition = size * Mathf.Sqrt(3f) * (q + r / 2f);
             zPosition = size * 1.5f * r;
         }
@@ -114,7 +117,7 @@ public class Map : MonoBehaviour
         xPosition *= spacing;
         zPosition *= spacing;
 
-       
+
         return new Vector3(xPosition, 0f, -zPosition);
     }
 
@@ -206,8 +209,6 @@ public class Map : MonoBehaviour
         }
     }
 
-
-
     public void setSingleNeighbour(int x, int y)
     {
         Tile tile = PlayArea.get_Tile(x, y);
@@ -217,4 +218,41 @@ public class Map : MonoBehaviour
             tile.SetNeighbour(a);
         }
     }
+
+    public IGenerate MakeGenerator(GenType gen, string[] files)
+    {
+        IGenerate ToReturn = null;
+        switch (gen)
+        {
+            case GenType.Random:
+                ToReturn = gameObject.AddComponent<RandomGeneration>();
+                break;
+            case GenType.FromFile:
+                ToReturn = gameObject.AddComponent<GenerateFromFile>();
+                (ToReturn as GenerateFromFile).FileName = files[0];
+                break;
+            case GenType.Merge:
+                ToReturn = gameObject.AddComponent<GenerateMerge>();
+                (ToReturn as GenerateMerge).Ship1Local = files[0];
+                (ToReturn as GenerateMerge).Ship2Local = files[1];
+                (ToReturn as GenerateMerge).Side = (ShipSide)Random.Range(0, 3);
+                (ToReturn as GenerateMerge).Rot = (BoardRotator.Rotation)Random.Range(0, 5);
+                break;
+            case GenType.Empty:
+                ToReturn = gameObject.AddComponent<GenerateEmptyAir>();
+                break;
+        }
+
+        return ToReturn;
+
+    }
+}
+
+public enum GenType
+{
+    Random,
+    FromFile,
+    Merge,
+    Empty
+
 }

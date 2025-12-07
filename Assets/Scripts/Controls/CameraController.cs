@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
@@ -35,7 +34,7 @@ public class CameraController : MonoBehaviour
     {
         Forward = transform.forward;
         Right = new Vector3(Forward.z, 0, -Forward.x);
-        movementSpeed = (newZoom.y >= (maximumZoom - minimumZoom) /2 ) ? movementSpeedFast : movementSpeedNormal;
+        movementSpeed = (newZoom.y >= (maximumZoom - minimumZoom) / 2) ? movementSpeedFast : movementSpeedNormal;
     }
 
     //Sets position based on input, this allows for diagonal movemnt

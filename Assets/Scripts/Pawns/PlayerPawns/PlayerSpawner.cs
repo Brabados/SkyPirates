@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ public class PlayerSpawner : MonoBehaviour
             GameObject Holder = Instantiate(n);
             PlayerPawns ToAdd = Holder.GetComponentInChildren<PlayerPawns>();
             Holder.SetActive(true);
-            Players.Add(ToAdd);            
+            Players.Add(ToAdd);
         }
         PawnManager.PawnManagerInstance.populatePlayer(Players);
     }

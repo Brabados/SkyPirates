@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
 
 public class TurnToken : IComparable
 {
@@ -52,7 +50,7 @@ public class TurnToken : IComparable
 
     public int CompareTo(object obj)
     {
-       if(obj == null)
+        if (obj == null)
         {
             return 1;
         }
@@ -62,7 +60,7 @@ public class TurnToken : IComparable
         {
             return -1;
         }
-        else if(this.TurnCounter < ToCompare.TurnCounter)
+        else if (this.TurnCounter < ToCompare.TurnCounter)
         {
             return 1;
         }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,9 +39,9 @@ public class TurnManager : MonoBehaviour
 
         TurnOrder.Sort();
 
-        foreach(TurnToken a in TurnOrder)
+        foreach (TurnToken a in TurnOrder)
         {
-            if(a.TurnCounter >=  TurnTime)
+            if (a.TurnCounter >= TurnTime)
             {
                 a.TurnCounter = 0;
                 currentTurn = a;

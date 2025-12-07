@@ -34,7 +34,7 @@ public class MovementLine : MonoBehaviour
         {
             foreach (Vector3Int a in Points)
             {
-                Tpoint = _Playarea.SearchTileByCubeCoordinates(a.x,a.y,a.z);
+                Tpoint = _Playarea.SearchTileByCubeCoordinates(a.x, a.y, a.z);
                 if (Tpoint != null)
                 {
                     Wpoint.Add(Tpoint.gameObject.transform);

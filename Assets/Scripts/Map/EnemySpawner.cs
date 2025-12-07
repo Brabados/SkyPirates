@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,17 +6,23 @@ public class EnemySpawner : MonoBehaviour
 
     public EnemyPackSO ToSpawn;
 
+    public void Awake()
+    {
+        ToSpawn = PawnManager.PawnManagerInstance.Enimies;
+    }
+
     // Start is called before the first frame update
     public void Start()
     {
         SpawnEnemies();
+
     }
 
     private void SpawnEnemies()
     {
         List<EnemyPawn> Enemies = new List<EnemyPawn>();
         int count = 0;
-        if(ToSpawn == null)
+        if (ToSpawn == null)
         {
             return;
         }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -29,7 +28,7 @@ public class Inventory : MonoBehaviour
 
     public void Add(Item toAdd)
     {
-        if(!InInventory.Contains(toAdd))
+        if (!InInventory.Contains(toAdd))
         {
             InInventory.Add(toAdd);
         }
@@ -37,7 +36,7 @@ public class Inventory : MonoBehaviour
 
     public void Remove(Item toRemove)
     {
-        if(InInventory.Contains(toRemove))
+        if (InInventory.Contains(toRemove))
         {
             InInventory.Remove(toRemove);
         }

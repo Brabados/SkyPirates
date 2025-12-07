@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BasicEnemyHealth : MonoBehaviour, IHealth
@@ -20,7 +18,7 @@ public class BasicEnemyHealth : MonoBehaviour, IHealth
     public void Heal(int healing)
     {
         CurrentHealth += healing;
-        if(CurrentHealth > TotalHealth)
+        if (CurrentHealth > TotalHealth)
         {
             CurrentHealth = TotalHealth;
         }

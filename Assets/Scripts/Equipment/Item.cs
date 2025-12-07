@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ public class Item : BaseScriptableObject
 
     public override bool Equals(object other)
     {
-        if(!(other is Item) || other == null)
+        if (!(other is Item) || other == null)
         {
             return false;
         }
@@ -24,7 +23,7 @@ public class Item : BaseScriptableObject
             {
                 return true;
             }
-            else 
+            else
             {
                 return false;
             }

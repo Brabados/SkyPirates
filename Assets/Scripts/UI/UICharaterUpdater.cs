@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,9 +18,9 @@ public class UICharaterUpdater : MonoBehaviour
 
     public void UpdateUI(Pawn Selected)
     {
-        UI.gameObject.SetActive (true);
+        UI.gameObject.SetActive(true);
         PlayerPawns Player;
-        if(Selected is PlayerPawns)
+        if (Selected is PlayerPawns)
         {
             Player = (PlayerPawns)Selected;
 

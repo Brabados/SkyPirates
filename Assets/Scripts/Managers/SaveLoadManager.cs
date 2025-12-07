@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
 using Newtonsoft.Json;
-using UnityEngine.UI;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 [System.Serializable]
 public class SerializableTile

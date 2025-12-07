@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// MonoBehaviour wrapper that delegates range calculations to
@@ -111,6 +111,6 @@ public class RangeFinder : MonoBehaviour
     }
     public List<Tile> AreaLineFan(Tile center, int range)
     {
-        return RangeCalculator.AreaLineFan(_GameBoard.PlayArea, center,  range) ;
+        return RangeCalculator.AreaLineFan(_GameBoard.PlayArea, center, range);
     }
 }

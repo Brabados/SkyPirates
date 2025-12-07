@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 public class SceneChange : MonoBehaviour
 {
@@ -29,15 +26,13 @@ public class SceneChange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(inputActions.Battle.SceneSwitch.triggered || inputActions.Menu.SceneSwitch.triggered)
+        if (inputActions.Battle.SceneSwitch.triggered || inputActions.Menu.SceneSwitch.triggered)
         {
             string name = SceneManager.GetActiveScene().name;
-            if(name == "BattleScene")
+            if (name == "BattleScene")
             {
-                inputActions.Battle.Disable();
-                inputActions.Menu.Enable();
-                SceneManager.LoadScene("CharacterScene");
-                
+                SceneLoader.UnloadBattleScene();
+
             }
             if (name == "CharacterScene")
             {

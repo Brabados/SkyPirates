@@ -9,7 +9,10 @@
     "Unity.Transforms",
     "Unity.Entities.Hybrid",
     "Unity.Burst",
-    "Unity.Scenes"
+    "Unity.Scenes",
+    "Unity.Splines",
+    "UnityEngine.Splines",
+    "UnityEngine.Rendering.Universal"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

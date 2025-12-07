@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class LoadBoardFromJsonTests
 {
@@ -56,9 +56,9 @@ public class LoadBoardFromJsonTests
         Assert.IsNotNull(board);
         Assert.AreEqual(2, board._size_X);
         Assert.AreEqual(1, board._size_Y);
-        Assert.AreEqual(typeA, board.get_Tile(0,0).Data);
-        Assert.AreEqual(0f, board.get_Tile(0,0).Height);
-        Assert.AreEqual(typeB, board.get_Tile(1,0).Data);
-        Assert.AreEqual(1f, board.get_Tile(1,0).Height);
+        Assert.AreEqual(typeA, board.get_Tile(0, 0).Data);
+        Assert.AreEqual(0f, board.get_Tile(0, 0).Height);
+        Assert.AreEqual(typeB, board.get_Tile(1, 0).Data);
+        Assert.AreEqual(1f, board.get_Tile(1, 0).Height);
     }
 }

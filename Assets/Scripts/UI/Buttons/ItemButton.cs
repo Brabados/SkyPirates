@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class ItemButton : MonoBehaviour
 {
-    
+
     public ScrollRect ItemDysplay;
     public ItemType SearchItem;
     public Item CurrentEquip;
@@ -16,7 +14,7 @@ public class ItemButton : MonoBehaviour
     {
         if (EventSystem.current.currentSelectedGameObject == this.gameObject)
         {
-           
+
         }
     }
 

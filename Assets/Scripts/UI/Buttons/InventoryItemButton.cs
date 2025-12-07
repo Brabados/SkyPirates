@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryItemButton : MonoBehaviour
@@ -12,7 +10,7 @@ public class InventoryItemButton : MonoBehaviour
         {
             EventManager.TriggerEquipmentChange(Equip.Type, Equip);
         }
-        else if(CanvasManager.CanvasInstance.position == 2)
+        else if (CanvasManager.CanvasInstance.position == 2)
         {
             EventManager.TriggerShowInfo(Equip);
         }

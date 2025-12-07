@@ -23,14 +23,14 @@ public class MergeLayoutTests
     [Test]
     public void Bow_MergesVertically()
     {
-        Vector2Int sizeA = new Vector2Int(2,2);
-        Vector2Int sizeB = new Vector2Int(2,2);
+        Vector2Int sizeA = new Vector2Int(2, 2);
+        Vector2Int sizeB = new Vector2Int(2, 2);
 
         var result = MapMerge.GetMergeLayout(sizeA, sizeB, ShipSide.Bow);
 
         Assert.AreEqual(Vector2Int.zero, result.offsetA);
-        Assert.AreEqual(new Vector2Int(0,2), result.offsetB);
-        Assert.AreEqual(new Vector2Int(2,4), result.merged);
+        Assert.AreEqual(new Vector2Int(0, 2), result.offsetB);
+        Assert.AreEqual(new Vector2Int(2, 4), result.merged);
     }
 
     /*
@@ -48,14 +48,14 @@ public class MergeLayoutTests
     [Test]
     public void Starboard_MergesHorizontally()
     {
-        Vector2Int sizeA = new Vector2Int(2,3);
-        Vector2Int sizeB = new Vector2Int(1,1);
+        Vector2Int sizeA = new Vector2Int(2, 3);
+        Vector2Int sizeB = new Vector2Int(1, 1);
 
         var result = MapMerge.GetMergeLayout(sizeA, sizeB, ShipSide.Starboard);
 
         Assert.AreEqual(Vector2Int.zero, result.offsetA);
-        Assert.AreEqual(new Vector2Int(2,0), result.offsetB);
-        Assert.AreEqual(new Vector2Int(3,3), result.merged);
+        Assert.AreEqual(new Vector2Int(2, 0), result.offsetB);
+        Assert.AreEqual(new Vector2Int(3, 3), result.merged);
     }
 }
 

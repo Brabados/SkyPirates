@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class DefaultSelectState : HexSelectState
@@ -7,8 +5,8 @@ public class DefaultSelectState : HexSelectState
     private HexSelection HexState;
 
     public override void EnterState(HexSelectManager manager)
-    { 
-        if(TurnManager.Instance.currentTurn != null)
+    {
+        if (TurnManager.Instance.currentTurn != null)
         {
             TurnManager.Instance.currentTurn.MovementLeft = TurnManager.Instance.currentTurn.FullMovement;
             TurnManager.Instance.currentTurn.ActionTaken = false;
@@ -16,7 +14,7 @@ public class DefaultSelectState : HexSelectState
         HexState = manager.GetComponent<HexSelection>();
         manager.Responce = HexState;
         manager.Highlight = manager.GetComponent<HexHighlight>();
-        if(CanvasManager.CanvasInstance != null)
+        if (CanvasManager.CanvasInstance != null)
         {
             EventManager.TriggerHideCanvas(((int)Menues.PawnInfo));
         }
@@ -40,7 +38,7 @@ public class DefaultSelectState : HexSelectState
             manager.Highlight.SetHighlight(st.gameObject);
             manager.Select();
         }
-        else if(st is EnemyPawn)
+        else if (st is EnemyPawn)
         {
             manager.SwitchToEnemyTurnState();
         }

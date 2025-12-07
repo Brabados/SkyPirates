@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -69,7 +68,7 @@ public class MovementHighlight : MonoBehaviour, IHighlightResponce
 
     public PathfinderSelections UpdateSelection()
     {
-        
+
         PathfinderSelections.AddPath(CurrentPath);
         return PathfinderSelections;
     }

@@ -944,7 +944,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""name"": ""RotateCamera"",
                     ""type"": ""Value"",
                     ""id"": ""6e82d880-57b6-4fa5-a7a3-2144bc45126f"",
-                    ""expectedControlType"": ""Axis"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true

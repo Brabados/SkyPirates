@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,7 +56,7 @@ public class HexRenderer : MonoBehaviour
     {
         H_Faces = new List<Face>();
 
-        for(int point = 0; point < 6; point++)
+        for (int point = 0; point < 6; point++)
         {
             H_Faces.Add(CreateFace(innerSize, outerSize, height / 2f, height / 2f, point));
         }
@@ -86,14 +85,14 @@ public class HexRenderer : MonoBehaviour
         List<int> tris = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
 
-        for(int x = 0; x < H_Faces.Count; x++)
+        for (int x = 0; x < H_Faces.Count; x++)
         {
             verticies.AddRange(H_Faces[x].Verts);
             uvs.AddRange(H_Faces[x].Uvs);
 
             int offset = (4 * x);
 
-            foreach(int triangle in H_Faces[x].Tris)
+            foreach (int triangle in H_Faces[x].Tris)
             {
                 tris.Add(triangle + offset);
             }
@@ -103,7 +102,7 @@ public class HexRenderer : MonoBehaviour
         H_Mesh.triangles = tris.ToArray();
         H_Mesh.uv = uvs.ToArray();
         H_Mesh.RecalculateNormals();
-        
+
     }
 
     //builds the faces of the hex
@@ -111,24 +110,24 @@ public class HexRenderer : MonoBehaviour
     {
         Vector3 pointA = GetPoint(innerRad, heightB, point);
         Vector3 pointB = GetPoint(innerRad, heightB, (point < 5) ? point + 1 : 0);
-        Vector3 pointC = GetPoint(outerRad, heightA, (point< 5) ? point + 1 : 0);
+        Vector3 pointC = GetPoint(outerRad, heightA, (point < 5) ? point + 1 : 0);
         Vector3 pointD = GetPoint(outerRad, heightA, point);
 
         List<Vector3> verticies = new List<Vector3>() { pointA, pointB, pointC, pointD };
         List<int> triangles = new List<int>() { 0, 1, 2, 2, 3, 0 };
         List<Vector2> uvs = new List<Vector2>() { new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1) };
 
-        if(reverse)
+        if (reverse)
         {
             verticies.Reverse();
         }
-        return new Face(verticies,triangles,uvs);
+        return new Face(verticies, triangles, uvs);
     }
-    
+
     //Returns a verticy based on input
     protected Vector3 GetPoint(float size, float height, int index)
     {
-        float angle_deg = isFlatTopped ? 60 * index: 60 * index - 30;
+        float angle_deg = isFlatTopped ? 60 * index : 60 * index - 30;
         float angle_rad = Mathf.PI / 180f * angle_deg;
         return new Vector3((size * Mathf.Cos(angle_rad)), height, size * Mathf.Sin(angle_rad));
     }

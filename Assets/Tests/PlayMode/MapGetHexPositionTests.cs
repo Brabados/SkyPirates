@@ -1,8 +1,7 @@
 using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.TestTools.Utils;
-using System.Collections;
-using System.Collections.Generic;
 
 public class MapGetHexPositionTests
 {
@@ -10,7 +9,7 @@ public class MapGetHexPositionTests
     {
         var go = new GameObject("Map");
         var map = go.AddComponent<Map>();
-        map.MapSize = new Vector2Int(1,1);
+        map.MapSize = new Vector2Int(1, 1);
         map.innerSize = innerSize;
         map.outerSize = outerSize;
         map.isFlatTopped = isFlatTopped;
@@ -74,12 +73,12 @@ public class MapGetHexPositionTests
     public void FlatTopped_GetHexPosition_ReturnsExpectedValues()
     {
         // Arrange: create a map using axial coordinates with known sizes
-        var map = CreateMap(innerSize:0.5f, outerSize:1f, isFlatTopped:true);
+        var map = CreateMap(innerSize: 0.5f, outerSize: 1f, isFlatTopped: true);
 
         // Manual calculation for q=0,r=0 when flat topped:
         // x = 1.5*q*size*0.9 = 0
         // z = sqrt(3)*(r + q/2)*size*0.9 = 0
-        Assert.That(map.GetHexPositionFromCoordinate(new Vector2Int(0,0)),
+        Assert.That(map.GetHexPositionFromCoordinate(new Vector2Int(0, 0)),
             Is.EqualTo(Vector3.zero).Using(Vector3ComparerWithEqualsOperator.Instance));
 
         // Small table of expected positions (size=1, gap=0.9):
@@ -89,11 +88,11 @@ public class MapGetHexPositionTests
         // | 0 | 1 | (0.000,-1.559)|
 
         Vector3 expected1 = new Vector3(1.35f, 0f, -0.77942286f);
-        Vector3 actual1 = map.GetHexPositionFromCoordinate(new Vector2Int(1,0));
+        Vector3 actual1 = map.GetHexPositionFromCoordinate(new Vector2Int(1, 0));
         Assert.That(actual1, Is.EqualTo(expected1).Using(Vector3ComparerWithEqualsOperator.Instance));
 
         Vector3 expected2 = new Vector3(0f, 0f, -1.5588458f);
-        Vector3 actual2 = map.GetHexPositionFromCoordinate(new Vector2Int(0,1));
+        Vector3 actual2 = map.GetHexPositionFromCoordinate(new Vector2Int(0, 1));
         Assert.That(actual2, Is.EqualTo(expected2).Using(Vector3ComparerWithEqualsOperator.Instance));
     }
 
@@ -102,11 +101,11 @@ public class MapGetHexPositionTests
     [Test]
     public void FlatTopped_NegativeCoordinates_AreCalculatedCorrectly()
     {
-        var map = CreateMap(innerSize:0.5f, outerSize:1f, isFlatTopped:true);
+        var map = CreateMap(innerSize: 0.5f, outerSize: 1f, isFlatTopped: true);
 
         // q=-1, r=0 -> x=1.5*-1*size*0.9=-1.35, z=sqrt(3)*(-0.5)*size*0.9=0.779
         Vector3 expected = new Vector3(-1.35f, 0f, 0.77942286f);
-        Vector3 actual = map.GetHexPositionFromCoordinate(new Vector2Int(-1,0));
+        Vector3 actual = map.GetHexPositionFromCoordinate(new Vector2Int(-1, 0));
         Assert.That(actual, Is.EqualTo(expected).Using(Vector3ComparerWithEqualsOperator.Instance));
     }
 
@@ -115,11 +114,11 @@ public class MapGetHexPositionTests
     [Test]
     public void PointyTopped_GetHexPosition_ReturnsExpectedValues()
     {
-        var map = CreateMap(innerSize:0.5f, outerSize:1f, isFlatTopped:false);
+        var map = CreateMap(innerSize: 0.5f, outerSize: 1f, isFlatTopped: false);
 
         // For pointy topped offset=0
         // q=0,r=0 -> (0,0,0)
-        Assert.That(map.GetHexPositionFromCoordinate(new Vector2Int(0,0)),
+        Assert.That(map.GetHexPositionFromCoordinate(new Vector2Int(0, 0)),
             Is.EqualTo(Vector3.zero).Using(Vector3ComparerWithEqualsOperator.Instance));
 
         // Small table of expected positions (size=1, gap=0.9):
@@ -127,12 +126,12 @@ public class MapGetHexPositionTests
         // | 1 | 0 | (1.559, 0.000)|
         // | 1 | 1 | (2.338,-1.350)|
 
-        Vector3 expected1 = new Vector3(1.5588458f,0f,0f);
-        Vector3 actual1 = map.GetHexPositionFromCoordinate(new Vector2Int(1,0));
+        Vector3 expected1 = new Vector3(1.5588458f, 0f, 0f);
+        Vector3 actual1 = map.GetHexPositionFromCoordinate(new Vector2Int(1, 0));
         Assert.That(actual1, Is.EqualTo(expected1).Using(Vector3ComparerWithEqualsOperator.Instance));
 
-        Vector3 expected2 = new Vector3(2.3382686f,0f,-1.35f);
-        Vector3 actual2 = map.GetHexPositionFromCoordinate(new Vector2Int(1,1));
+        Vector3 expected2 = new Vector3(2.3382686f, 0f, -1.35f);
+        Vector3 actual2 = map.GetHexPositionFromCoordinate(new Vector2Int(1, 1));
         Assert.That(actual2, Is.EqualTo(expected2).Using(Vector3ComparerWithEqualsOperator.Instance));
 
     }
@@ -141,7 +140,7 @@ public class MapGetHexPositionTests
     [Test]
     public void FlatTopped_Origin_IsAtZero()
     {
-        var map = CreateMap(innerSize:0.5f, outerSize:1f, isFlatTopped:true);
+        var map = CreateMap(innerSize: 0.5f, outerSize: 1f, isFlatTopped: true);
 
         Assert.That(
             map.GetHexPositionFromCoordinate(new Vector2Int(0, 0)),

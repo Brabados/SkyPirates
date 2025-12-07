@@ -3,10 +3,10 @@
 // Run these from Unity's Test Runner (Window > General > Test Runner) under the
 // PlayMode tab. Each test builds a minimal scene at runtime.
 
+using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 

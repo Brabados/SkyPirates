@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +6,9 @@ public class PawnManager : MonoBehaviour
     public static PawnManager PawnManagerInstance { get; private set; }
     public List<PlayerPawns> PlayerPawns;
     public List<EnemyPawn> EnemyPawns;
+    public string[] MapFiles;
+    public GenType MapGeneration;
+    public EnemyPackSO Enimies;
     private bool TurnAssign = false;
 
     public List<EnemyPawn> GetAllEnemies()
@@ -17,9 +19,9 @@ public class PawnManager : MonoBehaviour
     public int getPlayerPawnPosition(GameObject Pawn)
     {
         int count = 0;
-        foreach(PlayerPawns n in PlayerPawns)
+        foreach (PlayerPawns n in PlayerPawns)
         {
-            if(n == Pawn)
+            if (n == Pawn)
             {
                 return count;
             }
@@ -56,32 +58,32 @@ public class PawnManager : MonoBehaviour
 
     public Pawn getPawn(GameObject Pawn)
     {
-        foreach(PlayerPawns n in PlayerPawns)
+        foreach (PlayerPawns n in PlayerPawns)
         {
-            if(n == Pawn)
+            if (n == Pawn)
             {
-              //  return n;
+                //  return n;
             }
         }
-        foreach(EnemyPawn n in EnemyPawns)
+        foreach (EnemyPawn n in EnemyPawns)
         {
-            if(n == Pawn)
+            if (n == Pawn)
             {
                 return n;
-            }    
+            }
         }
 
         return null;
-    }    
+    }
 
     public int GetNextPlayerPawnByObject(GameObject Index)
     {
         int count = 0;
-        foreach(PlayerPawns n in PlayerPawns)
+        foreach (PlayerPawns n in PlayerPawns)
         {
             if (n == Index)
             {
-                if(count == PlayerPawns.Count)
+                if (count == PlayerPawns.Count)
                 {
                     return 0;
                 }
@@ -105,17 +107,20 @@ public class PawnManager : MonoBehaviour
         else
         {
             PawnManagerInstance = this;
+            Object.DontDestroyOnLoad(this.gameObject);
         }
         EnemyPawns = new List<EnemyPawn>();
+
     }
 
     public void populateEnemey(List<EnemyPawn> Enemy)
     {
-        foreach(EnemyPawn n in Enemy)
+        EnemyPawns.Clear();
+        foreach (EnemyPawn n in Enemy)
         {
             EnemyPawns.Add(n);
         }
-        if(TurnAssign)
+        if (TurnAssign)
         {
             TurnManager.Instance.SetTurns();
         }
@@ -124,7 +129,8 @@ public class PawnManager : MonoBehaviour
 
     public void populatePlayer(List<PlayerPawns> Player)
     {
-        foreach(PlayerPawns n in Player)
+        PlayerPawns.Clear();
+        foreach (PlayerPawns n in Player)
         {
             PlayerPawns.Add(n);
         }

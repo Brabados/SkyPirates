@@ -13,8 +13,8 @@
  * The tests below rotate this sample coordinate and verify each result.
  */
 
-using System.Collections.Generic;
 using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BoardRotatorTests

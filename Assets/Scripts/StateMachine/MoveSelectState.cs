@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -76,7 +75,7 @@ public class MoveSelectState : HexSelectState
         {
             foreach (Tile tile in movementRange)
             {
-                
+
                 tile.Hex.meshupdate(tile.BaseMaterial);
             }
         }

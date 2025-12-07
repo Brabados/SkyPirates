@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,7 +43,7 @@ public class ActionSelectState : HexSelectState
         //otherwise should remain blank/allow button selection rollover from bottom and top both 
         //are options as unity handles button selection for key board. May have to configure for gamepads.
 
-        if(TurnManager.Instance.currentTurn.ActionTaken && TurnManager.Instance.currentTurn.MovementLeft == 0)
+        if (TurnManager.Instance.currentTurn.ActionTaken && TurnManager.Instance.currentTurn.MovementLeft == 0)
         {
             menuSelect.Deselect();
         }

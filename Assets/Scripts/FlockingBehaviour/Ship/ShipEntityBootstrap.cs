@@ -1,8 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
 using Unity.Physics;
-using Unity.Collections;
+using Unity.Transforms;
 using UnityEngine;
 
 public class ShipEntityBootstrap : MonoBehaviour

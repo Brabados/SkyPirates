@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EventManager : MonoBehaviour
 {
@@ -60,8 +61,6 @@ public class EventManager : MonoBehaviour
     public static void TriggerHideCanvas(int index) => OnHideCanvas?.Invoke(index);
     public static void TriggerShowCanvas(int index) => OnShowCanvas?.Invoke(index);
 
-
-
     private void Awake()
     {
         if (EventInstance != null && EventInstance != this)
@@ -73,5 +72,11 @@ public class EventManager : MonoBehaviour
 
         inputActions = new BasicControls();
         inputActions.Battle.Enable();
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneUnloaded += s => Debug.Log("Unloaded: " + s.name);
+        SceneManager.sceneLoaded += (s, m) => Debug.Log("Loaded: " + s.name);
     }
 }

@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CharaterChange : MonoBehaviour
 {
@@ -66,7 +65,7 @@ public class CharaterChange : MonoBehaviour
 
                 if (itemButton != null)
                 {
-                    itemButton.CurrentEquip = item;                  
+                    itemButton.CurrentEquip = item;
                 }
                 else
                 {

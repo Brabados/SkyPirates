@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using UnityEngine;
 using System.Reflection;
+using UnityEngine;
 
 public class AbilitySelectStateTests
 {

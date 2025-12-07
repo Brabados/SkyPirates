@@ -3,21 +3,25 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using Unity.Physics;
 using UnityEngine;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 [UpdateAfter(typeof(OptimizedSpatialHashSystem))]
-[UpdateAfter(typeof(AssignBoidUpdateGroupsSystem))] // Ensure this runs after group assignment
+[UpdateAfter(typeof(AssignBoidUpdateGroupsSystem))]
 public partial struct OptimizedFlockingBehaviorSystem : ISystem
 {
     private double _lastShipUpdateTime;
     private int _currentUpdateGroup;
     private ComponentLookup<BoidUpdateGroup> _boidGroupLookup;
 
+    private EntityQuery _flockCenterQuery;
+
     public void OnCreate(ref SystemState state)
     {
         _boidGroupLookup = state.GetComponentLookup<BoidUpdateGroup>(isReadOnly: true);
+
+        // Query to enumerate all flock centers when building the hashmap
+        _flockCenterQuery = state.GetEntityQuery(ComponentType.ReadOnly<FlockCenterData>());
     }
 
     public void OnUpdate(ref SystemState state)
@@ -32,8 +36,8 @@ public partial struct OptimizedFlockingBehaviorSystem : ISystem
 
         if (spatialHashRef.GetLastBoidCount() == 0) return;
 
+        // Ship avoidance caching (same behavior as before)
         var shipData = new ShipData { HasShip = false };
-
         if (currentTime - _lastShipUpdateTime > 0.2)
         {
             foreach (var (transform, tag) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<ShipProxyTag>>())
@@ -60,10 +64,23 @@ public partial struct OptimizedFlockingBehaviorSystem : ISystem
             shipData = SystemAPI.GetSingleton<CachedShipData>().Data;
         }
 
+        // Build a NativeParallelHashMap<int, float3> of flock centers for O(1) lookup in the job
+        int centerCount = _flockCenterQuery.CalculateEntityCount();
+        var flockCenters = new NativeParallelHashMap<int, float3>(math.max(1, centerCount), Allocator.TempJob);
+
+        if (centerCount > 0)
+        {
+            foreach (var fc in SystemAPI.Query<RefRO<FlockCenterData>>())
+            {
+                // If duplicate FlockID exists, TryAdd will fail; override behavior is not expected but can be adjusted
+                flockCenters.TryAdd(fc.ValueRO.FlockID, fc.ValueRO.Position);
+            }
+        }
+
         _currentUpdateGroup = frameCount % 4;
 
         var boidQuery = SystemAPI.QueryBuilder()
-            .WithAll<BoidTag, LocalTransform, Velocity, BoidSettings, BoundarySettings>()
+            .WithAll<BoidTag, LocalTransform, Velocity, BoidSettings, BoundarySettings, BoidFlockID>()
             .Build();
 
         // Update the ComponentLookup right before scheduling the job
@@ -76,16 +93,20 @@ public partial struct OptimizedFlockingBehaviorSystem : ISystem
             ShipData = shipData,
             FrameCount = frameCount,
             CurrentUpdateGroup = _currentUpdateGroup,
-            BoidUpdateGroupHandle = _boidGroupLookup
+            BoidUpdateGroupHandle = _boidGroupLookup,
+            FlockCenters = flockCenters
         };
 
+        // Schedule the job and then dispose the hashmap via dependency chaining (safe)
         state.Dependency = flockingJob.ScheduleParallel(boidQuery, state.Dependency);
+        state.Dependency = flockCenters.Dispose(state.Dependency);
     }
 }
 
 public struct BoidUpdateGroup : IComponentData { public int Group; }
 public struct CachedShipData : IComponentData { public ShipData Data; }
 public struct ShipData { public bool HasShip; public float3 Position; public float Radius; }
+
 
 [BurstCompile]
 public partial struct UltraOptimizedFlockingJob : IJobEntity
@@ -97,11 +118,13 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
     [ReadOnly] public int CurrentUpdateGroup;
     [ReadOnly] public ComponentLookup<BoidUpdateGroup> BoidUpdateGroupHandle;
 
+    // NEW: O(1) flock center lookup
+    [ReadOnly] public NativeParallelHashMap<int, float3> FlockCenters;
+
     void Execute(Entity entity, [EntityIndexInQuery] int index,
         ref LocalTransform transform, ref Velocity velocity,
-        in BoidSettings settings, in BoundarySettings boundarySettings)
+        in BoidSettings settings, in BoundarySettings boundarySettings, in BoidFlockID flockId)
     {
-        // Use a fallback mechanism in case ComponentLookup fails
         int group;
         if (BoidUpdateGroupHandle.HasComponent(entity))
         {
@@ -109,7 +132,6 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
         }
         else
         {
-            // Fallback to index-based grouping if ComponentLookup is not available
             group = index % 4;
         }
 
@@ -117,6 +139,13 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
 
         float3 pos = transform.Position;
         if (math.any(math.isnan(pos))) return;
+
+        // Default to static boundary center if no flock center exists for this boid's flock
+        float3 targetCenter = boundarySettings.Center;
+        if (FlockCenters.TryGetValue(flockId.FlockID, out var mappedCenter))
+        {
+            targetCenter = mappedCenter;
+        }
 
         float3 zero = float3.zero;
         float3 up = new float3(0, 1, 0);
@@ -173,7 +202,7 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
             }
         }
 
-        boundaryForce = CalculateBoundaryForce(pos, boundarySettings);
+        boundaryForce = CalculateBoundaryForce(pos, targetCenter, boundarySettings);
         float3 totalForce = avoiding
             ? obstacle * 5f + steer * 0.3f + boundaryForce * 0.5f
             : steer + boundaryForce;
@@ -214,7 +243,6 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
         float radiusSq = radius * radius;
         int count = 0;
 
-        // how many cells to search in each axis
         int radiusInCells = (int)math.ceil(radius / cellSize);
         radiusInCells = math.max(1, radiusInCells);
 
@@ -236,13 +264,12 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
                 }
 
         return count;
-
     }
 
     [BurstCompile]
-    private float3 CalculateBoundaryForce(float3 pos, BoundarySettings boundary)
+    private float3 CalculateBoundaryForce(float3 pos, float3 center, BoundarySettings boundary)
     {
-        float3 diff = boundary.Center - pos;
+        float3 diff = center - pos;
         float distSq = math.lengthsq(diff);
         float innerRadiusSq = boundary.Radius * boundary.Radius * 0.49f;
 
@@ -256,6 +283,7 @@ public partial struct UltraOptimizedFlockingJob : IJobEntity
         return float3.zero;
     }
 }
+
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct AssignBoidUpdateGroupsSystem : ISystem
@@ -283,7 +311,6 @@ public partial struct AssignBoidUpdateGroupsSystem : ISystem
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
 
-        // Only disable if no more entities need group assignment
         var ungroupedQuery = SystemAPI.QueryBuilder().WithAll<BoidTag>().WithNone<BoidUpdateGroup>().Build();
         if (ungroupedQuery.IsEmpty)
         {

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,7 +36,7 @@ public class BasicMovement : MonoBehaviour, IAIHeatMap
             if (minDistToAlly <= 3)
             {
                 // Best score at distance 3, worst (but still positive) at distance 1
-                score += minDistToAlly; 
+                score += minDistToAlly;
             }
             else
             {

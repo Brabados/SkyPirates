@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,7 +38,7 @@ public class Tile : MonoBehaviour
     {
         Hex.DrawMesh();
         Hex.GetColliderMesh();
-        SetColliderMesh();      
+        SetColliderMesh();
     }
 
     public void SetColliderMesh()
@@ -76,9 +75,9 @@ public class Tile : MonoBehaviour
     {
         SetPosition(coords);
         SetQUSPosition(q, r);
-        SetHeight(height);      
+        SetHeight(height);
         transform.position = new Vector3(transform.position.x, Height / 2f, transform.position.z);
-        
+
     }
 
     public void SetPawnPos()
@@ -165,7 +164,7 @@ public class Tile : MonoBehaviour
         Hex.meshupdate(Data.BaseMat);
     }
 
-    public void SetNeighbour( Tile neighbour)
+    public void SetNeighbour(Tile neighbour)
     {
         if (!Neighbours.Contains(neighbour))
         {

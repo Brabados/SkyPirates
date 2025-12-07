@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -132,7 +130,7 @@ public class Foid : MonoBehaviour
     private Vector3 CalculateCohesion()
     {
         Vector3 CohesionVector = Vector3.zero;
-        if(CohesionNeighbours.Count == 0)
+        if (CohesionNeighbours.Count == 0)
         {
             return CohesionVector;
         }

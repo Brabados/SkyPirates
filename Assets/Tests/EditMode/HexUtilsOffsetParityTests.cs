@@ -38,47 +38,47 @@ public class HexUtilsOffsetParityTests
     public void OffsetToCube_FlatTopped_EvenQ()
     {
         // even-q shifts column 1 downward
-        Assert.AreEqual(new Vector3Int(0,0,0),
-            HexUtils.OffsetToCube(new Vector2Int(0,0), true, false));
-        Assert.AreEqual(new Vector3Int(1,-1,0),
-            HexUtils.OffsetToCube(new Vector2Int(1,0), true, false));
-        Assert.AreEqual(new Vector3Int(1,0,-1),
-            HexUtils.OffsetToCube(new Vector2Int(1,1), true, false));
+        Assert.AreEqual(new Vector3Int(0, 0, 0),
+            HexUtils.OffsetToCube(new Vector2Int(0, 0), true, false));
+        Assert.AreEqual(new Vector3Int(1, -1, 0),
+            HexUtils.OffsetToCube(new Vector2Int(1, 0), true, false));
+        Assert.AreEqual(new Vector3Int(1, 0, -1),
+            HexUtils.OffsetToCube(new Vector2Int(1, 1), true, false));
     }
 
     [Test]
     public void OffsetToCube_FlatTopped_OddQ()
     {
         // odd-q shifts column 1 upward instead
-        Assert.AreEqual(new Vector3Int(0,0,0),
-            HexUtils.OffsetToCube(new Vector2Int(0,0), true, true));
-        Assert.AreEqual(new Vector3Int(1,0,-1),
-            HexUtils.OffsetToCube(new Vector2Int(1,0), true, true));
-        Assert.AreEqual(new Vector3Int(1,1,-2),
-            HexUtils.OffsetToCube(new Vector2Int(1,1), true, true));
+        Assert.AreEqual(new Vector3Int(0, 0, 0),
+            HexUtils.OffsetToCube(new Vector2Int(0, 0), true, true));
+        Assert.AreEqual(new Vector3Int(1, 0, -1),
+            HexUtils.OffsetToCube(new Vector2Int(1, 0), true, true));
+        Assert.AreEqual(new Vector3Int(1, 1, -2),
+            HexUtils.OffsetToCube(new Vector2Int(1, 1), true, true));
     }
 
     [Test]
     public void OffsetToCube_PointyTopped_EvenR()
     {
         // even-r shifts row 1 to the right
-        Assert.AreEqual(new Vector3Int(0,0,0),
-            HexUtils.OffsetToCube(new Vector2Int(0,0), false, false));
-        Assert.AreEqual(new Vector3Int(-1,1,0),
-            HexUtils.OffsetToCube(new Vector2Int(0,1), false, false));
-        Assert.AreEqual(new Vector3Int(0,1,-1),
-            HexUtils.OffsetToCube(new Vector2Int(1,1), false, false));
+        Assert.AreEqual(new Vector3Int(0, 0, 0),
+            HexUtils.OffsetToCube(new Vector2Int(0, 0), false, false));
+        Assert.AreEqual(new Vector3Int(-1, 1, 0),
+            HexUtils.OffsetToCube(new Vector2Int(0, 1), false, false));
+        Assert.AreEqual(new Vector3Int(0, 1, -1),
+            HexUtils.OffsetToCube(new Vector2Int(1, 1), false, false));
     }
 
     [Test]
     public void OffsetToCube_PointyTopped_OddR()
     {
         // odd-r shifts row 1 to the left instead
-        Assert.AreEqual(new Vector3Int(0,0,0),
-            HexUtils.OffsetToCube(new Vector2Int(0,0), false, true));
-        Assert.AreEqual(new Vector3Int(0,1,-1),
-            HexUtils.OffsetToCube(new Vector2Int(0,1), false, true));
-        Assert.AreEqual(new Vector3Int(1,1,-2),
-            HexUtils.OffsetToCube(new Vector2Int(1,1), false, true));
+        Assert.AreEqual(new Vector3Int(0, 0, 0),
+            HexUtils.OffsetToCube(new Vector2Int(0, 0), false, true));
+        Assert.AreEqual(new Vector3Int(0, 1, -1),
+            HexUtils.OffsetToCube(new Vector2Int(0, 1), false, true));
+        Assert.AreEqual(new Vector3Int(1, 1, -2),
+            HexUtils.OffsetToCube(new Vector2Int(1, 1), false, true));
     }
 }

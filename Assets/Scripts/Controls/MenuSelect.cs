@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum Menues
@@ -77,7 +75,7 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
         }
         else if (selection != null)
         {
-            
+
             if (SelectedTile != null)
             {
                 SelectedTile.Hex.meshupdate(SelectedTile.BaseMaterial);
@@ -95,10 +93,10 @@ public class MenuSelect : MonoBehaviour, ISelectionResponce
             //commenting out for now to make turn system work
             if (SelectedContents != null && SelectedContents is PlayerPawns)
             {
-               // EventManager.TriggerShowCanvas(((int)Menues.PawnInfo));
+                // EventManager.TriggerShowCanvas(((int)Menues.PawnInfo));
                 //HexSelectManager.Instance.UpdateLastPawnTile(SelectedTile);
-               // EventManager.TriggerPawnSelect(SelectedContents);
-              //  EventManager.TriggerUIUpdate(SelectedContents);
+                // EventManager.TriggerPawnSelect(SelectedContents);
+                //  EventManager.TriggerUIUpdate(SelectedContents);
             }
 
             //another side note logic should be placed here to highlight the movement range of any selected

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,8 +14,8 @@ public class Board
 
 
     //Additive vectors for assigning neighbours 
-    private Vector3Int[] directions = new Vector3Int[6] { new Vector3Int(1, -1, 0), new Vector3Int(1, 0, -1), new Vector3Int(0, 1, -1),new Vector3Int(-1, 1, 0), new Vector3Int(-1, 0, 1), new Vector3Int(0, -1, 1) };
-   
+    private Vector3Int[] directions = new Vector3Int[6] { new Vector3Int(1, -1, 0), new Vector3Int(1, 0, -1), new Vector3Int(0, 1, -1), new Vector3Int(-1, 1, 0), new Vector3Int(-1, 0, 1), new Vector3Int(0, -1, 1) };
+
 
     public Board(Vector2Int coordinates, int qOffset = int.MinValue, int rOffset = int.MinValue)
     {
@@ -130,7 +129,7 @@ public class Board
 
     public void Destroy()
     {
-        foreach(Tile x in _board_Contents)
+        foreach (Tile x in _board_Contents)
         {
             if (x != null)
             {

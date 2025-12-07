@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 public abstract class HexSelectState
 {
     public abstract void EnterState(HexSelectManager manager);

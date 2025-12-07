@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(RangeFinder))]
@@ -166,13 +164,13 @@ public class HexSelectManager : MonoBehaviour
     public void SwitchToAbilityState(ActiveAbility Ability)
     {
         stateStack.Push(currentState);
-        currentState.ExitState(this);   
+        currentState.ExitState(this);
         ((AbilitySelectState)abilitySelectState).Active = Ability;
         currentState = abilitySelectState;
         currentState.EnterState(this);
         Debug.Log("Ability State" + " " + Ability.Name);
     }
-    
+
     public void UpdateMovementRange(List<Tile> area, Tile selection)
     {
         if (((MoveSelect)Responce).Selections.Count > 0)

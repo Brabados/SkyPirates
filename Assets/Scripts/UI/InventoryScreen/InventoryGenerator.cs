@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class InventoryGenerator : MonoBehaviour
@@ -32,7 +31,7 @@ public class InventoryGenerator : MonoBehaviour
 
             // Position buttons at the top of the scroll area
             generatedButton.transform.localPosition = new Vector3(
-                0 - (ScrollSpace.rect.width/2),
+                0 - (ScrollSpace.rect.width / 2),
                 0 - (x * (ScrollSpace.rect.height / 6) + ScrollSpace.rect.height / 6),
                 0);
             Inventorylist.Add(generatedButton);

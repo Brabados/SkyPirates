@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using Unity.Entities;
 
 [RequireComponent(typeof(Rigidbody))]
 public class HelicopterController : MonoBehaviour
@@ -23,6 +21,11 @@ public class HelicopterController : MonoBehaviour
     private float turnInput;
     private float verticalInput;
 
+    [SerializeField]
+    private GameObject FlockSpawner;
+    private DynamicFlockCreator flockCreator;
+    private GameObject CurrentSpawned;
+
     // Reference to your input actions
     private BasicControls inputActions;
 
@@ -38,6 +41,8 @@ public class HelicopterController : MonoBehaviour
 
         // Enable the OverWorld action map
         inputActions.OverWorld.Enable();
+
+        flockCreator = FlockSpawner.GetComponent<DynamicFlockCreator>();
     }
 
     void OnDisable()
@@ -52,7 +57,7 @@ public class HelicopterController : MonoBehaviour
         turnInput = inputActions.OverWorld.TurnShip.ReadValue<float>();
 
         float heightValue = inputActions.OverWorld.Height.ReadValue<float>();
-        if(heightValue > 0)
+        if (heightValue > 0)
         {
             verticalInput = 1;
         }
@@ -65,29 +70,33 @@ public class HelicopterController : MonoBehaviour
             verticalInput = 0;
         }
 
-        if(inputActions.OverWorld.Spawn.triggered)
+        if (inputActions.OverWorld.Spawn.triggered)
         {
-            var controller = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<FishFlockController>();         
-            controller.TriggerSpawn();
+            if (CurrentSpawned != null)
+            {
+                Destroy(CurrentSpawned);
+            }
+            GameObject instace = Instantiate(FlockSpawner, new Vector3(transform.position.x + 20, transform.position.y + 20, transform.position.y + 20), new Quaternion(0, 0, 0, 0));
+            CurrentSpawned = instace;
         }
-         
+
     }
 
     void FixedUpdate()
     {
         // Local movement
-        Vector3 forward = transform.forward * moveInput.y * moveSpeed;  
-        Vector3 strafe = transform.right * moveInput.x * strafeSpeed;   
+        Vector3 forward = transform.forward * moveInput.y * moveSpeed;
+        Vector3 strafe = transform.right * moveInput.x * strafeSpeed;
         Vector3 lift = transform.up * verticalInput * verticalSpeed;
 
         rb.velocity = forward + strafe + lift;
 
         // Apply rotation
         float yaw = turnInput * yawSpeed * Time.fixedDeltaTime;
-       // float pitch = -turnInput.y * pitchSpeed * Time.fixedDeltaTime;
+        // float pitch = -turnInput.y * pitchSpeed * Time.fixedDeltaTime;
 
         Quaternion yawRotation = Quaternion.Euler(0f, yaw, 0f);
-       // Quaternion pitchRotation = Quaternion.Euler(pitch, 0f, 0f);
+        // Quaternion pitchRotation = Quaternion.Euler(pitch, 0f, 0f);
         rb.MoveRotation(rb.rotation * yawRotation);
 
         // Optional roll/bank effect

@@ -1,13 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public enum ShipSide
 {
-    Bow,       
-    Stern,      
-    Port,       
-    Starboard   
+    Bow,
+    Stern,
+    Port,
+    Starboard
 }
 
 public class MapMerge : MonoBehaviour
@@ -112,14 +111,14 @@ public class MapMerge : MonoBehaviour
 
             Tile newTile = Object.Instantiate(tile, map.transform);
 
-            newTile.SetQUSPosition(cubeCoords.x, cubeCoords.y);           
+            newTile.SetQUSPosition(cubeCoords.x, cubeCoords.y);
             newTile.SetPosition(offsetCoords);
             newTile.SetHeight(tile.Height);
             newTile.SetPawnPos();
             newTile.SetupHexRenderer(map.innerSize, map.outerSize, map.isFlatTopped);
             newTile.transform.position = map.GetHexPositionFromCoordinate(offsetCoords);
 
-            map.PlayArea.set_Tile(mx, my, newTile);                       
+            map.PlayArea.set_Tile(mx, my, newTile);
         }
 
 

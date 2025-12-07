@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class TileTypeGenerator : MonoBehaviour
@@ -18,7 +17,7 @@ public class TileTypeGenerator : MonoBehaviour
     {
         TileData = new List<TileDataSO>();
         Map Playarea = FindObjectOfType<Map>();
-        foreach(TileDataSO a in Playarea.TileTypes)
+        foreach (TileDataSO a in Playarea.TileTypes)
         {
             TileData.Add(a);
         }

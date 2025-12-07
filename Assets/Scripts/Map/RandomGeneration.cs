@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RandomGeneration : MonoBehaviour, IGenerate
@@ -27,7 +25,7 @@ public class RandomGeneration : MonoBehaviour, IGenerate
                 tile.SetPosition(new Vector2Int(x, y));
                 tile.SetPawnPos();
                 PlayArea.set_Tile(x, y, tile);
-            }        
+            }
         }
         return PlayArea;
     }

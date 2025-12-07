@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ public class Flock : MonoBehaviour
 
     public List<Foid> allUnits;
 
-    [Range(0,200)]
+    [Range(0, 200)]
     [SerializeField]
     private float _CohesionDistance;
     public int CohesionDistance { get { return (int)_CohesionDistance; } }
@@ -52,13 +51,13 @@ public class Flock : MonoBehaviour
     private float _BoundsWeight;
     public int BoundsWeight { get { return (int)_BoundsWeight; } }
 
-    [Range(0,20)]
+    [Range(0, 20)]
     [SerializeField]
     private float MinSpeed;
-    [Range(0,20)]
+    [Range(0, 20)]
     [SerializeField]
     private float MaxSpeed;
-    
+
     public void Start()
     {
         generateFlock();
@@ -66,7 +65,7 @@ public class Flock : MonoBehaviour
 
     public void Update()
     {
-        foreach(Foid f in allUnits)
+        foreach (Foid f in allUnits)
         {
             f.moveFoid();
         }
@@ -76,7 +75,7 @@ public class Flock : MonoBehaviour
     {
         allUnits = new List<Foid>(FlockSize);
 
-        for(int x = 0; x < FlockSize; x++)
+        for (int x = 0; x < FlockSize; x++)
         {
             Vector3 randomvector = UnityEngine.Random.insideUnitSphere;
             randomvector = new Vector3(randomvector.x * FlockBounds.x, randomvector.y * FlockBounds.y, randomvector.z * FlockBounds.z);
