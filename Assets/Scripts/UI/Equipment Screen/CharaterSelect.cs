@@ -1,88 +1,132 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharaterSelect : MonoBehaviour
+/// <summary>
+/// Handles switching between player characters and managing their on-screen visibility
+/// </summary>
+public class CharacterSelector : MonoBehaviour
 {
-    public Transform OnScreen;
-    public Transform Storage;
-    public List<PlayerPawns> PlayerPawnsList;
-    public int PawnOnScreen = 0;
+    [Header("Scene Positions")]
+    [SerializeField] private Transform onScreenPosition;
+    [SerializeField] private Transform storagePosition;
 
+    private List<PlayerPawns> playerPawns = new List<PlayerPawns>();
+    private int currentPawnIndex = 0;
     private BasicControls inputActions;
-    private bool SceneLoad = false;
+    private bool hasInitialized = false;
 
     void Start()
     {
+        Initialize();
+    }
+
+    private void Initialize()
+    {
         inputActions = EventManager.EventInstance.inputActions;
-        PlayerPawnsList = new List<PlayerPawns>();
+        LoadPlayerPawns();
+        ShowCurrentPawn();
 
-        foreach (var pawn in PawnManager.PawnManagerInstance.PlayerPawns)
+        EventManager.OnEquipmentChange += OnEquipmentChanged;
+        hasInitialized = false;
+    }
+
+    private void LoadPlayerPawns()
+    {
+        playerPawns.Clear();
+
+        if (PawnManager.PawnManagerInstance?.PlayerPawns != null)
         {
-            MovePawnTo(pawn, Storage.position);
-            PlayerPawnsList.Add(pawn);
+            foreach (PlayerPawns pawn in PawnManager.PawnManagerInstance.PlayerPawns)
+            {
+                MovePawn(pawn, storagePosition.position);
+                playerPawns.Add(pawn);
+            }
         }
-
-        PawnOnScreen = 0;
-        PlayerPawnsList[PawnOnScreen].Equiped.Onscreen = true;
-        MovePawnTo(PlayerPawnsList[PawnOnScreen], OnScreen.position);
-
-        EventManager.OnEquipmentChange += UpdateEquipement;
-        EventManager.TriggerCharacterChange(PlayerPawnsList[PawnOnScreen]);
     }
 
     void Update()
     {
-        if (!SceneLoad)
+        // Ensure character display updates on first frame
+        if (!hasInitialized)
         {
-            EventManager.TriggerCharacterChange(PlayerPawnsList[PawnOnScreen]);
-            SceneLoad = true;
+            EventManager.TriggerCharacterChange(GetCurrentPawn());
+            hasInitialized = true;
         }
 
-        CharaterSwitch();
+        HandleCharacterSwitch();
     }
 
-    public void CharaterSwitch()
+    private void HandleCharacterSwitch()
     {
-        if (inputActions.Menu.SwitchCharater.triggered)
+        if (!inputActions.Menu.SwitchCharater.triggered) return;
+
+        HideCurrentPawn();
+
+        float input = inputActions.Menu.SwitchCharater.ReadValue<float>();
+        currentPawnIndex = WrapIndex(currentPawnIndex + (int)input, playerPawns.Count);
+
+        ShowCurrentPawn();
+    }
+
+    private void ShowCurrentPawn()
+    {
+        if (playerPawns.Count == 0) return;
+
+        PlayerPawns currentPawn = GetCurrentPawn();
+        currentPawn.Equiped.Onscreen = true;
+        MovePawn(currentPawn, onScreenPosition.position);
+        EventManager.TriggerCharacterChange(currentPawn);
+    }
+
+    private void HideCurrentPawn()
+    {
+        if (playerPawns.Count == 0) return;
+
+        PlayerPawns currentPawn = GetCurrentPawn();
+        currentPawn.Equiped.Onscreen = false;
+        MovePawn(currentPawn, storagePosition.position);
+    }
+
+    private void OnEquipmentChanged(ItemType itemType, Item item)
+    {
+        PlayerPawns currentPawn = GetCurrentPawn();
+        currentPawn.Equiped.UpdateEquipment(itemType, item);
+
+        // Sync with master list
+        if (PlayerList.ListInstance?.AllPlayerPawns != null &&
+            currentPawnIndex < PlayerList.ListInstance.AllPlayerPawns.Count)
         {
-            MovePawnTo(PlayerPawnsList[PawnOnScreen], Storage.position);
-            PlayerPawnsList[PawnOnScreen].Equiped.Onscreen = false;
-            PawnOnScreen += (int)inputActions.Menu.SwitchCharater.ReadValue<float>();
-
-            if (PawnOnScreen < 0)
-                PawnOnScreen = PlayerPawnsList.Count - 1;
-            else if (PawnOnScreen >= PlayerPawnsList.Count)
-                PawnOnScreen = 0;
-
-            MovePawnTo(PlayerPawnsList[PawnOnScreen], OnScreen.position);
-            PlayerPawnsList[PawnOnScreen].Equiped.Onscreen = true;
-            EventManager.TriggerCharacterChange(PlayerPawnsList[PawnOnScreen]);
+            PlayerList.ListInstance.AllPlayerPawns[currentPawnIndex]
+                .GetComponent<PlayerPawns>()?.Equiped.UpdateEquipment(itemType, item);
         }
-    }
-
-    public void UpdateEquipement(ItemType TypeToGChange, Item ToChange)
-    {
-        PlayerPawns currentPawn = PlayerPawnsList[PawnOnScreen];
-        currentPawn.Equiped.UpdateEquipment(TypeToGChange, ToChange);
-
-        PlayerList.ListInstance.AllPlayerPawns[PawnOnScreen]
-            .GetComponent<PlayerPawns>().Equiped.UpdateEquipment(TypeToGChange, ToChange);
 
         EventManager.TriggerCharacterChange(currentPawn);
     }
 
-    public void OnEnable()
+    private PlayerPawns GetCurrentPawn()
     {
-        SceneLoad = false;
+        return playerPawns.Count > 0 ? playerPawns[currentPawnIndex] : null;
     }
 
-    public void OnDestroy()
+    private void MovePawn(PlayerPawns pawn, Vector3 position)
     {
-        EventManager.OnEquipmentChange -= UpdateEquipement;
+        if (pawn != null)
+            pawn.transform.position = position;
     }
 
-    private void MovePawnTo(PlayerPawns pawn, Vector3 position)
+    private int WrapIndex(int index, int count)
     {
-        pawn.gameObject.transform.position = position;
+        if (count == 0) return 0;
+        return ((index % count) + count) % count;
+    }
+
+    void OnEnable()
+    {
+        hasInitialized = false;
+    }
+
+    void OnDestroy()
+    {
+        EventManager.OnEquipmentChange -= OnEquipmentChanged;
     }
 }

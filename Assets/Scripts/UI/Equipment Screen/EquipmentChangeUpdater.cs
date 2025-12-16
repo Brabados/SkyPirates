@@ -1,88 +1,103 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-public class EquipmentChangeUpdater : MonoBehaviour
+/// <summary>
+/// Displays item information and stat changes when hovering over equipment
+/// </summary>
+public class EquipmentInfoDisplay : MonoBehaviour
 {
-    public GameObject ChuzpahPanel;
-    public GameObject CadishnessPanel;
-    public GameObject GracePanel;
-    public GameObject GritPanel;
-    public GameObject SerindipityPanel;
-    public GameObject SwaggerPanel;
+    [Header("Stat Panels")]
+    [SerializeField] private GameObject chuzpahPanel;
+    [SerializeField] private GameObject cadishnessPanel;
+    [SerializeField] private GameObject gracePanel;
+    [SerializeField] private GameObject gritPanel;
+    [SerializeField] private GameObject serindipityPanel;
+    [SerializeField] private GameObject swaggerPanel;
 
-    private Image[] statImages;
+    [Header("Info Text")]
+    [SerializeField] private TextMeshProUGUI infoText;
 
-    public Text InfoText;
+    private Image[] statPanelImages;
 
-    public void Start()
+    void Start()
     {
-        EventManager.OnInfoChange += InfoChange;
-        EventManager.OnInfoReset += ResetPanels;
-        EventManager.OnInfoCompareChange += InfoChangeCompare;
+        InitializeStatPanels();
 
-        GetImage();
+        EventManager.OnInfoChange += DisplayItemInfo;
+        EventManager.OnInfoReset += ResetDisplay;
+        EventManager.OnInfoCompareChange += DisplayItemComparison;
     }
 
-    public void GetImage()
+    private void InitializeStatPanels()
     {
-        statImages = new Image[6];
-        statImages[0] = ChuzpahPanel.GetComponent<Image>();
-        statImages[1] = CadishnessPanel.GetComponent<Image>();
-        statImages[2] = GracePanel.GetComponent<Image>();
-        statImages[3] = GritPanel.GetComponent<Image>();
-        statImages[4] = SerindipityPanel.GetComponent<Image>();
-        statImages[5] = SwaggerPanel.GetComponent<Image>();
-    }
-
-    public void PanelChange(int[] Colors)
-    {
-        EnsureStatImagesInitialized();
-
-        for (int i = 0; i < statImages.Length && i < Colors.Length; i++)
+        statPanelImages = new Image[]
         {
-            if (Colors[i] > 0)
-                statImages[i].color = Color.green;
-            else if (Colors[i] < 0)
-                statImages[i].color = Color.red;
-            else
-                statImages[i].color = Color.gray; // Explicitly reset to neutral
+            chuzpahPanel.GetComponent<Image>(),
+            cadishnessPanel.GetComponent<Image>(),
+            gracePanel.GetComponent<Image>(),
+            gritPanel.GetComponent<Image>(),
+            serindipityPanel.GetComponent<Image>(),
+            swaggerPanel.GetComponent<Image>()
+        };
+    }
+
+    private void DisplayItemInfo(Item item)
+    {
+        if (item == null) return;
+
+        UpdateStatPanels(item.StatChanges);
+        UpdateInfoText(item, item.StatChanges);
+    }
+
+    private void DisplayItemComparison(Item item, int[] statChanges)
+    {
+        if (item == null) return;
+
+        UpdateStatPanels(statChanges);
+        UpdateInfoText(item, statChanges);
+    }
+
+    private void UpdateStatPanels(int[] statChanges)
+    {
+        if (statPanelImages == null || statChanges == null) return;
+
+        for (int i = 0; i < statPanelImages.Length && i < statChanges.Length; i++)
+        {
+            statPanelImages[i].color = GetStatColor(statChanges[i]);
         }
     }
 
-    public void InfoChange(Item Info)
+    private Color GetStatColor(int value)
     {
-        PanelChange(Info.StatChanges);
-        InfoText.text = $"{Info.Info}{System.Environment.NewLine}{string.Join(" ", Info.StatChanges)}";
+        if (value > 0) return Color.green;
+        if (value < 0) return Color.red;
+        return Color.gray;
     }
 
-    public void InfoChangeCompare(Item Info, int[] StatChanges)
+    private void UpdateInfoText(Item item, int[] statChanges)
     {
-        PanelChange(StatChanges);
-        InfoText.text = $"{Info.Info}{System.Environment.NewLine}{string.Join(" ", Info.StatChanges)}";
+        infoText.text = $"{item.Info}{Environment.NewLine}{string.Join(" ", statChanges)}";
     }
 
-    public void ResetPanels()
+    public void ResetDisplay()
     {
-        EnsureStatImagesInitialized();
+        if (statPanelImages == null) return;
 
-        foreach (var img in statImages)
+        foreach (Image panel in statPanelImages)
         {
-            img.color = Color.gray;
+            panel.color = Color.gray;
         }
+
+        if (infoText != null)
+            infoText.text = "";
     }
 
-    public void OnDestroy()
+    void OnDestroy()
     {
-        EventManager.OnInfoChange -= InfoChange;
-        EventManager.OnInfoReset -= ResetPanels;
-        EventManager.OnInfoCompareChange -= InfoChangeCompare;
-    }
-
-    private void EnsureStatImagesInitialized()
-    {
-        if (statImages == null || statImages.Length == 0)
-        {
-            GetImage();
-        }
+        EventManager.OnInfoChange -= DisplayItemInfo;
+        EventManager.OnInfoReset -= ResetDisplay;
+        EventManager.OnInfoCompareChange -= DisplayItemComparison;
     }
 }

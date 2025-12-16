@@ -1,96 +1,144 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using TMPro;
 
-public class CharaterChange : MonoBehaviour
+/// <summary>
+/// Manages the character stat display and equipment button UI
+/// </summary>
+public class CharacterUIManager : MonoBehaviour
 {
-    public Text Chuzpah;
-    public Text Cadishness;
-    public Text Grace;
-    public Text Grit;
-    public Text Serendipity;
-    public Text Swagger;
+    [Header("Stat Displays")]
+    [SerializeField] private TextMeshProUGUI chuzpahText;
+    [SerializeField] private TextMeshProUGUI cadishnessText;
+    [SerializeField] private TextMeshProUGUI graceText;
+    [SerializeField] private TextMeshProUGUI gritText;
+    [SerializeField] private TextMeshProUGUI serendipityText;
+    [SerializeField] private TextMeshProUGUI swaggerText;
+    [SerializeField] private TextMeshProUGUI equipmentText;
 
-    public Text Equipment;
+    [Header("Equipment Buttons")]
+    [SerializeField] private ButtonHighlight headButton;
+    [SerializeField] private ButtonHighlight bodyButton;
+    [SerializeField] private ButtonHighlight weaponButton;
+    [SerializeField] private ButtonHighlight feetButton;
+    [SerializeField] private ButtonHighlight accessoryButton;
 
-    public Button Head;
-    public Button Body;
-    public Button Weapon;
-    public Button Feet;
-    public Button Accessory;
+    private Dictionary<ItemType, ButtonHighlight> equipmentButtons;
 
-    private Dictionary<ItemType, Button> equipmentButtons;
+    void Awake()
+    {
+        InitializeDictionaries();
+        SetupButtonListeners();
+    }
 
     void Start()
     {
-        EventSystem.current.firstSelectedGameObject = Head.gameObject;
-        EventManager.OnCharacterChange += UpdateCanvas;
-        EventManager.OnEquipmentChange += UpdateButtonSelect;
+        EventSystem.current.firstSelectedGameObject = headButton.gameObject;
 
-        // Setup dictionary for easier lookup
-        equipmentButtons = new Dictionary<ItemType, Button>
+        EventManager.OnCharacterChange += UpdateDisplay;
+        EventManager.OnEquipmentChange += SelectEquipmentButton;
+    }
+
+    private void InitializeDictionaries()
+    {
+        equipmentButtons = new Dictionary<ItemType, ButtonHighlight>
         {
-            { ItemType.Head, Head },
-            { ItemType.Body, Body },
-            { ItemType.Weapon, Weapon },
-            { ItemType.Feet, Feet },
-            { ItemType.Accessory, Accessory }
+            { ItemType.Head, headButton },
+            { ItemType.Body, bodyButton },
+            { ItemType.Weapon, weaponButton },
+            { ItemType.Feet, feetButton },
+            { ItemType.Accessory, accessoryButton }
         };
     }
 
-    public void UpdateCanvas(Pawn OnScreeen)
+    private void SetupButtonListeners()
     {
-        //Change here to make equipment totals private
-        Chuzpah.text = (OnScreeen.Stats.Chutzpah + OnScreeen.Equiped.chuzpah).ToString();
-        Cadishness.text = (OnScreeen.Stats.Cadishness + OnScreeen.Equiped.cadishness).ToString();
-        Grace.text = (OnScreeen.Stats.Grace + OnScreeen.Equiped.grace).ToString();
-        Grit.text = (OnScreeen.Stats.Grit + OnScreeen.Equiped.grit).ToString();
-        Serendipity.text = (OnScreeen.Stats.Serendipity + OnScreeen.Equiped.serindipity).ToString();
-        Swagger.text = (OnScreeen.Stats.Swagger + OnScreeen.Equiped.swagger).ToString();
-
-        Equipment.text = "";
-
-        foreach (var item in OnScreeen.Equiped.Equipment)
+        foreach (var kvp in equipmentButtons)
         {
-            Equipment.text += item.Name + System.Environment.NewLine;
+            ButtonHighlight button = kvp.Value;
 
-            if (equipmentButtons.TryGetValue(item.Type, out Button button))
+            ItemButton itemButton = button.GetComponent<ItemButton>();
+            if (itemButton == null)
             {
-                var textComp = button.GetComponentInChildren<Text>();
-                var itemButton = button.GetComponentInChildren<ItemButton>();
-
-                if (textComp != null)
-                    textComp.text = item.Name;
-
-                if (itemButton != null)
-                {
-                    itemButton.CurrentEquip = item;
-                }
-                else
-                {
-                    Debug.LogWarning($"ItemButton for {item.Name} not found on button: {button.gameObject.name}");
-                }
-            }
-            else
-            {
-                Debug.LogWarning($"No button found for item type: {item.Type}");
+                itemButton = button.gameObject.AddComponent<ItemButton>();
             }
         }
     }
 
-    public void UpdateButtonSelect(ItemType type, Item item)
+    public void UpdateDisplay(Pawn pawn)
     {
-        if (equipmentButtons.TryGetValue(item.Type, out Button button))
+        if (pawn == null) return;
+
+        UpdateStats(pawn);
+        UpdateEquipment(pawn);
+    }
+
+    private void UpdateStats(Pawn pawn)
+    {
+        chuzpahText.text = (pawn.Stats.Chutzpah + pawn.Equiped.chuzpah).ToString();
+        cadishnessText.text = (pawn.Stats.Cadishness + pawn.Equiped.cadishness).ToString();
+        graceText.text = (pawn.Stats.Grace + pawn.Equiped.grace).ToString();
+        gritText.text = (pawn.Stats.Grit + pawn.Equiped.grit).ToString();
+        serendipityText.text = (pawn.Stats.Serendipity + pawn.Equiped.serindipity).ToString();
+        swaggerText.text = (pawn.Stats.Swagger + pawn.Equiped.swagger).ToString();
+    }
+
+    private void UpdateEquipment(Pawn pawn)
+    {
+        equipmentText.text = "";
+
+        foreach (Item item in pawn.Equiped.Equipment)
         {
-            EventSystem.current.SetSelectedGameObject(button.gameObject);
+            equipmentText.text += item.Name + Environment.NewLine;
+
+            if (equipmentButtons.TryGetValue(item.Type, out ButtonHighlight button))
+            {
+                UpdateEquipmentButton(button, item);
+            }
         }
     }
 
-
-    public void OnDestroy()
+    private void UpdateEquipmentButton(ButtonHighlight button, Item item)
     {
-        EventManager.OnCharacterChange -= UpdateCanvas;
-        EventManager.OnEquipmentChange -= UpdateButtonSelect;
+        TextMeshProUGUI textComponent = button.GetComponentInChildren<TextMeshProUGUI>();
+        if (textComponent != null)
+            textComponent.text = item.Name;
+
+        ItemButton itemButton = button.GetComponent<ItemButton>();
+        if (itemButton != null)
+            itemButton.CurrentEquip = item;
+    }
+
+    private void SelectEquipmentButton(ItemType type, Item item)
+    {
+        if (equipmentButtons.TryGetValue(item.Type, out ButtonHighlight button))
+        {
+            StartCoroutine(SelectButtonDelayed(button.gameObject));
+        }
+    }
+
+    private IEnumerator SelectButtonDelayed(GameObject buttonObj)
+    {
+        // Wait for spawned list to clear
+        yield return null;
+
+        // Clear selection
+        EventSystem.current.SetSelectedGameObject(null);
+
+        // Wait one more frame
+        yield return null;
+
+        // Select the equipment button
+        EventSystem.current.SetSelectedGameObject(buttonObj);
+    }
+
+    void OnDestroy()
+    {
+        EventManager.OnCharacterChange -= UpdateDisplay;
+        EventManager.OnEquipmentChange -= SelectEquipmentButton;
     }
 }

@@ -1751,6 +1751,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dialogue"",
+                    ""type"": ""Button"",
+                    ""id"": ""7a3672ef-3aab-4cf1-8252-515997583ecb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1830,6 +1839,65 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""action"": ""MenuSwap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""058e4281-dcf3-4e60-9287-4e25d6fc80e5"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dialogue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Dialouge"",
+            ""id"": ""4cb0663e-d649-48ab-85e5-844132bf1eb2"",
+            ""actions"": [
+                {
+                    ""name"": ""Test"",
+                    ""type"": ""Button"",
+                    ""id"": ""cbfd9775-5613-4bd9-b9d9-48dbd9d029ec"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""06ea5764-e430-435a-8744-88aee9f44e10"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""35b03379-550d-446b-ab15-020a3461812e"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Test"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd92b36e-fcb0-4bfe-8271-94c0c2276f1d"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1861,6 +1929,11 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         m_Menu_SwitchCharater = m_Menu.FindAction("SwitchCharater", throwIfNotFound: true);
         m_Menu_SceneSwitch = m_Menu.FindAction("SceneSwitch", throwIfNotFound: true);
         m_Menu_MenuSwap = m_Menu.FindAction("MenuSwap", throwIfNotFound: true);
+        m_Menu_Dialogue = m_Menu.FindAction("Dialogue", throwIfNotFound: true);
+        // Dialouge
+        m_Dialouge = asset.FindActionMap("Dialouge", throwIfNotFound: true);
+        m_Dialouge_Test = m_Dialouge.FindAction("Test", throwIfNotFound: true);
+        m_Dialouge_SwitchAction = m_Dialouge.FindAction("SwitchAction", throwIfNotFound: true);
     }
 
     ~@BasicControls()
@@ -1868,6 +1941,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Battle.enabled, "This will cause a leak and performance issues, BasicControls.Battle.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OverWorld.enabled, "This will cause a leak and performance issues, BasicControls.OverWorld.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Menu.enabled, "This will cause a leak and performance issues, BasicControls.Menu.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Dialouge.enabled, "This will cause a leak and performance issues, BasicControls.Dialouge.Disable() has not been called.");
     }
 
     /// <summary>
@@ -2292,6 +2366,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Menu_SwitchCharater;
     private readonly InputAction m_Menu_SceneSwitch;
     private readonly InputAction m_Menu_MenuSwap;
+    private readonly InputAction m_Menu_Dialogue;
     /// <summary>
     /// Provides access to input actions defined in input action map "Menu".
     /// </summary>
@@ -2315,6 +2390,10 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Menu/MenuSwap".
         /// </summary>
         public InputAction @MenuSwap => m_Wrapper.m_Menu_MenuSwap;
+        /// <summary>
+        /// Provides access to the underlying input action "Menu/Dialogue".
+        /// </summary>
+        public InputAction @Dialogue => m_Wrapper.m_Menu_Dialogue;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2350,6 +2429,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @MenuSwap.started += instance.OnMenuSwap;
             @MenuSwap.performed += instance.OnMenuSwap;
             @MenuSwap.canceled += instance.OnMenuSwap;
+            @Dialogue.started += instance.OnDialogue;
+            @Dialogue.performed += instance.OnDialogue;
+            @Dialogue.canceled += instance.OnDialogue;
         }
 
         /// <summary>
@@ -2370,6 +2452,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @MenuSwap.started -= instance.OnMenuSwap;
             @MenuSwap.performed -= instance.OnMenuSwap;
             @MenuSwap.canceled -= instance.OnMenuSwap;
+            @Dialogue.started -= instance.OnDialogue;
+            @Dialogue.performed -= instance.OnDialogue;
+            @Dialogue.canceled -= instance.OnDialogue;
         }
 
         /// <summary>
@@ -2403,6 +2488,113 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="MenuActions" /> instance referencing this action map.
     /// </summary>
     public MenuActions @Menu => new MenuActions(this);
+
+    // Dialouge
+    private readonly InputActionMap m_Dialouge;
+    private List<IDialougeActions> m_DialougeActionsCallbackInterfaces = new List<IDialougeActions>();
+    private readonly InputAction m_Dialouge_Test;
+    private readonly InputAction m_Dialouge_SwitchAction;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Dialouge".
+    /// </summary>
+    public struct DialougeActions
+    {
+        private @BasicControls m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public DialougeActions(@BasicControls wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/Test".
+        /// </summary>
+        public InputAction @Test => m_Wrapper.m_Dialouge_Test;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/SwitchAction".
+        /// </summary>
+        public InputAction @SwitchAction => m_Wrapper.m_Dialouge_SwitchAction;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Dialouge; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="DialougeActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(DialougeActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="DialougeActions" />
+        public void AddCallbacks(IDialougeActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DialougeActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DialougeActionsCallbackInterfaces.Add(instance);
+            @Test.started += instance.OnTest;
+            @Test.performed += instance.OnTest;
+            @Test.canceled += instance.OnTest;
+            @SwitchAction.started += instance.OnSwitchAction;
+            @SwitchAction.performed += instance.OnSwitchAction;
+            @SwitchAction.canceled += instance.OnSwitchAction;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="DialougeActions" />
+        private void UnregisterCallbacks(IDialougeActions instance)
+        {
+            @Test.started -= instance.OnTest;
+            @Test.performed -= instance.OnTest;
+            @Test.canceled -= instance.OnTest;
+            @SwitchAction.started -= instance.OnSwitchAction;
+            @SwitchAction.performed -= instance.OnSwitchAction;
+            @SwitchAction.canceled -= instance.OnSwitchAction;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="DialougeActions.UnregisterCallbacks(IDialougeActions)" />.
+        /// </summary>
+        /// <seealso cref="DialougeActions.UnregisterCallbacks(IDialougeActions)" />
+        public void RemoveCallbacks(IDialougeActions instance)
+        {
+            if (m_Wrapper.m_DialougeActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="DialougeActions.AddCallbacks(IDialougeActions)" />
+        /// <seealso cref="DialougeActions.RemoveCallbacks(IDialougeActions)" />
+        /// <seealso cref="DialougeActions.UnregisterCallbacks(IDialougeActions)" />
+        public void SetCallbacks(IDialougeActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DialougeActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DialougeActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="DialougeActions" /> instance referencing this action map.
+    /// </summary>
+    public DialougeActions @Dialouge => new DialougeActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Battle" which allows adding and removing callbacks.
     /// </summary>
@@ -2559,5 +2751,34 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMenuSwap(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Dialogue" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDialogue(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Dialouge" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="DialougeActions.AddCallbacks(IDialougeActions)" />
+    /// <seealso cref="DialougeActions.RemoveCallbacks(IDialougeActions)" />
+    public interface IDialougeActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Test" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnTest(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchAction(InputAction.CallbackContext context);
     }
 }

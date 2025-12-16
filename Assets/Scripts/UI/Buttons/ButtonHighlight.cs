@@ -2,7 +2,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ButtonHighlight : Selectable, IPointerEnterHandler, ISelectHandler
+/// <summary>
+/// Handles button hover and selection events to display item information
+/// </summary>
+public class ButtonHighlight : Button, IPointerEnterHandler, ISelectHandler 
 {
     public override void OnPointerExit(PointerEventData eventData)
     {
@@ -13,35 +16,19 @@ public class ButtonHighlight : Selectable, IPointerEnterHandler, ISelectHandler
     {
         GameObject hoveredObject = eventData.pointerEnter;
 
-        var button = hoveredObject.GetComponentInParent<ItemButton>();
-        if (button != null)
+        ItemButton itemButton = hoveredObject.GetComponentInParent<ItemButton>();
+        if (itemButton?.CurrentEquip != null)
         {
-            if (button.CurrentEquip != null)
-            {
-                EventManager.TriggerInfoChange(button.CurrentEquip);
-            }
-            else
-            {
-                Debug.LogWarning("[PointerEnter] ItemButton found but CurrentEquip is null.");
-            }
+            EventManager.TriggerInfoChange(itemButton.CurrentEquip);
             return;
         }
 
-        var button2 = hoveredObject.GetComponentInParent<InventoryItemButton>();
-        if (button2 != null)
+        InventoryItemButton inventoryButton = hoveredObject.GetComponentInParent<InventoryItemButton>();
+        if (inventoryButton?.Equip != null)
         {
-            if (button2.Equip != null)
-            {
-                EventManager.TriggerInfoCompare(button2.Equip);
-            }
-            else
-            {
-                Debug.LogWarning("[PointerEnter] InventoryItemButton found but Equip is null.");
-            }
+            EventManager.TriggerInfoCompare(inventoryButton.Equip);
             return;
         }
-
-        Debug.LogWarning("[PointerEnter] No valid button found on pointer enter.");
     }
 
     public override void OnSelect(BaseEventData eventData)
@@ -50,34 +37,18 @@ public class ButtonHighlight : Selectable, IPointerEnterHandler, ISelectHandler
 
         EventManager.TriggerInfoReset();
 
-        var button = selectedObject.GetComponent<ItemButton>();
-        if (button != null)
+        ItemButton itemButton = selectedObject.GetComponent<ItemButton>();
+        if (itemButton?.CurrentEquip != null)
         {
-            if (button.CurrentEquip != null)
-            {
-                EventManager.TriggerInfoChange(button.CurrentEquip);
-            }
-            else
-            {
-                Debug.LogWarning("[Select] ItemButton found but CurrentEquip is null.");
-            }
+            EventManager.TriggerInfoChange(itemButton.CurrentEquip);
             return;
         }
 
-        var button2 = selectedObject.GetComponent<InventoryItemButton>();
-        if (button2 != null)
+        InventoryItemButton inventoryButton = selectedObject.GetComponent<InventoryItemButton>();
+        if (inventoryButton?.Equip != null)
         {
-            if (button2.Equip != null)
-            {
-                EventManager.TriggerInfoCompare(button2.Equip);
-            }
-            else
-            {
-                Debug.LogWarning("[Select] InventoryItemButton found but Equip is null.");
-            }
+            EventManager.TriggerInfoCompare(inventoryButton.Equip);
             return;
         }
-
-        Debug.LogWarning("[Select] No valid button component found.");
     }
 }

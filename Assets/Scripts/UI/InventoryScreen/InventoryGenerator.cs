@@ -1,63 +1,43 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-
-public class InventoryGenerator : MonoBehaviour
+/// <summary>
+/// Generates a scrollable list of all items in the player's inventory
+/// </summary>
+public class InventoryGenerator : ScrollListGenerator<Item>
 {
-    public RectTransform ScrollSpace;
-    public GameObject Viewport;
-    public Inventory PublicItems;
-    public Button Prefab;
-    private List<Button> Inventorylist = new List<Button>(); // Initialize the list at the time of declaration
+    [Header("Inventory Data")]
+    [SerializeField] private Inventory inventory;
 
-    // Start is called before the first frame update
     void Start()
     {
-        SpawnButtons();
+        autoSelectFirstButton = true;
+        RefreshList();
     }
 
-    public void SpawnButtons()
+    protected override List<Item> GetListData()
     {
-        Viewport.GetComponent<RectTransform>().sizeDelta = new Vector2(
-        Viewport.GetComponent<RectTransform>().sizeDelta.x,
-        PublicItems.InInventory.Count * (ScrollSpace.rect.height / 6) + 150);
-        // Create and position the buttons
-        for (int x = 0; x < PublicItems.InInventory.Count; x++)
+        if (inventory == null)
         {
-            Button generatedButton = CreateButton(PublicItems.InInventory[x]);
-            generatedButton.GetComponentInChildren<Text>().text = PublicItems.InInventory[x].Name;
-
-            // Position buttons at the top of the scroll area
-            generatedButton.transform.localPosition = new Vector3(
-                0 - (ScrollSpace.rect.width / 2),
-                0 - (x * (ScrollSpace.rect.height / 6) + ScrollSpace.rect.height / 6),
-                0);
-            Inventorylist.Add(generatedButton);
+            Debug.LogError("[InventoryGenerator] Inventory is NULL!");
+            return new List<Item>();
         }
 
-        EventSystem.current.SetSelectedGameObject(Inventorylist[0].gameObject);
+        if (inventory.InInventory == null)
+        {
+            Debug.LogWarning("[InventoryGenerator] Inventory.InInventory is NULL!");
+            return new List<Item>();
+        }
+
+        return inventory.InInventory;
     }
 
-    public Button CreateButton(Item item)
+    protected override string GetItemDisplayText(Item item) => item.Name;
+
+    protected override void ConfigureButton(UnityEngine.UI.Button button, Item item)
     {
-        Button button = Instantiate(Prefab, Vector3.zero, Quaternion.identity);
-        RectTransform rectTransform = button.GetComponent<RectTransform>();
-
-        // Setup RectTransform properties
-        rectTransform.SetParent(Viewport.transform);
-        rectTransform.anchorMax = this.GetComponent<RectTransform>().anchorMax;
-        rectTransform.anchorMin = this.GetComponent<RectTransform>().anchorMin;
-        rectTransform.offsetMax = Vector2.zero;
-        rectTransform.offsetMin = Vector2.zero;
-        rectTransform.sizeDelta = new Vector2(ScrollSpace.rect.width, ScrollSpace.rect.height / 6);
-
-        // Add custom script and listener
-        InventoryItemButton newScript = button.gameObject.AddComponent<InventoryItemButton>();
-        newScript.Equip = item;
-        button.onClick.AddListener(newScript.onClick);
-
-        return button;
+        InventoryItemButton itemButton = button.gameObject.AddComponent<InventoryItemButton>();
+        itemButton.Equip = item;
+        button.onClick.AddListener(itemButton.onClick);
     }
 }

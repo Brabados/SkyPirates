@@ -1665,6 +1665,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Dialogue",
+                    "type": "Button",
+                    "id": "7a3672ef-3aab-4cf1-8252-515997583ecb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1744,6 +1753,65 @@
                     "action": "MenuSwap",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "058e4281-dcf3-4e60-9287-4e25d6fc80e5",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dialogue",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Dialouge",
+            "id": "4cb0663e-d649-48ab-85e5-844132bf1eb2",
+            "actions": [
+                {
+                    "name": "Test",
+                    "type": "Button",
+                    "id": "cbfd9775-5613-4bd9-b9d9-48dbd9d029ec",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SwitchAction",
+                    "type": "Button",
+                    "id": "06ea5764-e430-435a-8744-88aee9f44e10",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "35b03379-550d-446b-ab15-020a3461812e",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Test",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fd92b36e-fcb0-4bfe-8271-94c0c2276f1d",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwitchAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

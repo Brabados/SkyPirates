@@ -1,20 +1,31 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SliderHightValue : MonoBehaviour
+/// <summary>
+/// Broadcasts slider value changes through the EventManager
+/// </summary>
+public class SliderHeightValue : MonoBehaviour
 {
-    [SerializeField] private Slider Slide;
+    [SerializeField] private Slider slider;
+
     void Start()
     {
-        Slide.onValueChanged.AddListener((v) =>
+        if (slider != null)
         {
-            EventManager.TriggerSliderValueChange(v);
-        });
+            slider.onValueChanged.AddListener(OnSliderValueChanged);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnSliderValueChanged(float value)
     {
+        EventManager.TriggerSliderValueChange(value);
+    }
 
+    void OnDestroy()
+    {
+        if (slider != null)
+        {
+            slider.onValueChanged.RemoveListener(OnSliderValueChanged);
+        }
     }
 }

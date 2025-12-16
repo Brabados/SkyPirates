@@ -12,7 +12,8 @@
     "Unity.Scenes",
     "Unity.Splines",
     "UnityEngine.Splines",
-    "UnityEngine.Rendering.Universal"
+    "UnityEngine.Rendering.Universal",
+    "Unity.TextMeshPro"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

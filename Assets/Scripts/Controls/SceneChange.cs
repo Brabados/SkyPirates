@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 public class SceneChange : MonoBehaviour
 {
     private BasicControls inputActions;
+    public DialogueSystem Test;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,6 +41,17 @@ public class SceneChange : MonoBehaviour
                 inputActions.Menu.Disable();
                 SceneManager.LoadScene("BattleScene");
             }
+        }
+        else if(inputActions.Menu.Dialogue.triggered)
+        {
+            inputActions.Menu.Disable();
+            inputActions.Dialouge.Enable();
+            Test.ShowExampleDialogue();
+        }
+        else if(inputActions.Dialouge.SwitchAction.triggered)
+        {
+            inputActions.Menu.Enable();
+            inputActions.Dialouge.Disable();
         }
     }
 }

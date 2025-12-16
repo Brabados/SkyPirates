@@ -1,103 +1,92 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-
-public class EquipmentButtonSpawner : MonoBehaviour
+/// <summary>
+/// Generates a filtered list of equipment items based on the selected equipment slot type
+/// </summary>
+public class EquipmentButtonSpawner : ScrollListGenerator<Item>
 {
-    public RectTransform ScrollSpace;
-    public GameObject Viewport;
-    public Inventory PublicItems;
-    public Button Prefab;
-    private List<Button> Inventorylist = new List<Button>(); // Initialize the list at the time of declaration
+    [Header("Inventory Data")]
+    [SerializeField] private Inventory inventory;
+
+    private ItemType currentFilterType;
+    private List<Item> filteredItems = new List<Item>();
 
     void Start()
     {
-        EventManager.OnItemSelect += SpawnButtons;
-        EventManager.OnEquipmentChange += Equipmentchangebuttonpress;
+        autoSelectFirstButton = false; // Don't auto-select spawned items
+        EventManager.OnItemSelect += OnItemSelected;
+        EventManager.OnEquipmentChange += OnEquipmentChanged;
     }
 
-    public void SpawnButtons(Item Search)
+    protected override List<Item> GetListData() => filteredItems;
+
+    protected override string GetItemDisplayText(Item item) => item.Name;
+
+    protected override void ConfigureButton(UnityEngine.UI.Button button, Item item)
     {
-        // Clear and reset the inventory list
-        ClearInventoryList();
+        InventoryItemButton itemButton = button.gameObject.AddComponent<InventoryItemButton>();
+        itemButton.Equip = item;
+        button.onClick.AddListener(itemButton.onClick);
+    }
 
-        // Filter items based on the search criteria
-        List<Item> SearchResults = GetFilteredItems(Search);
+    private void OnItemSelected(Item selectedItem)
+    {
+        if (selectedItem == null) return;
 
-        // Create and position the buttons
-        for (int x = 0; x < SearchResults.Count; x++)
+        // Clear old buttons before creating new ones
+        ClearList();
+
+        currentFilterType = selectedItem.Type;
+        FilterItemsByType(currentFilterType);
+
+        // Show the content area
+        if (contentRect != null)
         {
-            Button generatedButton = CreateButton(SearchResults[x]);
-            generatedButton.GetComponentInChildren<Text>().text = SearchResults[x].Name;
-
-            // Position buttons at the top of the scroll area
-            generatedButton.transform.position = new Vector3(
-                generatedButton.transform.position.x,
-                ScrollSpace.rect.height - (x * (ScrollSpace.rect.height / 6)),
-                0);
-
-            Inventorylist.Add(generatedButton);
+            contentRect.gameObject.SetActive(true);
         }
-        EventSystem.current.SetSelectedGameObject(Inventorylist[0].gameObject);
-    }
 
-    // Function to clear the list of existing buttons
-    private void ClearInventoryList()
-    {
-        foreach (var button in Inventorylist)
+        RefreshList();
+
+        // Select first spawned button manually
+        if (spawnedButtons.Count > 0 && spawnedButtons[0] != null)
         {
-            Destroy(button.gameObject);
+            EventSystem.current.SetSelectedGameObject(spawnedButtons[0].gameObject);
         }
-        Inventorylist.Clear(); // Clear the list after destroying the buttons
     }
 
-    // Function to filter items based on the search type
-    private List<Item> GetFilteredItems(Item Search)
+    private void FilterItemsByType(ItemType type)
     {
-        List<Item> SearchResults = new List<Item>();
-        foreach (Item x in PublicItems.InInventory)
+        filteredItems.Clear();
+
+        if (inventory?.InInventory == null) return;
+
+        foreach (Item item in inventory.InInventory)
         {
-            if (x.Type == Search.Type)
-            {
-                SearchResults.Add(x);
-            }
+            if (item.Type == type)
+                filteredItems.Add(item);
         }
-        return SearchResults;
+
+        Debug.Log($"[EquipmentButtonSpawner] Filtered {filteredItems.Count} items of type {type}");
     }
 
-    // Function to create a button for a given item
-    public Button CreateButton(Item item)
+    private void OnEquipmentChanged(ItemType itemType, Item item)
     {
-        Button button = Instantiate(Prefab, Vector3.zero, Quaternion.identity);
-        RectTransform rectTransform = button.GetComponent<RectTransform>();
+        // Clear the spawned buttons
+        ClearList();
 
-        // Setup RectTransform properties
-        rectTransform.SetParent(Viewport.transform);
-        rectTransform.anchorMax = this.GetComponent<RectTransform>().anchorMax;
-        rectTransform.anchorMin = this.GetComponent<RectTransform>().anchorMin;
-        rectTransform.offsetMax = Vector2.zero;
-        rectTransform.offsetMin = Vector2.zero;
-        rectTransform.sizeDelta = new Vector2(ScrollSpace.rect.width, ScrollSpace.rect.height / 6);
-
-        // Add custom script and listener
-        InventoryItemButton newScript = button.gameObject.AddComponent<InventoryItemButton>();
-        newScript.Equip = item;
-        button.onClick.AddListener(newScript.onClick);
-
-        return button;
+        // Hide the content area
+        if (contentRect != null)
+        {
+            contentRect.gameObject.SetActive(false);
+        }
     }
 
-    public void Equipmentchangebuttonpress(ItemType item, Item item1)
+    protected override void OnDestroy()
     {
-        ClearInventoryList();
-        ScrollSpace.gameObject.SetActive(false);
-    }
-
-    public void OnDestroy()
-    {
-        EventManager.OnItemSelect -= SpawnButtons;
-        EventManager.OnEquipmentChange -= Equipmentchangebuttonpress;
+        base.OnDestroy();
+        EventManager.OnItemSelect -= OnItemSelected;
+        EventManager.OnEquipmentChange -= OnEquipmentChanged;
     }
 }
