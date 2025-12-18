@@ -19,6 +19,8 @@ public class EncyclopediaPanel : MonoBehaviour
     [SerializeField] private string loreLabel = "LORE";
     [SerializeField] private string gameSystemLabel = "GAME SYSTEM";
 
+    private bool isPanelOpen = false;
+
     void Start()
     {
         if (panel != null)
@@ -29,6 +31,8 @@ public class EncyclopediaPanel : MonoBehaviour
     {
         if (panel != null)
             panel.SetActive(true);
+
+        isPanelOpen = true;
 
         if (titleText != null)
             titleText.text = entry.title;
@@ -64,5 +68,12 @@ public class EncyclopediaPanel : MonoBehaviour
     {
         if (panel != null)
             panel.SetActive(false);
+
+        isPanelOpen = false;
+    }
+
+    public bool IsPanelOpen()
+    {
+        return isPanelOpen;
     }
 }

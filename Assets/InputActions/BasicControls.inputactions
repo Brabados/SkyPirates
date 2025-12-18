@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DialogeStart",
+                    "type": "Button",
+                    "id": "a11a2aad-13ce-4bca-80ec-153dc790726d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -784,6 +793,17 @@
                     "action": "SceneSwitch",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "32157f72-e6b9-46c3-a38d-d91d9c70ae03",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DialogeStart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -867,6 +887,15 @@
                     "name": "Spawn",
                     "type": "Button",
                     "id": "9623dd73-a149-495d-9e09-63b92f803665",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DioalogeStart",
+                    "type": "Button",
+                    "id": "c8c875f5-346f-42f7-9510-431c8362fe2f",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1632,6 +1661,17 @@
                     "action": "Spawn",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "64040e4a-c542-435b-8a51-5f5850dcbf9b",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DioalogeStart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -1772,7 +1812,16 @@
             "id": "4cb0663e-d649-48ab-85e5-844132bf1eb2",
             "actions": [
                 {
-                    "name": "Test",
+                    "name": "Devance",
+                    "type": "Button",
+                    "id": "08ef6edc-47d2-42df-8c7d-f4f544957bf6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Advance",
                     "type": "Button",
                     "id": "cbfd9775-5613-4bd9-b9d9-48dbd9d029ec",
                     "expectedControlType": "",
@@ -1788,17 +1837,75 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SelectTerm",
+                    "type": "Button",
+                    "id": "1827c2a9-c694-423f-abf1-f580cff73619",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CloseTerm",
+                    "type": "Button",
+                    "id": "4ed4675a-c536-4b75-9eb0-20849b987968",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "NextTerm",
+                    "type": "Button",
+                    "id": "8bfb8028-beb9-49af-b560-212a494e9a1f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PreviousTerm",
+                    "type": "Button",
+                    "id": "006819bf-9075-47c0-891c-baf40fced73e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
                 {
                     "name": "",
                     "id": "35b03379-550d-446b-ab15-020a3461812e",
-                    "path": "<Keyboard>/anyKey",
+                    "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Test",
+                    "action": "Advance",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a070bfe5-bc41-4e48-bf8b-d1b6fb822c7a",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Advance",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "67fcedb2-ebdb-4d1a-a3eb-1a14e3ab0cef",
+                    "path": "<DualShockGamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Advance",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -1810,6 +1917,105 @@
                     "processors": "",
                     "groups": "",
                     "action": "SwitchAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "529e48d0-3ea7-448b-84a6-a5989c9ae098",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Devance",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "01c55485-204d-405c-8c6a-fd74368d1aa1",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Devance",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14eb7b6c-3033-4c24-8ce8-e432f5d95146",
+                    "path": "<DualShockGamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Devance",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "288472ed-f762-4572-af81-7556c23858a9",
+                    "path": "<DualShockGamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectTerm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "691f65e4-2689-498a-b9cf-840cf87d0920",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SelectTerm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f0d77e2b-d23c-4fe5-9655-d46b4336d6fa",
+                    "path": "<DualShockGamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseTerm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ecbab36e-2630-46b9-a52f-ee288594f880",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseTerm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d2feceb2-4231-4681-93d6-d2f47c7cf059",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NextTerm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e96fb6cb-3d48-4bc0-a253-a9d02de5197f",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PreviousTerm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

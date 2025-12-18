@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 420d6994fb44d594da44e10fa286ab25, type: 3}
+  m_Name: NewBoat
+  m_EditorClassIdentifier: 
+  dialogueLines:
+  - speakerSprite: {fileID: 21300000, guid: c47b7af3cbac04e4bbf5250d01f2f235, type: 3}
+    voiceClip: {fileID: 0}
+    dialogueText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis
+      sodales vehicula dolor, ac blandit tellus blandit eget. Ut ipsum augue, posuere
+      eu nunc sed, iaculis imperdiet libero. Ut rutrum tortor sit amet mauris porta
+      consequat. Aenean maximus metus vitae lectus lobortis mattis. Maecenas auctor
+      nec urna dictum porta. Donec eu dignissim quam. Quisque fermentum egestas [Dragon
+      King], eu congue justo finibus a. Praesent tempor, ligula ut commodo vulputate,
+      elit dui pretium nibh, quis aliquam est felis sit amet nunc. Mauris sed nulla
+      elit. Quisque commodo nulla eu nunc faucibus feugiat. Donec luctus congue ligula,
+      sed ullamcorper lorem maximus a. Pellentesque pellentesque laoreet nunc eget
+      vestibulum. Quisque tincidunt magna vel libero placerat ultrices.\r\n\r\nInteger
+      hendrerit pellentesque ligula cursus vulputate. Fusce eleifend iaculis tristique.
+      Nam ut ultricies lacus, quis gravida leo. Nulla rutrum libero vel justo fermentum,
+      in consectetur sapien vulputate. In vel justo sed erat placerat maximus vel
+      nec massa. Pellentesque vitae lacinia ligula. Nulla facilisi. Aliquam in sem
+      ac arcu dapibus lacinia vestibulum hendrerit nunc. Phasellus iaculis cursus
+      porta. Nulla posuere felis sed ante euismod, nec iaculis ligula semper. Aenean
+      nec laoreet odio. Sed at neque molestie, blandit libero et, auctor mi. Sed
+      nec tortor enim.\r\n\r\nSuspendisse pellentesque vitae sem et dictum. Donec
+      ac magna nisi. Pellentesque a rutrum ligula, ac auctor quam. Sed vehicula,
+      ex in placerat sagittis, odio ex maximus felis, id scelerisque metus urna eget
+      diam. Suspendisse volutpat, velit sed feugiat rutrum, tortor massa imperdiet
+      elit, ac fringilla dui nibh eu massa. Aliquam a augue ullamcorper, volutpat
+      nibh elementum, accumsan [Fire Magic]. Maecenas vel dolor interdum, semper
+      lorem non, rutrum nibh.\r\r"
+    textSegments:
+    - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sodales vehicula
+      dolor, ac blandit tellus blandit eget. Ut ipsum augue, posuere eu nunc sed,
+      iaculis imperdiet libero.
+    - Ut rutrum tortor sit amet mauris porta consequat. Aenean maximus metus vitae
+      lectus lobortis mattis. Maecenas auctor nec urna dictum porta. Donec eu dignissim
+      quam.
+    - Quisque fermentum egestas [Dragon King], eu congue justo finibus a. Praesent
+      tempor, ligula ut commodo vulputate, elit dui pretium nibh, quis aliquam est
+      felis sit amet nunc. Mauris sed nulla elit.
+    - Quisque commodo nulla eu nunc faucibus feugiat. Donec luctus congue ligula,
+      sed ullamcorper lorem maximus a. Pellentesque pellentesque laoreet nunc eget
+      vestibulum.
+    - 'Quisque tincidunt magna vel libero placerat ultrices.
+
+      
+
+      Integer
+      hendrerit pellentesque ligula cursus vulputate. Fusce eleifend iaculis tristique.
+      Nam ut ultricies lacus, quis gravida leo.'
+    - Nulla rutrum libero vel justo fermentum, in consectetur sapien vulputate. In
+      vel justo sed erat placerat maximus vel nec massa. Pellentesque vitae lacinia
+      ligula. Nulla facilisi.
+    - Aliquam in sem ac arcu dapibus lacinia vestibulum hendrerit nunc. Phasellus
+      iaculis cursus porta. Nulla posuere felis sed ante euismod, nec iaculis ligula
+      semper. Aenean nec laoreet odio.
+    - 'Sed at neque molestie, blandit libero et, auctor mi. Sed nec tortor enim.
+
+      
+
+      Suspendisse
+      pellentesque vitae sem et dictum. Donec ac magna nisi. Pellentesque a rutrum
+      ligula, ac auctor quam.'
+    - Sed vehicula, ex in placerat sagittis, odio ex maximus felis, id scelerisque
+      metus urna eget diam. Suspendisse volutpat, velit sed feugiat rutrum, tortor
+      massa imperdiet elit, ac fringilla dui nibh eu
+    - massa. Aliquam a augue ullamcorper, volutpat nibh elementum, accumsan [Fire
+      Magic]. Maecenas vel dolor interdum, semper lorem non, rutrum nibh.
+  - speakerSprite: {fileID: 21300000, guid: 4b6c84e50aa20194fb6017dfaea0f6ca, type: 3}
+    voiceClip: {fileID: 0}
+    dialogueText: 'Aliquam ut molestie nisl. Vivamus at augue sagittis, euismod neque
+      non, sagittis sem. Vivamus tincidunt eros ac neque posuere, at laoreet odio
+      eleifend. Nullam felis magna, interdum nec ante eu, eleifend tristique lectus.
+      Phasellus [Combat] elit est, in consequat massa vulputate sit amet. Proin fringilla
+      nunc ut nisl placerat aliquam. Suspendisse non malesuada mauris. Pellentesque
+      habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+
+
+
+      Nam
+      vitae nulla tincidunt, semper libero eu, dapibus est. Nullam nec enim mi. Vivamus
+      nec sapien non enim blandit vulputate eget eu leo. Proin dignissim, urna ut
+      congue consequat, nulla ipsum pulvinar nibh, sit amet pellentesque turpis orci
+      vitae neque. Pellentesque ornare lorem sapien, eu placerat neque condimentum
+      vel. Sed rhoncus nec dolor eu placerat. Suspendisse lobortis, est ut aliquet
+      consequat, mi tortor dignissim arcu, non posuere tortor dui laoreet nisi. Integer
+      et erat a diam sagittis aliquet. Nulla consectetur sem lectus, eget tincidunt
+      libero varius vitae. Donec viverra ligula quam, vel maximus sapien venenatis
+      sollicitudin. Curabitur eget suscipit nulla. Donec venenatis, est non semper
+      dapibus, eros nisi molestie lectus, quis accumsan nisl elit quis magna.'
+    textSegments:
+    - Aliquam ut molestie nisl. Vivamus at augue sagittis, euismod neque non, sagittis
+      sem. Vivamus tincidunt eros ac neque posuere, at laoreet odio eleifend.
+    - Nullam felis magna, interdum nec ante eu, eleifend tristique lectus. Phasellus
+      [Combat] elit est, in consequat massa vulputate sit amet. Proin fringilla nunc
+      ut nisl placerat aliquam.
+    - 'Suspendisse non malesuada mauris. Pellentesque habitant morbi tristique senectus
+      et netus et malesuada fames ac turpis egestas.
+
+
+
+      Nam vitae nulla tincidunt,
+      semper libero eu, dapibus est.'
+    - Nullam nec enim mi. Vivamus nec sapien non enim blandit vulputate eget eu leo.
+      Proin dignissim, urna ut congue consequat, nulla ipsum pulvinar nibh, sit amet
+      pellentesque turpis orci vitae neque.
+    - Pellentesque ornare lorem sapien, eu placerat neque condimentum vel. Sed rhoncus
+      nec dolor eu placerat.
+    - Suspendisse lobortis, est ut aliquet consequat, mi tortor dignissim arcu, non
+      posuere tortor dui laoreet nisi. Integer et erat a diam sagittis aliquet.
+    - Nulla consectetur sem lectus, eget tincidunt libero varius vitae. Donec viverra
+      ligula quam, vel maximus sapien venenatis sollicitudin. Curabitur eget suscipit
+      nulla.
+    - Donec venenatis, est non semper dapibus, eros nisi molestie lectus, quis accumsan
+      nisl elit quis magna.

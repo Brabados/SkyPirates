@@ -10,33 +10,34 @@ public class DialogueSystem : MonoBehaviour
     [Header("References")]
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private Encyclopedia encyclopedia;
+    [SerializeField] private EncyclopediaPanel encyclopediaPanel;
 
     [Header("Visual Settings")]
     [SerializeField] private Color loreColor = new Color(0.8f, 0.6f, 1f); // Purple
     [SerializeField] private Color gameSystemColor = new Color(0.3f, 0.8f, 1f); // Cyan
+    [SerializeField] private Color selectedTermColor = Color.white;
 
-    [Header("Events")]
-    public UnityEvent<EncyclopediaEntry> OnEntryClicked;
+    [Header("Navigation Settings")]
+    [SerializeField] private bool enableTermNavigation = true;
+    [Tooltip("Visual indicator for currently selected term (optional)")]
+    [SerializeField] private GameObject termSelectionIndicator;
 
     private List<LinkedTerm> linkedTerms = new List<LinkedTerm>();
+    private int currentTermIndex = -1;
+    private bool hasTermsInCurrentDialogue = false;
 
     private struct LinkedTerm
     {
         public string term;
         public string linkId;
         public EncyclopediaEntry entry;
+        public int linkIndex; // TMP link index for highlighting
     }
 
     void Start()
     {
         if (encyclopedia != null)
             encyclopedia.Initialize();
-
-        // Enable link clicking
-        if (dialogueText != null)
-        {
-            dialogueText.raycastTarget = true;
-        }
     }
 
     public void DisplayDialogue(string dialogue)
@@ -47,6 +48,8 @@ public class DialogueSystem : MonoBehaviour
     private void ProcessDialogue(string dialogue)
     {
         linkedTerms.Clear();
+        currentTermIndex = -1;
+        hasTermsInCurrentDialogue = false;
 
         // Find all bracketed terms
         MatchCollection matches = Regex.Matches(dialogue, @"\[([^\]]+)\]");
@@ -63,7 +66,7 @@ public class DialogueSystem : MonoBehaviour
 
             if (entry != null)
             {
-                string linkId = $"link_{linkCounter++}";
+                string linkId = $"link_{linkCounter}";
                 Color termColor = entry.type == EntryType.Lore ? loreColor : gameSystemColor;
 
                 // Create clickable link with TMP link tags
@@ -73,13 +76,17 @@ public class DialogueSystem : MonoBehaviour
                 processedText = processedText.Remove(match.Index, match.Length);
                 processedText = processedText.Insert(match.Index, linkedText);
 
-                // Store term info
-                linkedTerms.Add(new LinkedTerm
+                // Store term info (add to front since we're processing in reverse)
+                linkedTerms.Insert(0, new LinkedTerm
                 {
                     term = term,
                     linkId = linkId,
-                    entry = entry
+                    entry = entry,
+                    linkIndex = linkCounter
                 });
+
+                linkCounter++;
+                hasTermsInCurrentDialogue = true;
             }
             else
             {
@@ -90,11 +97,21 @@ public class DialogueSystem : MonoBehaviour
         }
 
         dialogueText.text = processedText;
+
+        // Auto-select first term if available
+        if (hasTermsInCurrentDialogue && enableTermNavigation)
+        {
+            currentTermIndex = 0;
+            HighlightCurrentTerm();
+        }
     }
 
-    void LateUpdate()
+    void Update()
     {
-        // Detect link clicks (works with both old and new input systems)
+        if (!enableTermNavigation || !hasTermsInCurrentDialogue)
+            return;
+
+        // Mouse/touch click support
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && dialogueText != null)
         {
             int linkIndex = TMP_TextUtilities.FindIntersectingLink(
@@ -108,12 +125,13 @@ public class DialogueSystem : MonoBehaviour
                 TMP_LinkInfo linkInfo = dialogueText.textInfo.linkInfo[linkIndex];
                 string linkId = linkInfo.GetLinkID();
 
-                // Find the entry for this link
-                foreach (var linkedTerm in linkedTerms)
+                // Find and open the entry for this link
+                for (int i = 0; i < linkedTerms.Count; i++)
                 {
-                    if (linkedTerm.linkId == linkId)
+                    if (linkedTerms[i].linkId == linkId)
                     {
-                        OpenEncyclopediaEntry(linkedTerm.entry);
+                        currentTermIndex = i;
+                        OpenCurrentTerm();
                         break;
                     }
                 }
@@ -121,17 +139,105 @@ public class DialogueSystem : MonoBehaviour
         }
     }
 
-    private void OpenEncyclopediaEntry(EncyclopediaEntry entry)
+    public void CycleTermForward()
     {
-        Debug.Log($"Opening encyclopedia entry: {entry.title} (Type: {entry.type})");
+        if (!hasTermsInCurrentDialogue || linkedTerms.Count == 0)
+            return;
 
-        // Invoke event for UI system to handle
-        OnEntryClicked?.Invoke(entry);
+        currentTermIndex = (currentTermIndex + 1) % linkedTerms.Count;
+        HighlightCurrentTerm();
     }
 
-    // Example: Call this from your input system or UI button
+    public void CycleTermBackward()
+    {
+        if (!hasTermsInCurrentDialogue || linkedTerms.Count == 0)
+            return;
+
+        currentTermIndex--;
+        if (currentTermIndex < 0)
+            currentTermIndex = linkedTerms.Count - 1;
+
+        HighlightCurrentTerm();
+    }
+
+    public void OpenCurrentTerm()
+    {
+        if (!hasTermsInCurrentDialogue || currentTermIndex < 0 || currentTermIndex >= linkedTerms.Count)
+            return;
+
+        LinkedTerm term = linkedTerms[currentTermIndex];
+        OpenEncyclopediaEntry(term.entry);
+    }
+
+    private void HighlightCurrentTerm()
+    {
+        if (currentTermIndex < 0 || currentTermIndex >= linkedTerms.Count)
+            return;
+
+        // Rebuild text with current term highlighted differently
+        string currentText = dialogueText.text;
+
+        UpdateTermIndicator();
+    }
+
+    private void UpdateTermIndicator()
+    {
+        if (termSelectionIndicator == null || dialogueText == null)
+            return;
+
+        if (currentTermIndex < 0 || currentTermIndex >= linkedTerms.Count)
+        {
+            termSelectionIndicator.SetActive(false);
+            return;
+        }
+
+        // Force text mesh to update
+        dialogueText.ForceMeshUpdate();
+
+        LinkedTerm currentTerm = linkedTerms[currentTermIndex];
+        TMP_LinkInfo linkInfo = dialogueText.textInfo.linkInfo[currentTerm.linkIndex];
+
+        // Get the bounds of the linked text
+        int firstCharIndex = linkInfo.linkTextfirstCharacterIndex;
+        int lastCharIndex = linkInfo.linkTextfirstCharacterIndex + linkInfo.linkTextLength - 1;
+
+        if (firstCharIndex < dialogueText.textInfo.characterCount)
+        {
+            Vector3 bottomLeft = dialogueText.textInfo.characterInfo[firstCharIndex].bottomLeft;
+            Vector3 topRight = dialogueText.textInfo.characterInfo[lastCharIndex].topRight;
+
+            Vector3 center = (bottomLeft + topRight) / 2;
+
+            termSelectionIndicator.SetActive(true);
+            termSelectionIndicator.transform.position = dialogueText.transform.TransformPoint(center);
+        }
+    }
+
+    private void OpenEncyclopediaEntry(EncyclopediaEntry entry)
+    {
+        if (encyclopediaPanel != null)
+        {
+            encyclopediaPanel.DisplayEntry(entry);
+        }
+    }
+
     public void ShowExampleDialogue()
     {
         DisplayDialogue("The [Dragon King] used [Fire Magic] to destroy the village. Learn about [Combat] to defeat him.");
+    }
+
+    public bool HasSelectableTerms()
+    {
+        return hasTermsInCurrentDialogue;
+    }
+
+    public int GetCurrentTermIndex()
+    {
+        return currentTermIndex;
+    }
+
+    public int GetTermCount()
+    {
+        return linkedTerms.Count;
     }
 }

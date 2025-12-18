@@ -21,8 +21,10 @@ public class ThirdPersonCameraController : MonoBehaviour
     public float controllerSensitivity = 100f;
 
     private BasicControls inputActions;
+    private bool cameraControlEnabled = true;
     private float currentYaw = 0f; // Horizontal rotation
     private float currentPitch = 20f; // Vertical rotation
+    
 
     void Start()
     {
@@ -45,9 +47,12 @@ public class ThirdPersonCameraController : MonoBehaviour
             return;
         }
 
-        HandleMouseRotation();
-        HandleControllerRotation();
-        UpdateCameraPosition();
+        if (cameraControlEnabled)
+        {
+            HandleMouseRotation();
+            HandleControllerRotation();
+            UpdateCameraPosition();
+        }
     }
 
     private void HandleMouseRotation()
@@ -64,7 +69,7 @@ public class ThirdPersonCameraController : MonoBehaviour
 
     private void HandleControllerRotation()
     {
-        // Read rotation input from controller (right stick)
+        // Read rotation input from controller 
         Vector2 controllerInput = inputActions.Battle.RotateCamera.ReadValue<Vector2>();
 
         if (controllerInput.magnitude > 0.1f) // Deadzone
@@ -93,25 +98,31 @@ public class ThirdPersonCameraController : MonoBehaviour
         transform.LookAt(lookTarget);
     }
 
-    // Optional: Method to set camera rotation directly (useful for transitions)
+
     public void SetRotation(float yaw, float pitch)
     {
         currentYaw = yaw;
         currentPitch = Mathf.Clamp(pitch, minVerticalAngle, maxVerticalAngle);
     }
 
-    // Optional: Get current camera direction (useful for character movement)
+
     public Vector3 GetCameraForward()
     {
         Vector3 forward = transform.forward;
-        forward.y = 0; // Flatten to horizontal plane
+        forward.y = 0; 
         return forward.normalized;
     }
 
     public Vector3 GetCameraRight()
     {
         Vector3 right = transform.right;
-        right.y = 0; // Flatten to horizontal plane
+        right.y = 0; 
         return right.normalized;
+    }
+
+    public void SetCameraRotationEnabled(bool Setter)
+    {
+        cameraControlEnabled = Setter;
+        return;
     }
 }

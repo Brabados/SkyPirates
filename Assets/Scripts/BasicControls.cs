@@ -153,6 +153,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DialogeStart"",
+                    ""type"": ""Button"",
+                    ""id"": ""a11a2aad-13ce-4bca-80ec-153dc790726d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -870,6 +879,17 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""action"": ""SceneSwitch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""32157f72-e6b9-46c3-a38d-d91d9c70ae03"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DialogeStart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -953,6 +973,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""name"": ""Spawn"",
                     ""type"": ""Button"",
                     ""id"": ""9623dd73-a149-495d-9e09-63b92f803665"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DioalogeStart"",
+                    ""type"": ""Button"",
+                    ""id"": ""c8c875f5-346f-42f7-9510-431c8362fe2f"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1718,6 +1747,17 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""action"": ""Spawn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""64040e4a-c542-435b-8a51-5f5850dcbf9b"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DioalogeStart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1858,7 +1898,16 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             ""id"": ""4cb0663e-d649-48ab-85e5-844132bf1eb2"",
             ""actions"": [
                 {
-                    ""name"": ""Test"",
+                    ""name"": ""Devance"",
+                    ""type"": ""Button"",
+                    ""id"": ""08ef6edc-47d2-42df-8c7d-f4f544957bf6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Advance"",
                     ""type"": ""Button"",
                     ""id"": ""cbfd9775-5613-4bd9-b9d9-48dbd9d029ec"",
                     ""expectedControlType"": """",
@@ -1874,17 +1923,75 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SelectTerm"",
+                    ""type"": ""Button"",
+                    ""id"": ""1827c2a9-c694-423f-abf1-f580cff73619"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseTerm"",
+                    ""type"": ""Button"",
+                    ""id"": ""4ed4675a-c536-4b75-9eb0-20849b987968"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""NextTerm"",
+                    ""type"": ""Button"",
+                    ""id"": ""8bfb8028-beb9-49af-b560-212a494e9a1f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PreviousTerm"",
+                    ""type"": ""Button"",
+                    ""id"": ""006819bf-9075-47c0-891c-baf40fced73e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""35b03379-550d-446b-ab15-020a3461812e"",
-                    ""path"": ""<Keyboard>/anyKey"",
+                    ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Test"",
+                    ""action"": ""Advance"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a070bfe5-bc41-4e48-bf8b-d1b6fb822c7a"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Advance"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""67fcedb2-ebdb-4d1a-a3eb-1a14e3ab0cef"",
+                    ""path"": ""<DualShockGamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Advance"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1896,6 +2003,105 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SwitchAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""529e48d0-3ea7-448b-84a6-a5989c9ae098"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Devance"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01c55485-204d-405c-8c6a-fd74368d1aa1"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Devance"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14eb7b6c-3033-4c24-8ce8-e432f5d95146"",
+                    ""path"": ""<DualShockGamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Devance"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""288472ed-f762-4572-af81-7556c23858a9"",
+                    ""path"": ""<DualShockGamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectTerm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""691f65e4-2689-498a-b9cf-840cf87d0920"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SelectTerm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0d77e2b-d23c-4fe5-9655-d46b4336d6fa"",
+                    ""path"": ""<DualShockGamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseTerm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ecbab36e-2630-46b9-a52f-ee288594f880"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseTerm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2feceb2-4231-4681-93d6-d2f47c7cf059"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextTerm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e96fb6cb-3d48-4bc0-a253-a9d02de5197f"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PreviousTerm"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1913,6 +2119,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         m_Battle_Select = m_Battle.FindAction("Select", throwIfNotFound: true);
         m_Battle_Deselect = m_Battle.FindAction("Deselect", throwIfNotFound: true);
         m_Battle_SceneSwitch = m_Battle.FindAction("SceneSwitch", throwIfNotFound: true);
+        m_Battle_DialogeStart = m_Battle.FindAction("DialogeStart", throwIfNotFound: true);
         // OverWorld
         m_OverWorld = asset.FindActionMap("OverWorld", throwIfNotFound: true);
         m_OverWorld_MoveShip = m_OverWorld.FindAction("MoveShip", throwIfNotFound: true);
@@ -1924,6 +2131,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         m_OverWorld_SceneSwitch = m_OverWorld.FindAction("SceneSwitch", throwIfNotFound: true);
         m_OverWorld_RotateCamera = m_OverWorld.FindAction("RotateCamera", throwIfNotFound: true);
         m_OverWorld_Spawn = m_OverWorld.FindAction("Spawn", throwIfNotFound: true);
+        m_OverWorld_DioalogeStart = m_OverWorld.FindAction("DioalogeStart", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_SwitchCharater = m_Menu.FindAction("SwitchCharater", throwIfNotFound: true);
@@ -1932,8 +2140,13 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         m_Menu_Dialogue = m_Menu.FindAction("Dialogue", throwIfNotFound: true);
         // Dialouge
         m_Dialouge = asset.FindActionMap("Dialouge", throwIfNotFound: true);
-        m_Dialouge_Test = m_Dialouge.FindAction("Test", throwIfNotFound: true);
+        m_Dialouge_Devance = m_Dialouge.FindAction("Devance", throwIfNotFound: true);
+        m_Dialouge_Advance = m_Dialouge.FindAction("Advance", throwIfNotFound: true);
         m_Dialouge_SwitchAction = m_Dialouge.FindAction("SwitchAction", throwIfNotFound: true);
+        m_Dialouge_SelectTerm = m_Dialouge.FindAction("SelectTerm", throwIfNotFound: true);
+        m_Dialouge_CloseTerm = m_Dialouge.FindAction("CloseTerm", throwIfNotFound: true);
+        m_Dialouge_NextTerm = m_Dialouge.FindAction("NextTerm", throwIfNotFound: true);
+        m_Dialouge_PreviousTerm = m_Dialouge.FindAction("PreviousTerm", throwIfNotFound: true);
     }
 
     ~@BasicControls()
@@ -2024,6 +2237,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Battle_Select;
     private readonly InputAction m_Battle_Deselect;
     private readonly InputAction m_Battle_SceneSwitch;
+    private readonly InputAction m_Battle_DialogeStart;
     /// <summary>
     /// Provides access to input actions defined in input action map "Battle".
     /// </summary>
@@ -2063,6 +2277,10 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Battle/SceneSwitch".
         /// </summary>
         public InputAction @SceneSwitch => m_Wrapper.m_Battle_SceneSwitch;
+        /// <summary>
+        /// Provides access to the underlying input action "Battle/DialogeStart".
+        /// </summary>
+        public InputAction @DialogeStart => m_Wrapper.m_Battle_DialogeStart;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2110,6 +2328,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @SceneSwitch.started += instance.OnSceneSwitch;
             @SceneSwitch.performed += instance.OnSceneSwitch;
             @SceneSwitch.canceled += instance.OnSceneSwitch;
+            @DialogeStart.started += instance.OnDialogeStart;
+            @DialogeStart.performed += instance.OnDialogeStart;
+            @DialogeStart.canceled += instance.OnDialogeStart;
         }
 
         /// <summary>
@@ -2142,6 +2363,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @SceneSwitch.started -= instance.OnSceneSwitch;
             @SceneSwitch.performed -= instance.OnSceneSwitch;
             @SceneSwitch.canceled -= instance.OnSceneSwitch;
+            @DialogeStart.started -= instance.OnDialogeStart;
+            @DialogeStart.performed -= instance.OnDialogeStart;
+            @DialogeStart.canceled -= instance.OnDialogeStart;
         }
 
         /// <summary>
@@ -2188,6 +2412,7 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_OverWorld_SceneSwitch;
     private readonly InputAction m_OverWorld_RotateCamera;
     private readonly InputAction m_OverWorld_Spawn;
+    private readonly InputAction m_OverWorld_DioalogeStart;
     /// <summary>
     /// Provides access to input actions defined in input action map "OverWorld".
     /// </summary>
@@ -2235,6 +2460,10 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "OverWorld/Spawn".
         /// </summary>
         public InputAction @Spawn => m_Wrapper.m_OverWorld_Spawn;
+        /// <summary>
+        /// Provides access to the underlying input action "OverWorld/DioalogeStart".
+        /// </summary>
+        public InputAction @DioalogeStart => m_Wrapper.m_OverWorld_DioalogeStart;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2288,6 +2517,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @Spawn.started += instance.OnSpawn;
             @Spawn.performed += instance.OnSpawn;
             @Spawn.canceled += instance.OnSpawn;
+            @DioalogeStart.started += instance.OnDioalogeStart;
+            @DioalogeStart.performed += instance.OnDioalogeStart;
+            @DioalogeStart.canceled += instance.OnDioalogeStart;
         }
 
         /// <summary>
@@ -2326,6 +2558,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @Spawn.started -= instance.OnSpawn;
             @Spawn.performed -= instance.OnSpawn;
             @Spawn.canceled -= instance.OnSpawn;
+            @DioalogeStart.started -= instance.OnDioalogeStart;
+            @DioalogeStart.performed -= instance.OnDioalogeStart;
+            @DioalogeStart.canceled -= instance.OnDioalogeStart;
         }
 
         /// <summary>
@@ -2492,8 +2727,13 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     // Dialouge
     private readonly InputActionMap m_Dialouge;
     private List<IDialougeActions> m_DialougeActionsCallbackInterfaces = new List<IDialougeActions>();
-    private readonly InputAction m_Dialouge_Test;
+    private readonly InputAction m_Dialouge_Devance;
+    private readonly InputAction m_Dialouge_Advance;
     private readonly InputAction m_Dialouge_SwitchAction;
+    private readonly InputAction m_Dialouge_SelectTerm;
+    private readonly InputAction m_Dialouge_CloseTerm;
+    private readonly InputAction m_Dialouge_NextTerm;
+    private readonly InputAction m_Dialouge_PreviousTerm;
     /// <summary>
     /// Provides access to input actions defined in input action map "Dialouge".
     /// </summary>
@@ -2506,13 +2746,33 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// </summary>
         public DialougeActions(@BasicControls wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Dialouge/Test".
+        /// Provides access to the underlying input action "Dialouge/Devance".
         /// </summary>
-        public InputAction @Test => m_Wrapper.m_Dialouge_Test;
+        public InputAction @Devance => m_Wrapper.m_Dialouge_Devance;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/Advance".
+        /// </summary>
+        public InputAction @Advance => m_Wrapper.m_Dialouge_Advance;
         /// <summary>
         /// Provides access to the underlying input action "Dialouge/SwitchAction".
         /// </summary>
         public InputAction @SwitchAction => m_Wrapper.m_Dialouge_SwitchAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/SelectTerm".
+        /// </summary>
+        public InputAction @SelectTerm => m_Wrapper.m_Dialouge_SelectTerm;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/CloseTerm".
+        /// </summary>
+        public InputAction @CloseTerm => m_Wrapper.m_Dialouge_CloseTerm;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/NextTerm".
+        /// </summary>
+        public InputAction @NextTerm => m_Wrapper.m_Dialouge_NextTerm;
+        /// <summary>
+        /// Provides access to the underlying input action "Dialouge/PreviousTerm".
+        /// </summary>
+        public InputAction @PreviousTerm => m_Wrapper.m_Dialouge_PreviousTerm;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2539,12 +2799,27 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_DialougeActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_DialougeActionsCallbackInterfaces.Add(instance);
-            @Test.started += instance.OnTest;
-            @Test.performed += instance.OnTest;
-            @Test.canceled += instance.OnTest;
+            @Devance.started += instance.OnDevance;
+            @Devance.performed += instance.OnDevance;
+            @Devance.canceled += instance.OnDevance;
+            @Advance.started += instance.OnAdvance;
+            @Advance.performed += instance.OnAdvance;
+            @Advance.canceled += instance.OnAdvance;
             @SwitchAction.started += instance.OnSwitchAction;
             @SwitchAction.performed += instance.OnSwitchAction;
             @SwitchAction.canceled += instance.OnSwitchAction;
+            @SelectTerm.started += instance.OnSelectTerm;
+            @SelectTerm.performed += instance.OnSelectTerm;
+            @SelectTerm.canceled += instance.OnSelectTerm;
+            @CloseTerm.started += instance.OnCloseTerm;
+            @CloseTerm.performed += instance.OnCloseTerm;
+            @CloseTerm.canceled += instance.OnCloseTerm;
+            @NextTerm.started += instance.OnNextTerm;
+            @NextTerm.performed += instance.OnNextTerm;
+            @NextTerm.canceled += instance.OnNextTerm;
+            @PreviousTerm.started += instance.OnPreviousTerm;
+            @PreviousTerm.performed += instance.OnPreviousTerm;
+            @PreviousTerm.canceled += instance.OnPreviousTerm;
         }
 
         /// <summary>
@@ -2556,12 +2831,27 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="DialougeActions" />
         private void UnregisterCallbacks(IDialougeActions instance)
         {
-            @Test.started -= instance.OnTest;
-            @Test.performed -= instance.OnTest;
-            @Test.canceled -= instance.OnTest;
+            @Devance.started -= instance.OnDevance;
+            @Devance.performed -= instance.OnDevance;
+            @Devance.canceled -= instance.OnDevance;
+            @Advance.started -= instance.OnAdvance;
+            @Advance.performed -= instance.OnAdvance;
+            @Advance.canceled -= instance.OnAdvance;
             @SwitchAction.started -= instance.OnSwitchAction;
             @SwitchAction.performed -= instance.OnSwitchAction;
             @SwitchAction.canceled -= instance.OnSwitchAction;
+            @SelectTerm.started -= instance.OnSelectTerm;
+            @SelectTerm.performed -= instance.OnSelectTerm;
+            @SelectTerm.canceled -= instance.OnSelectTerm;
+            @CloseTerm.started -= instance.OnCloseTerm;
+            @CloseTerm.performed -= instance.OnCloseTerm;
+            @CloseTerm.canceled -= instance.OnCloseTerm;
+            @NextTerm.started -= instance.OnNextTerm;
+            @NextTerm.performed -= instance.OnNextTerm;
+            @NextTerm.canceled -= instance.OnNextTerm;
+            @PreviousTerm.started -= instance.OnPreviousTerm;
+            @PreviousTerm.performed -= instance.OnPreviousTerm;
+            @PreviousTerm.canceled -= instance.OnPreviousTerm;
         }
 
         /// <summary>
@@ -2651,6 +2941,13 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSceneSwitch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DialogeStart" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDialogeStart(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "OverWorld" which allows adding and removing callbacks.
@@ -2722,6 +3019,13 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSpawn(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "DioalogeStart" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDioalogeStart(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Menu" which allows adding and removing callbacks.
@@ -2767,12 +3071,19 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     public interface IDialougeActions
     {
         /// <summary>
-        /// Method invoked when associated input action "Test" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Devance" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnTest(InputAction.CallbackContext context);
+        void OnDevance(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Advance" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAdvance(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "SwitchAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -2780,5 +3091,33 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSwitchAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SelectTerm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelectTerm(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CloseTerm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCloseTerm(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "NextTerm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNextTerm(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PreviousTerm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPreviousTerm(InputAction.CallbackContext context);
     }
 }
