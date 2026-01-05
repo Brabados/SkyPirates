@@ -900,6 +900,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Ztarget",
+                    "type": "Button",
+                    "id": "c967ebe9-0f79-4eaa-a546-2e22c093df58",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "NextTarget",
+                    "type": "Button",
+                    "id": "9cb8f055-120a-470d-b68b-584daaf41822",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "PreciousTarget",
+                    "type": "Button",
+                    "id": "70661567-eb96-4aee-83c1-9190e84215c7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1670,6 +1697,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "DioalogeStart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "233676b3-1b2d-4f73-bf4e-98d40d3b1803",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Ztarget",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e5335ee6-8c90-4891-a273-27246808871a",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "NextTarget",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5a43593a-05e2-4456-b003-2fecb596cc29",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PreciousTarget",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

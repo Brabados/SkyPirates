@@ -34,6 +34,11 @@ public class EventManager : MonoBehaviour
     public static event Action<bool> OnActionExicuted;
     public static event Action<bool> OnMovementAllUsed;
 
+    // --- Z-TARGETING EVENTS  ---
+
+    public static event Action<Transform> OnZTargetRegister;
+    public static event Action<Transform> OnZTargetUnregister;
+
     // --- TRIGGERS ---
 
     // --- BATTLE TRIGGERS ---
@@ -60,6 +65,10 @@ public class EventManager : MonoBehaviour
     public static void TriggerSliderValueChange(float value) => OnSliderValueChange?.Invoke(value);
     public static void TriggerHideCanvas(int index) => OnHideCanvas?.Invoke(index);
     public static void TriggerShowCanvas(int index) => OnShowCanvas?.Invoke(index);
+
+    // --- Z-TARGETING TRIGGERS ---
+    public static void TriggerZTargetRegister(Transform target) => OnZTargetRegister?.Invoke(target);
+    public static void TriggerZTargetUnregister(Transform target) => OnZTargetUnregister?.Invoke(target);
 
     private void Awake()
     {

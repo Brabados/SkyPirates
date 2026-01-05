@@ -58,12 +58,7 @@ public class BoatManager : MonoBehaviour
 
     private void Update()
     {
-        // Example: Auto-spawn boats at intervals (optional)
-        if (Time.time - lastSpawnTime > spawnInterval)
-        {
-            // Uncomment to enable auto-spawning
-            // SpawnBoat();
-        }
+      
     }
 
     public SplineMover SpawnBoat()
@@ -111,6 +106,8 @@ public class BoatManager : MonoBehaviour
             StartCoroutine(DelayedStartBoat(mover, autoStartDelay));
         }
 
+        EventManager.TriggerZTargetRegister(boatObj.transform);
+
         return mover;
     }
 
@@ -126,6 +123,7 @@ public class BoatManager : MonoBehaviour
             boat.OnReachedKnot.AddListener(OnBoatReachedKnot);
             boat.OnDetourStarted.AddListener(OnBoatDetourStarted);
             boat.OnDetourCompleted.AddListener(OnBoatDetourCompleted);
+            EventManager.TriggerZTargetRegister(boat.gameObject.transform);
 
             Debug.Log($"Registered existing boat: {boat.gameObject.name}");
         }

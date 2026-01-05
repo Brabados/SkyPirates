@@ -1,65 +1,37 @@
+using Unity.Entities;
 using UnityEngine;
 
 public class FlockSpawnInputHandler : MonoBehaviour
 {
-    [Header("Spawn Settings")]
-    [Tooltip("Use player position for closest calculation, or specify a transform")]
-    public Transform referenceTransform; // If null, uses this transform
-    public BasicControls inputActions;
+    public Transform referenceTransform;
 
-    // Your input actions reference
-    // private InputActions inputActions; // Uncomment and assign your input actions
+    EntityManager _em;
 
     void Start()
     {
         if (referenceTransform == null)
-            referenceTransform = this.transform;
+            referenceTransform = transform;
 
-        inputActions = EventManager.EventInstance.inputActions;
+        _em = World.DefaultGameObjectInjectionWorld.EntityManager;
     }
 
     void Update()
     {
-        if (inputActions.OverWorld.Spawn.triggered)
+        if (Input.GetKeyDown(KeyCode.P)) // replace with your input system
         {
-            // Option 1: Use utility (recommended)
-            //FlockSpawnUtility.SpawnAtClosest(referenceTransform.position);
+            SpawnFlockCenter(referenceTransform.position);
         }
     }
 
-}
-
-// Alternative: Static utility class for easy access from anywhere
-public static class FlockSpawnUtility
-{
-    /// <summary>
-    /// Spawn fish at the closest flock center to the given world position
-    /// </summary>
-    public static void SpawnAtClosest(Vector3 worldPosition)
+    void SpawnFlockCenter(Vector3 position)
     {
-        var controller = FishFlockController.Instance;
-        if (controller != null)
+        var entity = _em.CreateEntity(typeof(FlockCenterData));
+        _em.SetComponentData(entity, new FlockCenterData
         {
-            controller.TriggerSpawnAtClosest(worldPosition);
-        }
-        else
-        {
-            Debug.LogWarning("FishFlockController not available");
-        }
-    }
+            FlockID = Random.Range(1000, 9999),
+            Position = position
+        });
 
-    /// <summary>
-    /// Spawn fish at the closest flock center to the main camera position
-    /// </summary>
-    public static void SpawnAtClosestToCamera()
-    {
-        if (Camera.main != null)
-        {
-            SpawnAtClosest(Camera.main.transform.position);
-        }
-        else
-        {
-            Debug.LogWarning("Main camera not found");
-        }
+        Debug.Log("Spawned flock center via input");
     }
 }

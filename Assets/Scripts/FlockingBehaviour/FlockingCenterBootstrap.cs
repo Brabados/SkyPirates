@@ -2,118 +2,94 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
+/// <summary>
+/// FIXED: This system now properly detects baked FlockCenterData entities
+/// and creates FlockRepresentatives for them.
+/// </summary>
 [UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct FlockCenterBootstrapSystem : ISystem
 {
     private bool _hasInitialized;
+    private EntityQuery _flockCenterQuery;
+    private NativeHashSet<int> _knownFlocks;
 
     public void OnCreate(ref SystemState state)
     {
         _hasInitialized = false;
+        _knownFlocks = new NativeHashSet<int>(16, Allocator.Persistent);
+
+        // Create a query to check for flock centers
+        _flockCenterQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<FlockCenterData>(),
+            ComponentType.ReadOnly<BoidFlockID>()
+        );
+
+
+        Debug.Log("FlockCenterBootstrapSystem created");
+    }
+
+    public void OnDestroy(ref SystemState state)
+    {
+        if (_knownFlocks.IsCreated)
+            _knownFlocks.Dispose();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        // Only run once during initialization
-        if (_hasInitialized) return;
+        if (_flockCenterQuery.IsEmpty)
+            return;
 
+        var flockCenters = _flockCenterQuery.ToComponentDataArray<FlockCenterData>(Allocator.Temp);
+        var flockIDs = _flockCenterQuery.ToComponentDataArray<BoidFlockID>(Allocator.Temp);
 
-        // --- 2. Spawn flock centers for all FlockCenterAuthoring objects in scene ---
-        foreach (var authoring in Object.FindObjectsOfType<FlockCenterAuthoring>())
+        for (int i = 0; i < flockCenters.Length; i++)
         {
-            int flockID = authoring.FlockID;
-            if (!HasFlockCenterEntity(ref state, flockID))
-            {
-                Entity flockEntity = state.EntityManager.CreateEntity();
-                state.EntityManager.AddComponentData(flockEntity, new FlockCenterData
-                {
-                    FlockID = flockID, // Make sure to set the FlockID in the FlockCenterData
-                    Position = authoring.transform.position
-                });
-                state.EntityManager.AddComponentData(flockEntity, new BoidFlockID { FlockID = flockID });
+            int flockID = flockIDs[i].FlockID;
 
-                // Add prefab selection buffer
-                var prefabBuffer = state.EntityManager.AddBuffer<FlockPrefabSelection>(flockEntity);
+            // Already has a representative → skip
+            if (_knownFlocks.Contains(flockID))
+                continue;
 
-                // If specific prefabs are assigned, use those
-                if (authoring.SpecificPrefabs.Length > 0)
-                {
-                    foreach (var prefab in authoring.SpecificPrefabs)
-                    {
-                        if (prefab != null)
-                        {
-                            // Note: We can't get entity references here in bootstrap since baking hasn't happened
-                            // So we'll just mark it to use all prefabs for now
-                            prefabBuffer.Add(new FlockPrefabSelection { PrefabIndex = -1, PrefabEntity = Entity.Null });
-                            break; // Just add one entry to mark that this flock exists
-                        }
-                    }
-                }
-                // Use indices from the registry
-                else if (authoring.AllowedPrefabIndices.Length > 0)
-                {
-                    foreach (int index in authoring.AllowedPrefabIndices)
-                    {
-                        prefabBuffer.Add(new FlockPrefabSelection { PrefabIndex = index, PrefabEntity = Entity.Null });
-                    }
-                }
-                // If nothing specified, mark as "use all" with index -1
-                else
-                {
-                    prefabBuffer.Add(new FlockPrefabSelection { PrefabIndex = -1, PrefabEntity = Entity.Null });
-                }
-
-#if UNITY_EDITOR
-                state.EntityManager.SetName(flockEntity, $"FlockCenterEntity_{flockID}");
-#endif
-
-                Debug.Log($"Created flock center for FlockID {flockID} at {authoring.transform.position}");
-            }
+            CreateFlockRepresentative(flockID, flockCenters[i].Position);
+            _knownFlocks.Add(flockID);
         }
 
-        _hasInitialized = true;
-
-        // Log all existing flock centers for debugging
-        LogAllFlockCenters(ref state);
+        flockCenters.Dispose();
+        flockIDs.Dispose();
     }
 
-    private bool HasFlockCenterEntity(ref SystemState state, int flockID)
+
+    /// <summary>
+    /// Creates a FlockRepresentative GameObject for targeting at runtime
+    /// </summary>
+    private void CreateFlockRepresentative(int flockID, Vector3 position)
     {
-        // Create a query for entities with both FlockCenterData and BoidFlockID
-        var query = SystemAPI.QueryBuilder()
-            .WithAll<FlockCenterData, BoidFlockID>()
-            .Build();
-
-        // Check if any entities exist with this FlockID
-        var entities = query.ToEntityArray(Allocator.Temp);
-        var flockIDs = query.ToComponentDataArray<BoidFlockID>(Allocator.Temp);
-
-        bool found = false;
-        for (int i = 0; i < flockIDs.Length; i++)
+        // Check if representative already exists
+        var existing = GameObject.Find($"FlockRepresentative_{flockID}");
+        if (existing != null)
         {
-            if (flockIDs[i].FlockID == flockID)
-            {
-                found = true;
-                break;
-            }
+            Debug.Log($"FlockRepresentative_{flockID} already exists, skipping creation");
+            return;
         }
 
-        entities.Dispose();
-        flockIDs.Dispose();
-        return found;
+        // Create the representative GameObject
+        GameObject representative = new GameObject($"FlockRepresentative_{flockID}");
+        representative.transform.position = position;
+
+        // Add and configure FlockRepresentative component
+        var repComponent = representative.AddComponent<FlockRepresentative>();
+        repComponent.flockID = flockID;
+
+        Debug.Log($"Created FlockRepresentative for FlockID {flockID} at {position}");
     }
 
     private void LogAllFlockCenters(ref SystemState state)
     {
-        var query = SystemAPI.QueryBuilder()
-            .WithAll<FlockCenterData, BoidFlockID>()
-            .Build();
+        var entities = _flockCenterQuery.ToEntityArray(Allocator.Temp);
+        var flockCenters = _flockCenterQuery.ToComponentDataArray<FlockCenterData>(Allocator.Temp);
+        var flockIDs = _flockCenterQuery.ToComponentDataArray<BoidFlockID>(Allocator.Temp);
 
-        var entities = query.ToEntityArray(Allocator.Temp);
-        var flockCenters = query.ToComponentDataArray<FlockCenterData>(Allocator.Temp);
-        var flockIDs = query.ToComponentDataArray<BoidFlockID>(Allocator.Temp);
-
-        Debug.Log($"Total flock centers created: {entities.Length}");
+        Debug.Log($"=== Total flock centers: {entities.Length} ===");
         for (int i = 0; i < entities.Length; i++)
         {
             Debug.Log($"Flock Center - FlockID: {flockIDs[i].FlockID}, Position: {flockCenters[i].Position}, Entity: {entities[i]}");

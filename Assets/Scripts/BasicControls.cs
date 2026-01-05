@@ -986,6 +986,33 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Ztarget"",
+                    ""type"": ""Button"",
+                    ""id"": ""c967ebe9-0f79-4eaa-a546-2e22c093df58"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""NextTarget"",
+                    ""type"": ""Button"",
+                    ""id"": ""9cb8f055-120a-470d-b68b-584daaf41822"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PreciousTarget"",
+                    ""type"": ""Button"",
+                    ""id"": ""70661567-eb96-4aee-83c1-9190e84215c7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1758,6 +1785,39 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
                     ""action"": ""DioalogeStart"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""233676b3-1b2d-4f73-bf4e-98d40d3b1803"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Ztarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e5335ee6-8c90-4891-a273-27246808871a"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5a43593a-05e2-4456-b003-2fecb596cc29"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PreciousTarget"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -2132,6 +2192,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         m_OverWorld_RotateCamera = m_OverWorld.FindAction("RotateCamera", throwIfNotFound: true);
         m_OverWorld_Spawn = m_OverWorld.FindAction("Spawn", throwIfNotFound: true);
         m_OverWorld_DioalogeStart = m_OverWorld.FindAction("DioalogeStart", throwIfNotFound: true);
+        m_OverWorld_Ztarget = m_OverWorld.FindAction("Ztarget", throwIfNotFound: true);
+        m_OverWorld_NextTarget = m_OverWorld.FindAction("NextTarget", throwIfNotFound: true);
+        m_OverWorld_PreciousTarget = m_OverWorld.FindAction("PreciousTarget", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_SwitchCharater = m_Menu.FindAction("SwitchCharater", throwIfNotFound: true);
@@ -2413,6 +2476,9 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_OverWorld_RotateCamera;
     private readonly InputAction m_OverWorld_Spawn;
     private readonly InputAction m_OverWorld_DioalogeStart;
+    private readonly InputAction m_OverWorld_Ztarget;
+    private readonly InputAction m_OverWorld_NextTarget;
+    private readonly InputAction m_OverWorld_PreciousTarget;
     /// <summary>
     /// Provides access to input actions defined in input action map "OverWorld".
     /// </summary>
@@ -2464,6 +2530,18 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "OverWorld/DioalogeStart".
         /// </summary>
         public InputAction @DioalogeStart => m_Wrapper.m_OverWorld_DioalogeStart;
+        /// <summary>
+        /// Provides access to the underlying input action "OverWorld/Ztarget".
+        /// </summary>
+        public InputAction @Ztarget => m_Wrapper.m_OverWorld_Ztarget;
+        /// <summary>
+        /// Provides access to the underlying input action "OverWorld/NextTarget".
+        /// </summary>
+        public InputAction @NextTarget => m_Wrapper.m_OverWorld_NextTarget;
+        /// <summary>
+        /// Provides access to the underlying input action "OverWorld/PreciousTarget".
+        /// </summary>
+        public InputAction @PreciousTarget => m_Wrapper.m_OverWorld_PreciousTarget;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2520,6 +2598,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @DioalogeStart.started += instance.OnDioalogeStart;
             @DioalogeStart.performed += instance.OnDioalogeStart;
             @DioalogeStart.canceled += instance.OnDioalogeStart;
+            @Ztarget.started += instance.OnZtarget;
+            @Ztarget.performed += instance.OnZtarget;
+            @Ztarget.canceled += instance.OnZtarget;
+            @NextTarget.started += instance.OnNextTarget;
+            @NextTarget.performed += instance.OnNextTarget;
+            @NextTarget.canceled += instance.OnNextTarget;
+            @PreciousTarget.started += instance.OnPreciousTarget;
+            @PreciousTarget.performed += instance.OnPreciousTarget;
+            @PreciousTarget.canceled += instance.OnPreciousTarget;
         }
 
         /// <summary>
@@ -2561,6 +2648,15 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
             @DioalogeStart.started -= instance.OnDioalogeStart;
             @DioalogeStart.performed -= instance.OnDioalogeStart;
             @DioalogeStart.canceled -= instance.OnDioalogeStart;
+            @Ztarget.started -= instance.OnZtarget;
+            @Ztarget.performed -= instance.OnZtarget;
+            @Ztarget.canceled -= instance.OnZtarget;
+            @NextTarget.started -= instance.OnNextTarget;
+            @NextTarget.performed -= instance.OnNextTarget;
+            @NextTarget.canceled -= instance.OnNextTarget;
+            @PreciousTarget.started -= instance.OnPreciousTarget;
+            @PreciousTarget.performed -= instance.OnPreciousTarget;
+            @PreciousTarget.canceled -= instance.OnPreciousTarget;
         }
 
         /// <summary>
@@ -3026,6 +3122,27 @@ public partial class @BasicControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDioalogeStart(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Ztarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnZtarget(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "NextTarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNextTarget(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PreciousTarget" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPreciousTarget(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Menu" which allows adding and removing callbacks.

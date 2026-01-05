@@ -50,7 +50,7 @@ public class EnemyFlockMovement : MonoBehaviour
             timer = 0;
             target = mainTarget;
             destination = target.position;
-            if (flockCreator.HasBoidsWithinDistance(target.position, 5))
+            if (BoidQueryUtility.HasBoidsWithinDistance(flockCreator.flockID,target.position,5f))
             {
                 PawnManager.PawnManagerInstance.MapFiles = files;
                 PawnManager.PawnManagerInstance.MapGeneration = Geneerator;

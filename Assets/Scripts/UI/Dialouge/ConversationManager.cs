@@ -10,162 +10,294 @@ public class ConversationManager : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private GameObject conversationPanel;
 
-    [Header("Input Settings")]
-    [Tooltip("Connect your Input System actions here")]
-    public bool enableInputNavigation = true;
-
     [Header("Settings")]
     [SerializeField] private int maxCharactersPerSegment = 200;
     [SerializeField] private bool autoPlayVoice = true;
     [SerializeField] private float typewriterSpeed = 0.05f;
     [SerializeField] private bool useTypewriter = false;
 
+    [Header("Text Segmentation")]
+    [SerializeField] private float minBreakPointRatio = 0.5f;
+    [Tooltip("Minimum ratio of max length to use sentence break (0.5 = 50%)")]
+
     [Header("Events")]
     public UnityEvent OnConversationStart;
     public UnityEvent OnConversationEnd;
-    public UnityEvent<int, int> OnSegmentChange; // current segment, total segments
+    public UnityEvent<int, int> OnSegmentChange;
 
+    // State
     private Conversation currentConversation;
-    private int currentLineIndex = 0;
-    private int currentSegmentIndex = 0;
-    private int totalSegments = 0;
-
-    private bool isTyping = false;
+    private int currentLineIndex;
+    private int currentSegmentIndex;
+    private int totalSegments;
+    private bool isTyping;
     private Coroutine typewriterCoroutine;
+
+    // Cache
+    private DialogueLine cachedCurrentLine;
+    private ThirdPersonCameraController cameraController;
+
+    // Constants
+    private const int INITIAL_LINE_INDEX = 0;
+    private const int INITIAL_SEGMENT_INDEX = 0;
+    private const int INITIAL_TOTAL_SEGMENTS = 0;
+
+    void Awake()
+    {
+        CacheComponents();
+    }
 
     void Start()
     {
+        InitializeConversationPanel();
+        RegisterEventListeners();
+    }
+
+    private void CacheComponents()
+    {
+        if (Camera.main != null)
+        {
+            cameraController = Camera.main.GetComponent<ThirdPersonCameraController>();
+        }
+    }
+
+    private void InitializeConversationPanel()
+    {
         if (conversationPanel != null)
+        {
             conversationPanel.SetActive(false);
-        OnConversationStart.AddListener(() => DisableCamera());
-        OnConversationEnd.AddListener(() => EnableCamera());
+        }
+    }
+
+    private void RegisterEventListeners()
+    {
+        OnConversationStart.AddListener(DisableCamera);
+        OnConversationEnd.AddListener(EnableCamera);
     }
 
     public void StartConversation(Conversation conversation)
     {
-        if (conversation == null || conversation.dialogueLines.Count == 0)
+        if (!IsValidConversation(conversation))
         {
-            Debug.LogWarning("Cannot start empty conversation!");
+            Debug.LogWarning("Cannot start empty or null conversation!");
             return;
         }
 
-        currentConversation = conversation;
+        InitializeConversation(conversation);
         ProcessConversation();
-
-        currentLineIndex = 0;
-        currentSegmentIndex = 0;
-
-        if (conversationPanel != null)
-            conversationPanel.SetActive(true);
+        ShowConversationPanel();
 
         OnConversationStart?.Invoke();
         DisplayCurrentSegment();
     }
 
+    private bool IsValidConversation(Conversation conversation)
+    {
+        return conversation != null &&
+               conversation.dialogueLines != null &&
+               conversation.dialogueLines.Count > 0;
+    }
+
+    private void InitializeConversation(Conversation conversation)
+    {
+        currentConversation = conversation;
+        currentLineIndex = INITIAL_LINE_INDEX;
+        currentSegmentIndex = INITIAL_SEGMENT_INDEX;
+        cachedCurrentLine = null;
+    }
+
+    private void ShowConversationPanel()
+    {
+        if (conversationPanel != null)
+        {
+            conversationPanel.SetActive(true);
+        }
+    }
+
     private void ProcessConversation()
     {
-        totalSegments = 0;
+        totalSegments = INITIAL_TOTAL_SEGMENTS;
 
         foreach (var line in currentConversation.dialogueLines)
         {
-            line.textSegments.Clear();
-
-            if (string.IsNullOrEmpty(line.dialogueText))
-            {
-                line.textSegments.Add("");
-                totalSegments++;
-                continue;
-            }
-
-            // Split text into segments that fit the character limit
-            string remainingText = line.dialogueText;
-
-            while (remainingText.Length > 0)
-            {
-                if (remainingText.Length <= maxCharactersPerSegment)
-                {
-                    line.textSegments.Add(remainingText);
-                    totalSegments++;
-                    break;
-                }
-
-                // Find a good breaking point (space, punctuation)
-                int breakPoint = FindBreakPoint(remainingText, maxCharactersPerSegment);
-
-                string segment = remainingText.Substring(0, breakPoint).Trim();
-                line.textSegments.Add(segment);
-                totalSegments++;
-
-                remainingText = remainingText.Substring(breakPoint).Trim();
-            }
+            ProcessDialogueLine(line);
         }
+    }
+
+    private void ProcessDialogueLine(DialogueLine line)
+    {
+        line.textSegments.Clear();
+
+        if (string.IsNullOrEmpty(line.dialogueText))
+        {
+            AddEmptySegment(line);
+            return;
+        }
+
+        SegmentText(line);
+    }
+
+    private void AddEmptySegment(DialogueLine line)
+    {
+        line.textSegments.Add(string.Empty);
+        totalSegments++;
+    }
+
+    private void SegmentText(DialogueLine line)
+    {
+        string remainingText = line.dialogueText;
+
+        while (remainingText.Length > 0)
+        {
+            if (remainingText.Length <= maxCharactersPerSegment)
+            {
+                AddFinalSegment(line, remainingText);
+                break;
+            }
+
+            int breakPoint = FindBreakPoint(remainingText, maxCharactersPerSegment);
+            string segment = remainingText.Substring(0, breakPoint).Trim();
+
+            line.textSegments.Add(segment);
+            totalSegments++;
+
+            remainingText = remainingText.Substring(breakPoint).Trim();
+        }
+    }
+
+    private void AddFinalSegment(DialogueLine line, string text)
+    {
+        line.textSegments.Add(text);
+        totalSegments++;
     }
 
     private int FindBreakPoint(string text, int maxLength)
     {
         if (text.Length <= maxLength)
+        {
             return text.Length;
+        }
 
-        // Try to break at sentence end
+        int sentenceBreak = FindSentenceBreak(text, maxLength);
+        if (IsValidBreakPoint(sentenceBreak, maxLength))
+        {
+            return sentenceBreak + 1;
+        }
+
+        int spaceBreak = text.LastIndexOf(' ', maxLength);
+        if (spaceBreak > 0)
+        {
+            return spaceBreak;
+        }
+
+        return maxLength;
+    }
+
+    private int FindSentenceBreak(string text, int maxLength)
+    {
         int lastPeriod = text.LastIndexOf('.', maxLength);
         int lastExclamation = text.LastIndexOf('!', maxLength);
         int lastQuestion = text.LastIndexOf('?', maxLength);
 
-        int sentenceBreak = Mathf.Max(lastPeriod, lastExclamation, lastQuestion);
-        if (sentenceBreak > maxLength / 2) // Only use if it's not too early
-            return sentenceBreak + 1;
+        return Mathf.Max(lastPeriod, lastExclamation, lastQuestion);
+    }
 
-        // Try to break at space
-        int lastSpace = text.LastIndexOf(' ', maxLength);
-        if (lastSpace > 0)
-            return lastSpace;
-
-        // Force break at max length
-        return maxLength;
+    private bool IsValidBreakPoint(int breakPoint, int maxLength)
+    {
+        return breakPoint > maxLength * minBreakPointRatio;
     }
 
     private void DisplayCurrentSegment()
     {
         if (currentConversation == null)
-            return;
-
-        DialogueLine currentLine = currentConversation.dialogueLines[currentLineIndex];
-        string textToDisplay = currentLine.textSegments[currentSegmentIndex];
-
-        // Update speaker sprite
-        if (speakerImage != null && currentLine.speakerSprite != null)
         {
-            speakerImage.sprite = currentLine.speakerSprite;
+            return;
+        }
+
+        UpdateCachedLine();
+        string textToDisplay = GetCurrentSegmentText();
+
+        UpdateSpeakerVisual();
+        PlayVoiceIfNeeded();
+        DisplayText(textToDisplay);
+        NotifySegmentChange();
+    }
+
+    private void UpdateCachedLine()
+    {
+        cachedCurrentLine = currentConversation.dialogueLines[currentLineIndex];
+    }
+
+    private string GetCurrentSegmentText()
+    {
+        return cachedCurrentLine.textSegments[currentSegmentIndex];
+    }
+
+    private void UpdateSpeakerVisual()
+    {
+        if (speakerImage == null)
+        {
+            return;
+        }
+
+        if (cachedCurrentLine.speakerSprite != null)
+        {
+            speakerImage.sprite = cachedCurrentLine.speakerSprite;
             speakerImage.enabled = true;
         }
-        else if (speakerImage != null)
+        else
         {
             speakerImage.enabled = false;
         }
+    }
 
-        // Play voice clip (only on first segment of a line)
-        if (currentSegmentIndex == 0 && autoPlayVoice &&
-            currentLine.voiceClip != null && audioSource != null)
+    private void PlayVoiceIfNeeded()
+    {
+        if (!ShouldPlayVoice())
         {
-            audioSource.PlayOneShot(currentLine.voiceClip);
+            return;
         }
 
-        // Display text
-        if (useTypewriter && dialogueSystem != null)
+        audioSource.PlayOneShot(cachedCurrentLine.voiceClip);
+    }
+
+    private bool ShouldPlayVoice()
+    {
+        return currentSegmentIndex == 0 &&
+               autoPlayVoice &&
+               cachedCurrentLine.voiceClip != null &&
+               audioSource != null;
+    }
+
+    private void DisplayText(string text)
+    {
+        if (dialogueSystem == null)
         {
-            if (typewriterCoroutine != null)
-                StopCoroutine(typewriterCoroutine);
-            typewriterCoroutine = StartCoroutine(TypewriterEffect(textToDisplay));
-        }
-        else if (dialogueSystem != null)
-        {
-            dialogueSystem.DisplayDialogue(textToDisplay);
+            return;
         }
 
-        // Update navigation buttons
-        UpdateNavigationButtons();
+        if (useTypewriter)
+        {
+            StartTypewriterEffect(text);
+        }
+        else
+        {
+            dialogueSystem.DisplayDialogue(text);
+        }
+    }
 
-        // Invoke event
+    private void StartTypewriterEffect(string text)
+    {
+        if (typewriterCoroutine != null)
+        {
+            StopCoroutine(typewriterCoroutine);
+        }
+
+        typewriterCoroutine = StartCoroutine(TypewriterEffect(text));
+    }
+
+    private void NotifySegmentChange()
+    {
         int absoluteSegmentIndex = GetAbsoluteSegmentIndex();
         OnSegmentChange?.Invoke(absoluteSegmentIndex + 1, totalSegments);
     }
@@ -173,15 +305,16 @@ public class ConversationManager : MonoBehaviour
     private System.Collections.IEnumerator TypewriterEffect(string text)
     {
         isTyping = true;
-        string displayedText = "";
+        System.Text.StringBuilder displayedText = new System.Text.StringBuilder(text.Length);
 
-        // Parse the text to handle brackets properly
         for (int i = 0; i < text.Length; i++)
         {
-            displayedText += text[i];
+            displayedText.Append(text[i]);
 
             if (dialogueSystem != null)
-                dialogueSystem.DisplayDialogue(displayedText);
+            {
+                dialogueSystem.DisplayDialogue(displayedText.ToString());
+            }
 
             yield return new WaitForSeconds(typewriterSpeed);
         }
@@ -191,141 +324,251 @@ public class ConversationManager : MonoBehaviour
 
     public void NextSegment()
     {
-        if (currentConversation == null || isTyping)
+        if (!CanAdvance())
+        {
             return;
-
-        DialogueLine currentLine = currentConversation.dialogueLines[currentLineIndex];
-
-        // Move to next segment in current line
-        if (currentSegmentIndex < currentLine.textSegments.Count - 1)
-        {
-            currentSegmentIndex++;
-            DisplayCurrentSegment();
         }
-        // Move to next line
-        else if (currentLineIndex < currentConversation.dialogueLines.Count - 1)
+
+        if (HasMoreSegmentsInCurrentLine())
         {
-            currentLineIndex++;
-            currentSegmentIndex = 0;
-            DisplayCurrentSegment();
+            AdvanceToNextSegment();
         }
-        // End of conversation
+        else if (HasMoreLines())
+        {
+            AdvanceToNextLine();
+        }
         else
         {
             EndConversation();
         }
     }
 
+    private bool CanAdvance()
+    {
+        return currentConversation != null && !isTyping;
+    }
+
+    private bool HasMoreSegmentsInCurrentLine()
+    {
+        DialogueLine currentLine = GetCurrentOrCachedLine();
+        return currentSegmentIndex < currentLine.textSegments.Count - 1;
+    }
+
+    private bool HasMoreLines()
+    {
+        return currentLineIndex < currentConversation.dialogueLines.Count - 1;
+    }
+
+    private DialogueLine GetCurrentOrCachedLine()
+    {
+        return cachedCurrentLine ?? currentConversation.dialogueLines[currentLineIndex];
+    }
+
+    private void AdvanceToNextSegment()
+    {
+        currentSegmentIndex++;
+        DisplayCurrentSegment();
+    }
+
+    private void AdvanceToNextLine()
+    {
+        currentLineIndex++;
+        currentSegmentIndex = INITIAL_SEGMENT_INDEX;
+        cachedCurrentLine = null;
+        DisplayCurrentSegment();
+    }
+
     public void PreviousSegment()
     {
-        if (currentConversation == null || isTyping)
+        if (!CanGoBack())
+        {
             return;
+        }
 
-        // Move to previous segment in current line
         if (currentSegmentIndex > 0)
         {
-            currentSegmentIndex--;
-            DisplayCurrentSegment();
+            GoToPreviousSegment();
         }
-        // Move to previous line (last segment)
         else if (currentLineIndex > 0)
         {
-            currentLineIndex--;
-            DialogueLine previousLine = currentConversation.dialogueLines[currentLineIndex];
-            currentSegmentIndex = previousLine.textSegments.Count - 1;
-            DisplayCurrentSegment();
+            GoToPreviousLine();
         }
     }
 
-    private bool CanGoNext()
+    private bool CanGoBack()
     {
-        if (currentConversation == null)
-            return false;
-
-        DialogueLine currentLine = currentConversation.dialogueLines[currentLineIndex];
-        bool isLastSegment = currentSegmentIndex >= currentLine.textSegments.Count - 1;
-        bool isLastLine = currentLineIndex >= currentConversation.dialogueLines.Count - 1;
-
-        return !(isLastSegment && isLastLine);
+        return currentConversation != null && !isTyping;
     }
 
-    private bool CanGoPrevious()
+    private void GoToPreviousSegment()
     {
-        return currentLineIndex > 0 || currentSegmentIndex > 0;
+        currentSegmentIndex--;
+        DisplayCurrentSegment();
     }
 
-    private void UpdateNavigationButtons()
+    private void GoToPreviousLine()
     {
-
-        // Navigation state can be checked with CanGoNext() and CanGoPrevious()
+        currentLineIndex--;
+        cachedCurrentLine = currentConversation.dialogueLines[currentLineIndex];
+        currentSegmentIndex = cachedCurrentLine.textSegments.Count - 1;
+        DisplayCurrentSegment();
     }
 
     private int GetAbsoluteSegmentIndex()
     {
         int index = 0;
+
         for (int i = 0; i < currentLineIndex; i++)
         {
             index += currentConversation.dialogueLines[i].textSegments.Count;
         }
+
         return index + currentSegmentIndex;
     }
 
     public void EndConversation()
     {
+        CleanupConversation();
+        HideConversationPanel();
+        ResetConversationState();
+
         OnConversationEnd?.Invoke();
+    }
 
+    private void CleanupConversation()
+    {
+        StopTypewriterIfRunning();
+        StopAudioIfPlaying();
+    }
+
+    private void StopTypewriterIfRunning()
+    {
+        if (typewriterCoroutine != null)
+        {
+            StopCoroutine(typewriterCoroutine);
+            typewriterCoroutine = null;
+        }
+    }
+
+    private void StopAudioIfPlaying()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    private void HideConversationPanel()
+    {
         if (conversationPanel != null)
+        {
             conversationPanel.SetActive(false);
+        }
+    }
 
+    private void ResetConversationState()
+    {
         currentConversation = null;
-        currentLineIndex = 0;
-        currentSegmentIndex = 0;
+        cachedCurrentLine = null;
+        currentLineIndex = INITIAL_LINE_INDEX;
+        currentSegmentIndex = INITIAL_SEGMENT_INDEX;
+        isTyping = false;
     }
 
     public void SkipTypewriter()
     {
-        if (isTyping && typewriterCoroutine != null)
+        if (!IsTypewriterActive())
         {
-            StopCoroutine(typewriterCoroutine);
-            isTyping = false;
-
-            DialogueLine currentLine = currentConversation.dialogueLines[currentLineIndex];
-            string fullText = currentLine.textSegments[currentSegmentIndex];
-
-            if (dialogueSystem != null)
-                dialogueSystem.DisplayDialogue(fullText);
+            return;
         }
+
+        StopTypewriterIfRunning();
+        isTyping = false;
+
+        DisplayFullSegmentText();
     }
 
-    // Helper method to manually play voice
+    private bool IsTypewriterActive()
+    {
+        return isTyping && typewriterCoroutine != null;
+    }
+
+    private void DisplayFullSegmentText()
+    {
+        if (dialogueSystem == null || cachedCurrentLine == null)
+        {
+            return;
+        }
+
+        string fullText = cachedCurrentLine.textSegments[currentSegmentIndex];
+        dialogueSystem.DisplayDialogue(fullText);
+    }
+
     public void PlayCurrentVoice()
     {
-        if (currentConversation == null)
-            return;
-
-        DialogueLine currentLine = currentConversation.dialogueLines[currentLineIndex];
-        if (currentLine.voiceClip != null && audioSource != null)
+        if (!CanPlayVoice())
         {
-            audioSource.PlayOneShot(currentLine.voiceClip);
+            return;
         }
+
+        audioSource.PlayOneShot(cachedCurrentLine.voiceClip);
     }
+
+    private bool CanPlayVoice()
+    {
+        return currentConversation != null &&
+               cachedCurrentLine != null &&
+               cachedCurrentLine.voiceClip != null &&
+               audioSource != null;
+    }
+
     private void DisableCamera()
     {
-        ThirdPersonCameraController camera = Camera.main.gameObject.GetComponent<ThirdPersonCameraController>();
-        if (camera != null)
+        if (cameraController == null)
         {
-            camera.SetCameraRotationEnabled(false);
-            camera.target.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+            return;
         }
+
+        cameraController.SetCameraRotationEnabled(false);
+        FreezePlayerVerticalMovement();
     }
 
     private void EnableCamera()
     {
-        ThirdPersonCameraController camera = Camera.main.gameObject.GetComponent<ThirdPersonCameraController>();
-        if (camera != null)
+        if (cameraController == null)
         {
-            camera.SetCameraRotationEnabled(true);
-            camera.target.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            return;
+        }
+
+        cameraController.SetCameraRotationEnabled(true);
+        UnfreezePlayerMovement();
+    }
+
+    private void FreezePlayerVerticalMovement()
+    {
+        if (cameraController.target == null)
+        {
+            return;
+        }
+
+        Rigidbody rb = cameraController.target.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.constraints = RigidbodyConstraints.FreezePositionY;
+        }
+    }
+
+    private void UnfreezePlayerMovement()
+    {
+        if (cameraController.target == null)
+        {
+            return;
+        }
+
+        Rigidbody rb = cameraController.target.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.constraints = RigidbodyConstraints.None;
         }
     }
 }

@@ -13,31 +13,45 @@ public class DialogueSystem : MonoBehaviour
     [SerializeField] private EncyclopediaPanel encyclopediaPanel;
 
     [Header("Visual Settings")]
-    [SerializeField] private Color loreColor = new Color(0.8f, 0.6f, 1f); // Purple
-    [SerializeField] private Color gameSystemColor = new Color(0.3f, 0.8f, 1f); // Cyan
-    [SerializeField] private Color selectedTermColor = Color.white;
+    [SerializeField] private Color loreColor = new Color(0.8f, 0.6f, 1f);
+    [SerializeField] private Color gameSystemColor = new Color(0.3f, 0.8f, 1f);
 
     [Header("Navigation Settings")]
     [SerializeField] private bool enableTermNavigation = true;
-    [Tooltip("Visual indicator for currently selected term (optional)")]
     [SerializeField] private GameObject termSelectionIndicator;
 
+    // State
     private List<LinkedTerm> linkedTerms = new List<LinkedTerm>();
     private int currentTermIndex = -1;
-    private bool hasTermsInCurrentDialogue = false;
+    private bool hasTermsInCurrentDialogue;
+
+    // Cache
+    private static readonly Regex BracketRegex = new Regex(@"\[([^\]]+)\]", RegexOptions.Compiled);
+
+    // Constants
+    private const int INVALID_TERM_INDEX = -1;
+    private const int FIRST_TERM_INDEX = 0;
+    private const string LINK_ID_PREFIX = "link_";
 
     private struct LinkedTerm
     {
         public string term;
         public string linkId;
         public EncyclopediaEntry entry;
-        public int linkIndex; // TMP link index for highlighting
+        public int linkIndex;
     }
 
     void Start()
     {
+        InitializeEncyclopedia();
+    }
+
+    private void InitializeEncyclopedia()
+    {
         if (encyclopedia != null)
+        {
             encyclopedia.Initialize();
+        }
     }
 
     public void DisplayDialogue(string dialogue)
@@ -47,170 +61,315 @@ public class DialogueSystem : MonoBehaviour
 
     private void ProcessDialogue(string dialogue)
     {
+        ResetDialogueState();
+
+        MatchCollection matches = BracketRegex.Matches(dialogue);
+
+        if (matches.Count == 0)
+        {
+            DisplayPlainText(dialogue);
+            return;
+        }
+
+        string processedText = ProcessMatches(dialogue, matches);
+        DisplayProcessedText(processedText);
+
+        if (hasTermsInCurrentDialogue && enableTermNavigation)
+        {
+            SelectFirstTerm();
+        }
+    }
+
+    private void ResetDialogueState()
+    {
         linkedTerms.Clear();
-        currentTermIndex = -1;
+        currentTermIndex = INVALID_TERM_INDEX;
         hasTermsInCurrentDialogue = false;
+    }
 
-        // Find all bracketed terms
-        MatchCollection matches = Regex.Matches(dialogue, @"\[([^\]]+)\]");
+    private void DisplayPlainText(string text)
+    {
+        dialogueText.text = text;
+    }
 
+    private string ProcessMatches(string dialogue, MatchCollection matches)
+    {
         string processedText = dialogue;
         int linkCounter = 0;
 
-        // Process matches in reverse to maintain string positions
+        // Process in reverse to maintain string positions
         for (int i = matches.Count - 1; i >= 0; i--)
         {
             Match match = matches[i];
             string term = match.Groups[1].Value;
-            EncyclopediaEntry entry = encyclopedia?.GetEntry(term);
+            EncyclopediaEntry entry = GetEncyclopediaEntry(term);
 
             if (entry != null)
             {
-                string linkId = $"link_{linkCounter}";
-                Color termColor = entry.type == EntryType.Lore ? loreColor : gameSystemColor;
-
-                // Create clickable link with TMP link tags
-                string linkedText = $"<link=\"{linkId}\"><color=#{ColorUtility.ToHtmlStringRGB(termColor)}><u>{term}</u></color></link>";
-
-                // Replace [term] with linked version
-                processedText = processedText.Remove(match.Index, match.Length);
-                processedText = processedText.Insert(match.Index, linkedText);
-
-                // Store term info (add to front since we're processing in reverse)
-                linkedTerms.Insert(0, new LinkedTerm
-                {
-                    term = term,
-                    linkId = linkId,
-                    entry = entry,
-                    linkIndex = linkCounter
-                });
-
+                processedText = ProcessMatchedTerm(processedText, match, term, entry, linkCounter);
                 linkCounter++;
-                hasTermsInCurrentDialogue = true;
             }
             else
             {
-                // Remove brackets if no entry found
-                processedText = processedText.Remove(match.Index, match.Length);
-                processedText = processedText.Insert(match.Index, term);
+                processedText = RemoveBrackets(processedText, match, term);
             }
         }
 
-        dialogueText.text = processedText;
+        return processedText;
+    }
 
-        // Auto-select first term if available
-        if (hasTermsInCurrentDialogue && enableTermNavigation)
+    private EncyclopediaEntry GetEncyclopediaEntry(string term)
+    {
+        return encyclopedia?.GetEntry(term);
+    }
+
+    private string ProcessMatchedTerm(string text, Match match, string term, EncyclopediaEntry entry, int linkCounter)
+    {
+        string linkId = LINK_ID_PREFIX + linkCounter;
+        Color termColor = GetTermColor(entry.type);
+        string linkedText = CreateLinkedText(term, linkId, termColor);
+
+        text = ReplaceMatchWithLinkedText(text, match, linkedText);
+        StoreLinkedTerm(term, linkId, entry, linkCounter);
+
+        hasTermsInCurrentDialogue = true;
+
+        return text;
+    }
+
+    private Color GetTermColor(EntryType type)
+    {
+        return type == EntryType.Lore ? loreColor : gameSystemColor;
+    }
+
+    private string CreateLinkedText(string term, string linkId, Color color)
+    {
+        string colorHex = ColorUtility.ToHtmlStringRGB(color);
+        return $"<link=\"{linkId}\"><color=#{colorHex}><u>{term}</u></color></link>";
+    }
+
+    private string ReplaceMatchWithLinkedText(string text, Match match, string linkedText)
+    {
+        text = text.Remove(match.Index, match.Length);
+        text = text.Insert(match.Index, linkedText);
+        return text;
+    }
+
+    private void StoreLinkedTerm(string term, string linkId, EncyclopediaEntry entry, int linkCounter)
+    {
+        linkedTerms.Insert(0, new LinkedTerm
         {
-            currentTermIndex = 0;
-            HighlightCurrentTerm();
-        }
+            term = term,
+            linkId = linkId,
+            entry = entry,
+            linkIndex = linkCounter
+        });
+    }
+
+    private string RemoveBrackets(string text, Match match, string term)
+    {
+        text = text.Remove(match.Index, match.Length);
+        text = text.Insert(match.Index, term);
+        return text;
+    }
+
+    private void DisplayProcessedText(string text)
+    {
+        dialogueText.text = text;
+    }
+
+    private void SelectFirstTerm()
+    {
+        currentTermIndex = FIRST_TERM_INDEX;
+        UpdateTermIndicator();
     }
 
     void Update()
     {
-        if (!enableTermNavigation || !hasTermsInCurrentDialogue)
-            return;
-
-        // Mouse/touch click support
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame && dialogueText != null)
+        if (!ShouldProcessInput())
         {
-            int linkIndex = TMP_TextUtilities.FindIntersectingLink(
-                dialogueText,
-                Mouse.current.position.ReadValue(),
-                null
-            );
+            return;
+        }
 
-            if (linkIndex != -1)
+        HandleMouseClick();
+    }
+
+    private bool ShouldProcessInput()
+    {
+        return enableTermNavigation && hasTermsInCurrentDialogue;
+    }
+
+    private void HandleMouseClick()
+    {
+        if (!IsMouseButtonPressed())
+        {
+            return;
+        }
+
+        int linkIndex = GetClickedLinkIndex();
+
+        if (linkIndex != INVALID_TERM_INDEX)
+        {
+            ProcessClickedLink(linkIndex);
+        }
+    }
+
+    private bool IsMouseButtonPressed()
+    {
+        return Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+    }
+
+    private int GetClickedLinkIndex()
+    {
+        if (dialogueText == null)
+        {
+            return INVALID_TERM_INDEX;
+        }
+
+        return TMP_TextUtilities.FindIntersectingLink(
+            dialogueText,
+            Mouse.current.position.ReadValue(),
+            null
+        );
+    }
+
+    private void ProcessClickedLink(int linkIndex)
+    {
+        TMP_LinkInfo linkInfo = dialogueText.textInfo.linkInfo[linkIndex];
+        string linkId = linkInfo.GetLinkID();
+
+        int termIndex = FindTermIndexByLinkId(linkId);
+
+        if (termIndex != INVALID_TERM_INDEX)
+        {
+            currentTermIndex = termIndex;
+            OpenCurrentTerm();
+        }
+    }
+
+    private int FindTermIndexByLinkId(string linkId)
+    {
+        for (int i = 0; i < linkedTerms.Count; i++)
+        {
+            if (linkedTerms[i].linkId == linkId)
             {
-                TMP_LinkInfo linkInfo = dialogueText.textInfo.linkInfo[linkIndex];
-                string linkId = linkInfo.GetLinkID();
-
-                // Find and open the entry for this link
-                for (int i = 0; i < linkedTerms.Count; i++)
-                {
-                    if (linkedTerms[i].linkId == linkId)
-                    {
-                        currentTermIndex = i;
-                        OpenCurrentTerm();
-                        break;
-                    }
-                }
+                return i;
             }
         }
+
+        return INVALID_TERM_INDEX;
     }
 
     public void CycleTermForward()
     {
-        if (!hasTermsInCurrentDialogue || linkedTerms.Count == 0)
+        if (!CanNavigateTerms())
+        {
             return;
+        }
 
         currentTermIndex = (currentTermIndex + 1) % linkedTerms.Count;
-        HighlightCurrentTerm();
+        UpdateTermIndicator();
     }
 
     public void CycleTermBackward()
     {
-        if (!hasTermsInCurrentDialogue || linkedTerms.Count == 0)
+        if (!CanNavigateTerms())
+        {
             return;
+        }
 
         currentTermIndex--;
-        if (currentTermIndex < 0)
-            currentTermIndex = linkedTerms.Count - 1;
 
-        HighlightCurrentTerm();
+        if (currentTermIndex < 0)
+        {
+            currentTermIndex = linkedTerms.Count - 1;
+        }
+
+        UpdateTermIndicator();
+    }
+
+    private bool CanNavigateTerms()
+    {
+        return hasTermsInCurrentDialogue && linkedTerms.Count > 0;
     }
 
     public void OpenCurrentTerm()
     {
-        if (!hasTermsInCurrentDialogue || currentTermIndex < 0 || currentTermIndex >= linkedTerms.Count)
+        if (!IsValidTermSelected())
+        {
             return;
+        }
 
         LinkedTerm term = linkedTerms[currentTermIndex];
         OpenEncyclopediaEntry(term.entry);
     }
 
-    private void HighlightCurrentTerm()
+    private bool IsValidTermSelected()
     {
-        if (currentTermIndex < 0 || currentTermIndex >= linkedTerms.Count)
-            return;
-
-        // Rebuild text with current term highlighted differently
-        string currentText = dialogueText.text;
-
-        UpdateTermIndicator();
+        return hasTermsInCurrentDialogue &&
+               currentTermIndex >= 0 &&
+               currentTermIndex < linkedTerms.Count;
     }
 
     private void UpdateTermIndicator()
     {
-        if (termSelectionIndicator == null || dialogueText == null)
-            return;
-
-        if (currentTermIndex < 0 || currentTermIndex >= linkedTerms.Count)
+        if (!ShouldShowIndicator())
         {
-            termSelectionIndicator.SetActive(false);
+            HideIndicator();
             return;
         }
 
-        // Force text mesh to update
+        if (!IsValidTermSelected())
+        {
+            HideIndicator();
+            return;
+        }
+
+        PositionIndicator();
+    }
+
+    private bool ShouldShowIndicator()
+    {
+        return termSelectionIndicator != null && dialogueText != null;
+    }
+
+    private void HideIndicator()
+    {
+        if (termSelectionIndicator != null)
+        {
+            termSelectionIndicator.SetActive(false);
+        }
+    }
+
+    private void PositionIndicator()
+    {
         dialogueText.ForceMeshUpdate();
 
         LinkedTerm currentTerm = linkedTerms[currentTermIndex];
         TMP_LinkInfo linkInfo = dialogueText.textInfo.linkInfo[currentTerm.linkIndex];
 
-        // Get the bounds of the linked text
         int firstCharIndex = linkInfo.linkTextfirstCharacterIndex;
         int lastCharIndex = linkInfo.linkTextfirstCharacterIndex + linkInfo.linkTextLength - 1;
 
         if (firstCharIndex < dialogueText.textInfo.characterCount)
         {
-            Vector3 bottomLeft = dialogueText.textInfo.characterInfo[firstCharIndex].bottomLeft;
-            Vector3 topRight = dialogueText.textInfo.characterInfo[lastCharIndex].topRight;
-
-            Vector3 center = (bottomLeft + topRight) / 2;
-
-            termSelectionIndicator.SetActive(true);
-            termSelectionIndicator.transform.position = dialogueText.transform.TransformPoint(center);
+            Vector3 center = CalculateTermCenter(firstCharIndex, lastCharIndex);
+            ShowIndicatorAt(center);
         }
+    }
+
+    private Vector3 CalculateTermCenter(int firstCharIndex, int lastCharIndex)
+    {
+        Vector3 bottomLeft = dialogueText.textInfo.characterInfo[firstCharIndex].bottomLeft;
+        Vector3 topRight = dialogueText.textInfo.characterInfo[lastCharIndex].topRight;
+
+        return (bottomLeft + topRight) / 2f;
+    }
+
+    private void ShowIndicatorAt(Vector3 localPosition)
+    {
+        termSelectionIndicator.SetActive(true);
+        termSelectionIndicator.transform.position = dialogueText.transform.TransformPoint(localPosition);
     }
 
     private void OpenEncyclopediaEntry(EncyclopediaEntry entry)
@@ -219,11 +378,6 @@ public class DialogueSystem : MonoBehaviour
         {
             encyclopediaPanel.DisplayEntry(entry);
         }
-    }
-
-    public void ShowExampleDialogue()
-    {
-        DisplayDialogue("The [Dragon King] used [Fire Magic] to destroy the village. Learn about [Combat] to defeat him.");
     }
 
     public bool HasSelectableTerms()
