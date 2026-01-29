@@ -6,6 +6,9 @@ using UnityEngine;
 
 public static class BoidQueryUtility
 {
+    private static EntityQuery _cachedQuery;
+    private static World _cachedWorld;
+
     public static bool HasBoidsWithinDistance(
         int flockID,
         Vector3 centerPoint,
@@ -17,42 +20,57 @@ public static class BoidQueryUtility
 
         var em = world.EntityManager;
 
-        var query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<BoidTag>(),
-            ComponentType.ReadOnly<BoidFlockID>(),
-            ComponentType.ReadOnly<LocalTransform>()
-        );
-
-        if (query.IsEmpty)
+        // Cache the query to avoid creating it every time.
+        // If the world changes, we need to recreate the query for the new world.
+        if (_cachedWorld != world)
         {
-            query.Dispose();
+            _cachedQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<BoidTag>(),
+                ComponentType.ReadOnly<BoidFlockID>(),
+                ComponentType.ReadOnly<LocalTransform>()
+            );
+            _cachedWorld = world;
+        }
+
+        if (_cachedQuery.IsEmpty)
+        {
             return false;
         }
 
         float maxDistanceSq = maxDistance * maxDistance;
         float3 center = centerPoint;
 
-        var flockIDs = query.ToComponentDataArray<BoidFlockID>(Allocator.Temp);
-        var transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+        // Use chunk iteration to avoid allocating arrays for all entities.
+        var flockIDHandle = em.GetComponentTypeHandle<BoidFlockID>(true);
+        var transformHandle = em.GetComponentTypeHandle<LocalTransform>(true);
 
+        var chunks = _cachedQuery.ToArchetypeChunkArray(Allocator.Temp);
         bool found = false;
 
-        for (int i = 0; i < flockIDs.Length; i++)
+        for (int i = 0; i < chunks.Length; i++)
         {
-            if (flockIDs[i].FlockID != flockID)
-                continue;
+            var chunk = chunks[i];
+            var flockIDs = chunk.GetNativeArray(ref flockIDHandle);
+            var transforms = chunk.GetNativeArray(ref transformHandle);
 
-            float distSq = math.lengthsq(transforms[i].Position - center);
-            if (distSq <= maxDistanceSq)
+            for (int j = 0; j < chunk.Count; j++)
             {
-                found = true;
-                break;
+                if (flockIDs[j].FlockID != flockID)
+                    continue;
+
+                float distSq = math.lengthsq(transforms[j].Position - center);
+                if (distSq <= maxDistanceSq)
+                {
+                    found = true;
+                    break;
+                }
             }
+
+            if (found)
+                break;
         }
 
-        flockIDs.Dispose();
-        transforms.Dispose();
-        query.Dispose();
+        chunks.Dispose();
 
         return found;
     }
