@@ -125,5 +125,16 @@ public class RangeCalculatorExtraTests
         Assert.AreEqual(0, line.Count);
     }
 
+    [Test]
+    public void AreaDiagonal_ReturnsAllSixDiagonals()
+    {
+        Board board = CreateSimpleBoard(7); // Big enough for range 1 in all directions
+        Tile center = board.get_Tile(3, 3); // Center of 7x7 board
+
+        List<Tile> diagonals = RangeCalculator.AreaDiagonal(board, center, 1);
+
+        // A hexagon has 6 diagonal directions. For range 1, it should return 6 tiles.
+        Assert.AreEqual(6, diagonals.Count);
+    }
 }
 

@@ -22,6 +22,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  UNITY_VERSION: 2020.3.14f1
+
 jobs:
   build:
     # GitHub provides Linux, Windows and macOS runners.
@@ -33,46 +36,35 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
-    # 2) Request a Unity license activation.
-    #    A license is required for the Unity editor to run in batch mode.
-    #    Credentials and serial are stored as encrypted repository secrets.
-    #    Learn more: https://game.ci/docs/github/basics
-    - name: Activate Unity
-      id: unity-activate
-      uses: game-ci/unity-activate@v2
-      with:
-        unityVersion: 2020.3.14f1
-        unitySerial: ${{ secrets.UNITY_SERIAL }}
-        unityEmail: ${{ secrets.UNITY_EMAIL }}
-        unityPassword: ${{ secrets.UNITY_PASSWORD }}
-
-    # 3) Build the project. This step compiles all scripts and creates
+    # 2) Build the project. This step compiles all scripts and creates
     #    a standalone player build. If the compilation fails, the job
     #    stops here and the pull request check will show an error.
     #    Documentation: https://game.ci/docs/github/builder
     - name: Build project
       uses: game-ci/unity-builder@v2
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
       with:
-        unityVersion: 2020.3.14f1
+        unityVersion: ${{ env.UNITY_VERSION }}
         targetPlatform: StandaloneLinux64
         buildPath: build
+        allowDirtyBuild: true
 
-    # 4) Run play mode tests defined under Assets/Tests.
+    # 3) Run play mode tests defined under Assets/Tests.
     #    The Test Runner runs inside the editor and produces results
     #    which are uploaded as build artifacts.
     #    Documentation: https://game.ci/docs/github/test-runner
     - name: Run tests
       uses: game-ci/unity-test-runner@v2
+      env:
+        UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+        UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
       with:
-        unityVersion: 2020.3.14f1
+        unityVersion: ${{ env.UNITY_VERSION }}
         testMode: playmode
         artifactsPath: test-results
-
-    # 5) Once everything is done, return the Unity license.
-    #    Returning the license avoids hitting the activation limit.
-    - name: Return license
-      if: always()
-      uses: game-ci/unity-return-license@v2
-      with:
-        unityVersion: 2020.3.14f1
-        unitySerial: ${{ secrets.UNITY_SERIAL }}

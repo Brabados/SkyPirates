@@ -241,7 +241,9 @@ public static class RangeCalculator
         new Vector3Int(1, 1, -2),  // Up-Right Diagonal
         new Vector3Int(-1, -1, 2), // Down-Left Diagonal
         new Vector3Int(1, -2, 1),  // Up-Left Diagonal
-        new Vector3Int(-1, 2, -1)  // Down-Right Diagonal
+        new Vector3Int(-1, 2, -1), // Down-Right Diagonal
+        new Vector3Int(2, -1, -1), // Right Diagonal
+        new Vector3Int(-2, 1, 1)   // Left Diagonal
         };
 
         foreach (var direction in diagonalDirections)
